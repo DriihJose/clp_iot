@@ -1,0 +1,39 @@
+services:
+  nodered:
+    image: nodered/node-red:latest
+    container_name: nodered
+    # Host networking: no Docker NAT, direct L2/L3 access to the Micro850 (192.168.1.33) via enp58s0.
+    # Dashboard is served directly on the host at :1880. InfluxDB is reached at http://localhost:8086.
+    network_mode: host
+    volumes:
+      - ./nodered_data:/data
+    restart: unless-stopped
+
+  influxdb:
+    image: influxdb:2.7
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    volumes:
+      - ./influxdb_data:/var/lib/influxdb2
+      - ./influxdb_config:/etc/influxdb2
+    restart: unless-stopped
+    networks:
+      - iot-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana_data:/var/lib/grafana
+    restart: unless-stopped
+    networks:
+      - iot-network
+    depends_on:
+      - influxdb
+
+networks:
+  iot-network:
+    driver: bridge

@@ -1,0 +1,22 @@
+# ---- Container runtime data (owned by container users, binary, large) ----
+grafana_data/
+influxdb_data/
+
+# ---- Secrets: InfluxDB CLI config (operator token), admin password, tokens ----
+influxdb_config/
+
+# ---- Node-RED: reinstallable dependencies / caches ----
+nodered_data/node_modules/
+nodered_data/.npm/
+
+# ---- Node-RED: credentials + encryption key + runtime state (secrets) ----
+nodered_data/flows_cred.json
+nodered_data/.config.*.json
+nodered_data/.config.*.json.backup
+nodered_data/.flows*.json.backup
+nodered_data/*.backup
+nodered_data/.sessions.json
+
+# ---- Misc ----
+*.log
+.env
