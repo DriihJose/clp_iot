@@ -1,0 +1,7 @@
+# Força finais de linha LF para todos os arquivos de código e scripts Unix
+* text=auto eol=lf
+
+# Mantém CRLF explicitamente para scripts do Windows PowerShell e Batch
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf

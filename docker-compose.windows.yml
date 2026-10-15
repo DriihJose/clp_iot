@@ -1,0 +1,66 @@
+services:
+  nodered:
+    build:
+      context: .
+      dockerfile: Dockerfile.nodered
+    image: clp_iot-nodered:latest
+    container_name: nodered
+    # Windows (Docker Desktop via WSL2): expõe a porta 1880 diretamente no Windows
+    # e conecta na iot-network. A comunicação com InfluxDB é feita via host.docker.internal.
+    ports:
+      - "1880:1880"
+    networks:
+      - iot-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./nodered_data:/data
+      - ./relatorios:/data/relatorios
+    restart: unless-stopped
+    depends_on:
+      - influxdb
+
+  influxdb:
+    image: influxdb:2.7
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=${DOCKER_INFLUXDB_INIT_MODE:-setup}
+      - DOCKER_INFLUXDB_INIT_USERNAME=${DOCKER_INFLUXDB_INIT_USERNAME:-admin}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${DOCKER_INFLUXDB_INIT_PASSWORD:-adminpassword123}
+      - DOCKER_INFLUXDB_INIT_ORG=${DOCKER_INFLUXDB_INIT_ORG:-vigor}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${DOCKER_INFLUXDB_INIT_BUCKET:-carrinho}
+      - DOCKER_INFLUXDB_INIT_RETENTION=${DOCKER_INFLUXDB_INIT_RETENTION:-0}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN}
+    volumes:
+      - ./influxdb_data:/var/lib/influxdb2
+      - ./influxdb_config:/etc/influxdb2
+    restart: unless-stopped
+    networks:
+      iot-network:
+        aliases:
+          - influxdb
+          - host.docker.internal
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN}
+    volumes:
+      - ./grafana_data:/var/lib/grafana
+      - ./grafana_provisioning:/etc/grafana/provisioning:ro
+    restart: unless-stopped
+    networks:
+      - iot-network
+    depends_on:
+      - influxdb
+
+networks:
+  iot-network:
+    driver: bridge

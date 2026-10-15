@@ -1,19 +1,35 @@
 services:
   nodered:
-    image: nodered/node-red:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.nodered
+    image: clp_iot-nodered:latest
     container_name: nodered
-    # Host networking: no Docker NAT, direct L2/L3 access to the Micro850 (192.168.1.33) via enp58s0.
-    # Dashboard is served directly on the host at :1880. InfluxDB is reached at http://localhost:8086.
+    # Linux: network_mode: host permite comunicação direta em camada 2/3 com o Micro850 (192.168.1.33)
+    # via interface física enp58s0 sem passar pelo NAT do Docker.
     network_mode: host
     volumes:
       - ./nodered_data:/data
+      - ./relatorios:/data/relatorios
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped
+    depends_on:
+      - influxdb
 
   influxdb:
     image: influxdb:2.7
     container_name: influxdb
     ports:
       - "8086:8086"
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=${DOCKER_INFLUXDB_INIT_MODE:-setup}
+      - DOCKER_INFLUXDB_INIT_USERNAME=${DOCKER_INFLUXDB_INIT_USERNAME:-admin}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${DOCKER_INFLUXDB_INIT_PASSWORD:-adminpassword123}
+      - DOCKER_INFLUXDB_INIT_ORG=${DOCKER_INFLUXDB_INIT_ORG:-vigor}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${DOCKER_INFLUXDB_INIT_BUCKET:-carrinho}
+      - DOCKER_INFLUXDB_INIT_RETENTION=${DOCKER_INFLUXDB_INIT_RETENTION:-0}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN}
     volumes:
       - ./influxdb_data:/var/lib/influxdb2
       - ./influxdb_config:/etc/influxdb2
@@ -26,8 +42,13 @@ services:
     container_name: grafana
     ports:
       - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN}
     volumes:
       - ./grafana_data:/var/lib/grafana
+      - ./grafana_provisioning:/etc/grafana/provisioning:ro
     restart: unless-stopped
     networks:
       - iot-network

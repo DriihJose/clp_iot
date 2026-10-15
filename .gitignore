@@ -4,6 +4,7 @@ influxdb_data/
 
 # ---- Secrets: InfluxDB CLI config (operator token), admin password, tokens ----
 influxdb_config/
+.env
 
 # ---- Node-RED: reinstallable dependencies / caches ----
 nodered_data/node_modules/
@@ -17,6 +18,14 @@ nodered_data/.flows*.json.backup
 nodered_data/*.backup
 nodered_data/.sessions.json
 
+# ---- Generated reports (preserve .gitkeep) ----
+relatorios/*.html
+relatorios/*.pdf
+!relatorios/.gitkeep
+nodered_data/relatorios/*.html
+nodered_data/relatorios/*.pdf
+!nodered_data/relatorios/.gitkeep
+
 # ---- Misc ----
 *.log
-.env
+scratch/
