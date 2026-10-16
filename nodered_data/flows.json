@@ -171,6 +171,9 @@
                 },
                 "_IO_EM_DO_00": {
                     "type": "BOOL"
+                },
+                "_IO_EM_DO_01": {
+                    "type": "BOOL"
                 }
             }
         }
@@ -381,7 +384,7 @@
         "type": "function",
         "z": "flow_pressao_full",
         "name": "Inicia teste",
-        "func": "// Botão INICIAR TESTE: valida o intertravamento, trava o setpoint e inicia o ciclo.\n// Saídas: [0] bloqueia a UI ('RODANDO') | [1] ciclo_node = true (CLP) | [2] 1º ponto do setpoint travado (InfluxDB) | [3] texto de STATUS\nif (flow.get('ativo') === true) return null;   // já existe um teste em andamento\n\nconst valido = (v) => v !== null && v !== undefined && v !== '' && !isNaN(Number(v));\n\nconst equipamento   = String(flow.get('equipamento') ?? '').trim();\nconst motorLigado   = flow.get('motor_on') === true;\nconst valvulaAberta = flow.get('valvula_manual_on') === true || flow.get('valvula') === true;\n\n// Setpoint vigente = valor mais recente entre o campo da tela e o lido do CLP\nconst tUi = flow.get('sp_ui_t') || 0;\nconst tPlc = flow.get('sp_plc_t') || 0;\nconst primeiro = tUi >= tPlc ? flow.get('sp_ui') : flow.get('sp_plc');\nconst segundo  = tUi >= tPlc ? flow.get('sp_plc') : flow.get('sp_ui');\nconst spBruto = valido(primeiro) ? primeiro : segundo;\n\nconst motivos = [];\nif (!equipamento) motivos.push('PREENCHA O EQUIPAMENTO');\nif (motorLigado) motivos.push('DESLIGUE O MOTOR');\nif (valvulaAberta) motivos.push('FECHE A VÁLVULA');\nif (!valido(spBruto)) motivos.push('DEFINA A PRESSÃO DESEJADA');\n\nif (motivos.length > 0) {\n    const aviso = { payload: 'BLOQUEADO - ' + motivos.join(' / '), color: '#C62828' };\n    // o aviso fica visível por 8 s (o cronômetro de 1 s reescreve o STATUS)\n    flow.set('aviso_status', { payload: aviso.payload, color: aviso.color, ate: Date.now() + 8000 });\n    return [null, null, null, aviso];\n}\n\nconst sp = Math.round(Number(spBruto) * 100) / 100;\n\nflow.set('ativo', true);\nflow.set('aviso_status', null);\nflow.set('inicio', new Date().toLocaleString('pt-BR'));\n\nflow.set('soma', 0);\nflow.set('qtd', 0);\nflow.set('min', null);\nflow.set('max', null);\n\n// limpa histórico\nflow.set('historico', []);\n\n// hora oficial de início\nflow.set(\"hora_inicio_date\", Date.now());\n\n// duração padrão (1h)\nflow.set(\"duracao_teste\", 3600000);\n\n// IMPORTANTE: limpa fim anterior\nflow.set(\"hora_fim_date\", null);\n\n// SETPOINT TRAVADO: capturado uma única vez, no instante do início, e mantido até o fim do teste\nflow.set('sp_travado', sp);\nflow.set('sp', sp);\nflow.set('equipamento_teste', equipamento);\n\nreturn [\n    { payload: 'RODANDO' },\n    { payload: true },\n    { payload: sp },\n    null\n];\n",
+        "func": "// Botão INICIAR TESTE: valida o intertravamento, trava o setpoint e inicia o ciclo.\n// Saídas: [0] bloqueia a UI ('RODANDO') | [1] ciclo_node = true (CLP) | [2] 1º ponto do setpoint travado (InfluxDB) | [3] texto de STATUS\nif (flow.get('ativo') === true) return null;   // já existe um teste em andamento\n\nconst valido = (v) => v !== null && v !== undefined && v !== '' && !isNaN(Number(v));\n\nconst equipamento   = String(flow.get('equipamento') ?? '').trim();\nconst bombaFisica   = flow.get('bomba_fisica') === true || flow.get('bomba_fisica') === 1;\nconst motorComando  = flow.get('motor_on') === true;\nconst motorLigado   = motorComando || bombaFisica;\n\nconst valvulaFisica  = flow.get('valvula') === true || flow.get('valvula') === 1;\nconst valvulaComando = flow.get('valvula_manual_on') === true;\nconst valvulaAberta  = valvulaComando || valvulaFisica;\n\n// Setpoint vigente = valor mais recente entre o campo da tela e o lido do CLP\nconst tUi = flow.get('sp_ui_t') || 0;\nconst tPlc = flow.get('sp_plc_t') || 0;\nconst primeiro = tUi >= tPlc ? flow.get('sp_ui') : flow.get('sp_plc');\nconst segundo  = tUi >= tPlc ? flow.get('sp_plc') : flow.get('sp_ui');\nconst spBruto = valido(primeiro) ? primeiro : segundo;\n\nconst motivos = [];\nif (!equipamento) motivos.push('PREENCHA O EQUIPAMENTO');\nif (motorLigado) motivos.push('DESLIGUE O MOTOR / BOMBA');\nif (valvulaAberta) motivos.push('FECHE A VÁLVULA');\nif (!valido(spBruto)) motivos.push('DEFINA A PRESSÃO DESEJADA');\n\nif (motivos.length > 0) {\n    const aviso = { payload: 'BLOQUEADO - ' + motivos.join(' / '), color: '#C62828' };\n    // o aviso fica visível por 8 s (o cronômetro de 1 s reescreve o STATUS)\n    flow.set('aviso_status', { payload: aviso.payload, color: aviso.color, ate: Date.now() + 8000 });\n    return [null, null, null, aviso];\n}\n\nconst sp = Math.round(Number(spBruto) * 100) / 100;\n\nflow.set('ativo', true);\nflow.set('aviso_status', null);\nflow.set('inicio', new Date().toLocaleString('pt-BR'));\n\nflow.set('soma', 0);\nflow.set('qtd', 0);\nflow.set('min', null);\nflow.set('max', null);\n\n// limpa histórico\nflow.set('historico', []);\n\n// hora oficial de início\nflow.set(\"hora_inicio_date\", Date.now());\n\n// duração padrão (1h)\nflow.set(\"duracao_teste\", 3600000);\n\n// IMPORTANTE: limpa fim anterior\nflow.set(\"hora_fim_date\", null);\n\n// SETPOINT TRAVADO: capturado uma única vez, no instante do início, e mantido até o fim do teste\nflow.set('sp_travado', sp);\nflow.set('sp', sp);\nflow.set('equipamento_teste', equipamento);\n\nreturn [\n    { payload: 'RODANDO' },\n    { payload: true },\n    { payload: sp },\n    null\n];",
         "outputs": 4,
         "timeout": "",
         "noerr": 0,
@@ -437,7 +440,7 @@
         "z": "flow_pressao_full",
         "name": "",
         "group": "ui_group_pressao",
-        "order": 10,
+        "order": 8,
         "width": 12,
         "height": 6,
         "gtype": "gage",
@@ -544,7 +547,8 @@
         "wires": [
             [
                 "398b99857e5197e4",
-                "7d655f418f1c0085"
+                "7d655f418f1c0085",
+                "fn_auto_cutoff_sp"
             ]
         ]
     },
@@ -610,235 +614,97 @@
     },
     {
         "id": "9641c0e83444adc3",
-        "type": "ui_switch",
+        "type": "ui_dropdown",
         "z": "flow_pressao_full",
         "name": "",
         "label": "MOTOR MANUAL",
         "tooltip": "",
         "group": "ui_group_pressao",
-        "order": 5,
+        "order": 2,
         "width": 6,
         "height": 1,
         "passthru": false,
-        "decouple": "false",
         "topic": "topic",
         "topicType": "msg",
-        "style": "",
-        "onvalue": "1",
-        "onvalueType": "num",
-        "onicon": "",
-        "oncolor": "",
-        "offvalue": "2",
-        "offvalueType": "num",
-        "officon": "",
-        "offcolor": "",
-        "animate": true,
         "className": "",
         "x": 270,
         "y": 145.79545454545453,
         "wires": [
             [
-                "0e6d0439b7f1072c",
-                "adefa3e53a8be119",
-                "fn_cache_motor"
+                "fn_ctrl_motor_manual"
             ]
-        ]
-    },
-    {
-        "id": "0e6d0439b7f1072c",
-        "type": "change",
-        "z": "flow_pressao_full",
-        "name": "",
-        "rules": [
+        ],
+        "place": "LIBERAR MANUAL",
+        "multiple": false,
+        "options": [
             {
-                "t": "change",
-                "p": "payload",
-                "pt": "msg",
-                "from": "1",
-                "fromt": "num",
-                "to": "true",
-                "tot": "bool"
+                "label": "MOTOR LIGADO",
+                "value": 1,
+                "type": "num"
             },
             {
-                "t": "change",
-                "p": "payload",
-                "pt": "msg",
-                "from": "2",
-                "fromt": "num",
-                "to": "false",
-                "tot": "bool"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 520,
-        "y": 128.63636363636363,
-        "wires": [
-            [
-                "daa4f8544153c40e"
-            ]
-        ]
-    },
-    {
-        "id": "adefa3e53a8be119",
-        "type": "change",
-        "z": "flow_pressao_full",
-        "name": "",
-        "rules": [
-            {
-                "t": "change",
-                "p": "payload",
-                "pt": "msg",
-                "from": "2",
-                "fromt": "num",
-                "to": "true",
-                "tot": "bool"
+                "label": "MOTOR DESLIGADO",
+                "value": 2,
+                "type": "num"
             },
             {
-                "t": "change",
-                "p": "payload",
-                "pt": "msg",
-                "from": "1",
-                "fromt": "num",
-                "to": "false",
-                "tot": "bool"
+                "label": "LIBERAR MANUAL",
+                "value": 3,
+                "type": "num"
             }
         ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 520,
-        "y": 180.11363636363635,
-        "wires": [
-            [
-                "faecf82f35480bfa"
-            ]
-        ]
+        "payload": ""
     },
     {
         "id": "f20962dfb01ffb40",
-        "type": "ui_switch",
+        "type": "ui_dropdown",
         "z": "flow_pressao_full",
         "name": "",
         "label": "VALVULA MANUAL",
         "tooltip": "",
         "group": "ui_group_pressao",
-        "order": 6,
+        "order": 3,
         "width": 6,
         "height": 1,
         "passthru": false,
-        "decouple": "false",
         "topic": "topic",
         "topicType": "msg",
-        "style": "",
-        "onvalue": "1",
-        "onvalueType": "num",
-        "onicon": "",
-        "oncolor": "",
-        "offvalue": "2",
-        "offvalueType": "num",
-        "officon": "",
-        "offcolor": "",
-        "animate": true,
         "className": "",
         "x": 290,
         "y": 377.38636363636374,
         "wires": [
             [
-                "a9004b0615596a22",
-                "673fa86602fba062",
-                "fn_cache_valvula_manual"
+                "fn_ctrl_valvula_manual"
             ]
-        ]
-    },
-    {
-        "id": "a9004b0615596a22",
-        "type": "change",
-        "z": "flow_pressao_full",
-        "name": "",
-        "rules": [
+        ],
+        "place": "LIBERAR MANUAL",
+        "multiple": false,
+        "options": [
             {
-                "t": "change",
-                "p": "payload",
-                "pt": "msg",
-                "from": "1",
-                "fromt": "num",
-                "to": "true",
-                "tot": "bool"
+                "label": "VÁLVULA ABERTA",
+                "value": 1,
+                "type": "num"
             },
             {
-                "t": "change",
-                "p": "payload",
-                "pt": "msg",
-                "from": "2",
-                "fromt": "num",
-                "to": "false",
-                "tot": "bool"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 540,
-        "y": 360.2272727272728,
-        "wires": [
-            [
-                "7a612cafc5aaba50"
-            ]
-        ]
-    },
-    {
-        "id": "673fa86602fba062",
-        "type": "change",
-        "z": "flow_pressao_full",
-        "name": "",
-        "rules": [
-            {
-                "t": "change",
-                "p": "payload",
-                "pt": "msg",
-                "from": "2",
-                "fromt": "num",
-                "to": "true",
-                "tot": "bool"
+                "label": "VÁLVULA FECHADA",
+                "value": 2,
+                "type": "num"
             },
             {
-                "t": "change",
-                "p": "payload",
-                "pt": "msg",
-                "from": "1",
-                "fromt": "num",
-                "to": "false",
-                "tot": "bool"
+                "label": "LIBERAR MANUAL",
+                "value": 3,
+                "type": "num"
             }
         ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 540,
-        "y": 411.7045454545456,
-        "wires": [
-            [
-                "0f43d59264e5b79e"
-            ]
-        ]
+        "payload": ""
     },
     {
         "id": "82d8edb1336a7da3",
         "type": "ui_text",
         "z": "flow_pressao_full",
         "group": "ui_group_pressao",
-        "order": 11,
-        "width": 12,
+        "order": 9,
+        "width": 6,
         "height": 1,
         "name": "",
         "label": "",
@@ -859,7 +725,7 @@
         "z": "flow_pressao_full",
         "name": "",
         "group": "ui_group_pressao",
-        "order": 8,
+        "order": 5,
         "width": 6,
         "height": 1,
         "passthru": false,
@@ -887,7 +753,7 @@
         "z": "flow_pressao_full",
         "name": "",
         "group": "ui_group_pressao",
-        "order": 9,
+        "order": 6,
         "width": 6,
         "height": 1,
         "passthru": false,
@@ -917,7 +783,7 @@
         "label": "PRESSÃO DESEJADA:",
         "tooltip": "",
         "group": "ui_group_pressao",
-        "order": 8,
+        "order": 7,
         "width": 0,
         "height": 0,
         "wrap": false,
@@ -934,7 +800,8 @@
         "wires": [
             [
                 "fcc8d4b3097f775a",
-                "fn_cache_setpoint"
+                "fn_cache_setpoint",
+                "9c879e7c29e0e8de"
             ]
         ]
     },
@@ -943,7 +810,7 @@
         "type": "ui_text",
         "z": "flow_pressao_full",
         "group": "ui_group_pressao",
-        "order": 7,
+        "order": 4,
         "width": 12,
         "height": 1,
         "name": "Status do teste",
@@ -992,7 +859,8 @@
         "y": 900,
         "wires": [
             [
-                "fn_cache_setpoint_plc"
+                "fn_cache_setpoint_plc",
+                "9c879e7c29e0e8de"
             ]
         ]
     },
@@ -1095,38 +963,6 @@
         "wires": []
     },
     {
-        "id": "fn_cache_motor",
-        "type": "function",
-        "z": "flow_pressao_full",
-        "name": "Cache Motor Manual",
-        "func": "// 1 = ligado | 2 = desligado (valores do switch). Usado no intertravamento do INICIAR TESTE.\nflow.set('motor_on', msg.payload === 1 || msg.payload === true);\nreturn null;",
-        "outputs": 0,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 440,
-        "y": 80,
-        "wires": []
-    },
-    {
-        "id": "fn_cache_valvula_manual",
-        "type": "function",
-        "z": "flow_pressao_full",
-        "name": "Cache Válvula Manual",
-        "func": "// 1 = aberta | 2 = fechada (valores do switch). Usado no intertravamento do INICIAR TESTE.\nflow.set('valvula_manual_on', msg.payload === 1 || msg.payload === true);\nreturn null;",
-        "outputs": 0,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 560,
-        "y": 325.90909090909093,
-        "wires": []
-    },
-    {
         "id": "eth_out_ciclo",
         "type": "eth-ip out",
         "z": "flow_pressao_full",
@@ -1143,8 +979,8 @@
         "type": "function",
         "z": "flow_pressao_full",
         "name": "Habilitar / Bloquear UI",
-        "func": "// Entrada: msg.payload = 'RODANDO' | 'PARADO' | 'BOOT'\n// Durante o teste: tudo desabilitado (msg.enabled = false), exceto FINALIZAR TESTE.\n// Fora do teste:   tudo habilitado, FINALIZAR TESTE desabilitado.\n// Saídas: [0] Equipamento | [1] MOTOR MANUAL | [2] VALVULA MANUAL | [3] PRESSÃO DESEJADA | [4] INICIAR TESTE | [5] FINALIZAR TESTE\nlet estado = msg.payload;\nif (estado === 'BOOT') estado = flow.get('ativo') === true ? 'RODANDO' : 'PARADO';\nconst rodando = estado === 'RODANDO';\n\nconst sp = flow.get('sp_travado');\nconst mostraSp = rodando && sp !== undefined && sp !== null;\n\nreturn [\n    { enabled: !rodando },\n    { enabled: !rodando },\n    { enabled: !rodando },\n    mostraSp ? { enabled: !rodando, payload: Number(sp) } : { enabled: !rodando },\n    { enabled: !rodando },\n    { enabled: rodando }\n];\n",
-        "outputs": 6,
+        "func": "// Entrada: msg.payload = 'RODANDO' | 'PARADO' | 'BOOT'\n// Durante o teste: tudo desabilitado (msg.enabled = false), exceto FINALIZAR TESTE.\n// Fora do teste:   tudo habilitado, FINALIZAR TESTE desabilitado.\n// Ao iniciar o teste, no boot e ao finalizar: força on_node, off_node, onval_node e offval_node = false (LIBERAR MANUAL).\n// Saídas:\n// [0] Equipamento\n// [1] MOTOR MANUAL -> { enabled, payload: 3 }\n// [2] VALVULA MANUAL -> { enabled, payload: 3 }\n// [3] PRESSÃO DESEJADA -> { enabled, payload: sp }\n// [4] INICIAR TESTE -> { enabled }\n// [5] FINALIZAR TESTE -> { enabled }\n// [6] on_node (CLP) -> { payload: false }\n// [7] off_node (CLP) -> { payload: false }\n// [8] onval_node (CLP) -> { payload: false }\n// [9] offval_node (CLP) -> { payload: false }\n\nlet estado = msg.payload;\nif (estado === 'BOOT') estado = flow.get('ativo') === true ? 'RODANDO' : 'PARADO';\nconst rodando = estado === 'RODANDO';\n\n// Sempre garante que o estado do contexto reflita a liberação manual\nflow.set('motor_on', false);\nflow.set('valvula_manual_on', false);\n\nconst sp = flow.get('sp_travado');\nconst mostraSp = rodando && sp !== undefined && sp !== null;\n\nconst falseMsg = { payload: false };\n\nreturn [\n    { enabled: !rodando },\n    { enabled: !rodando, payload: 3 },\n    { enabled: !rodando, payload: 3 },\n    mostraSp ? { enabled: !rodando, payload: Number(sp) } : { enabled: !rodando },\n    { enabled: !rodando },\n    { enabled: rodando },\n    falseMsg,\n    falseMsg,\n    falseMsg,\n    falseMsg\n];",
+        "outputs": 10,
         "timeout": "",
         "noerr": 0,
         "initialize": "",
@@ -1170,6 +1006,18 @@
             ],
             [
                 "191a5d981abaa499"
+            ],
+            [
+                "daa4f8544153c40e"
+            ],
+            [
+                "faecf82f35480bfa"
+            ],
+            [
+                "7a612cafc5aaba50"
+            ],
+            [
+                "0f43d59264e5b79e"
             ]
         ]
     },
@@ -1196,6 +1044,151 @@
             [
                 "fn_ui_lock"
             ]
+        ]
+    },
+    {
+        "id": "9c879e7c29e0e8de",
+        "type": "ui_text",
+        "z": "flow_pressao_full",
+        "group": "ui_group_pressao",
+        "order": 10,
+        "width": 6,
+        "height": 1,
+        "name": "",
+        "label": "Pressão definida do teste:",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 150,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "fn_ctrl_motor_manual",
+        "type": "function",
+        "z": "flow_pressao_full",
+        "name": "Controle Motor Manual",
+        "func": "const val = Number(msg.payload);\nlet on = false;\nlet off = false;\n\nif (val === 1) {\n    on = true;\n    off = false;\n    flow.set('motor_on', true);\n} else if (val === 2) {\n    on = false;\n    off = true;\n    flow.set('motor_on', false);\n} else { // 3: LIBERAR MANUAL\n    on = false;\n    off = false;\n    flow.set('motor_on', false);\n}\n\nreturn [{ payload: on }, { payload: off }];",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 140,
+        "wires": [
+            [
+                "daa4f8544153c40e"
+            ],
+            [
+                "faecf82f35480bfa"
+            ]
+        ]
+    },
+    {
+        "id": "fn_ctrl_valvula_manual",
+        "type": "function",
+        "z": "flow_pressao_full",
+        "name": "Controle Válvula Manual",
+        "func": "const val = Number(msg.payload);\nlet onval = false;\nlet offval = false;\n\nif (val === 1) {\n    onval = true;\n    offval = false;\n    flow.set('valvula_manual_on', true);\n} else if (val === 2) {\n    onval = false;\n    offval = true;\n    flow.set('valvula_manual_on', false);\n} else { // 3: LIBERAR MANUAL\n    onval = false;\n    offval = false;\n    flow.set('valvula_manual_on', false);\n}\n\nreturn [{ payload: onval }, { payload: offval }];",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 380,
+        "wires": [
+            [
+                "7a612cafc5aaba50"
+            ],
+            [
+                "0f43d59264e5b79e"
+            ]
+        ]
+    },
+    {
+        "id": "fn_auto_cutoff_sp",
+        "type": "function",
+        "z": "flow_pressao_full",
+        "name": "Zeramento Automático Setpoint",
+        "func": "// Monitora RETORNO_BAR e zera automaticamente o comando do motor ao atingir o setpoint (Proteção Linha 5/6 CLP)\nconst pressao = Number(msg.payload);\nif (isNaN(pressao)) return null;\n\nconst motorOn = flow.get('motor_on') === true;\nif (!motorOn) return null;\n\n// Setpoint vigente: durante teste usa sp_travado; fora de teste usa sp_ui ou sp_plc\nconst sp = Number(flow.get('sp_travado') ?? flow.get('sp_ui') ?? flow.get('sp_plc') ?? 0);\nif (sp <= 0) return null;\n\n// Linha 1/6 CLP: ao atingir ou superar o setpoint, corta on_node e off_node e libera manual\nif (pressao >= sp) {\n    flow.set('motor_on', false);\n    return [\n        { payload: false },\n        { payload: false },\n        { payload: 3 }\n    ];\n}\n\nreturn null;",
+        "outputs": 3,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 260,
+        "wires": [
+            [
+                "daa4f8544153c40e"
+            ],
+            [
+                "faecf82f35480bfa"
+            ],
+            [
+                "9641c0e83444adc3"
+            ]
+        ]
+    },
+    {
+        "id": "eth_in_bomba",
+        "type": "eth-ip in",
+        "z": "flow_pressao_full",
+        "endpoint": "da562bad96c4eafe",
+        "mode": "single",
+        "variable": "_IO_EM_DO_01",
+        "program": "",
+        "name": "BOMBA FISICA",
+        "x": 160,
+        "y": 720,
+        "wires": [
+            [
+                "fn_cache_bomba"
+            ]
+        ]
+    },
+    {
+        "id": "fn_cache_bomba",
+        "type": "function",
+        "z": "flow_pressao_full",
+        "name": "Cache Bomba Física",
+        "func": "let b = msg.payload === true || msg.payload === 1 || msg.payload === 'true';\nflow.set('bomba_fisica', b);\nreturn { payload: b };",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 720,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ui_template_mobile_css",
+        "type": "ui_template",
+        "z": "flow_pressao_full",
+        "name": "CSS Mobile Responsivo",
+        "group": "",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "format": "<style>\n@media only screen and (max-width: 768px) {\n    /* Responsividade exclusiva para telas pequenas (<= 768px). PC (min-width: 769px) não é afetado. */\n    html, body {\n        overflow-x: hidden !important;\n        width: 100% !important;\n        max-width: 100vw !important;\n    }\n    md-content.maincontent {\n        overflow-x: hidden !important;\n        padding: 4px !important;\n        width: 100% !important;\n        max-width: 100vw !important;\n        box-sizing: border-box !important;\n    }\n    .nr-dashboard-cardpanel {\n        max-width: 100vw !important;\n        margin: 0 auto !important;\n        padding: 4px !important;\n        box-sizing: border-box !important;\n    }\n    @media only screen and (max-width: 650px) {\n        .nr-dashboard-cardpanel {\n            zoom: calc((100vw - 12px) / 642);\n        }\n    }\n}\n</style>",
+        "storeOutMessages": false,
+        "fwdInMessages": false,
+        "resendOnRefresh": false,
+        "templateScope": "global",
+        "className": "",
+        "x": 170,
+        "y": 60,
+        "wires": [
+            []
         ]
     }
 ]

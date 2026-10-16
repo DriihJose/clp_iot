@@ -65,11 +65,12 @@ Toda a comunicação do CLP foi unificada e homologada para o Micro850 via CIP n
 |---|---|---|---|
 | `RETORNO_BAR` | `REAL` | CLP -> Node-RED | Pressão instantânea lida pelo transmissor analógico (0 a 10 bar). |
 | `_IO_EM_DO_00` | `BOOL` | CLP -> Node-RED | Feedback elétrico da saída digital 00 (Válvula solenoide). |
+| `_IO_EM_DO_01` | `BOOL` | CLP -> Node-RED | Feedback elétrico da saída digital 01 (Bomba hidráulica / Motor). |
 | `setpoint_node` | `REAL` | Bidirecional | Pressão desejada configurada pelo operador ou lida do CLP. |
-| `on_node` | `DINT` | Node-RED -> CLP | Comando de ativação manual do motor hidráulico. |
-| `off_node` | `DINT` | Node-RED -> CLP | Comando de desativação manual do motor hidráulico. |
-| `onval_node` | `DINT` | Node-RED -> CLP | Comando de abertura manual da válvula solenoide. |
-| `offval_node` | `DINT` | Node-RED -> CLP | Comando de fechamento manual da válvula solenoide. |
+| `on_node` | `BOOL` | Node-RED -> CLP | Comando Liga Motor (Linha 5 Ladder CLP - aciona Set em `bar_auto`). |
+| `off_node` | `BOOL` | Node-RED -> CLP | Comando Desliga Motor (Linha 6 Ladder CLP - aciona Reset em `bar_auto`). |
+| `onval_node` | `BOOL` | Node-RED -> CLP | Comando Abre Válvula (Linha 8 Ladder CLP - aciona Set em `_IO_EM_DO_00`). |
+| `offval_node` | `BOOL` | Node-RED -> CLP | Comando Fecha Válvula (Linha 9 Ladder CLP - aciona Reset em `_IO_EM_DO_00`). |
 | `ciclo_node` | `BOOL` | Node-RED -> CLP | **Sinal de Teste em Andamento**: `true` durante o teste, `false` ao parar/finalizar. |
 
 ---
@@ -481,27 +482,30 @@ Write-Host "=================================================================" -
 
 ## 4. MAPEAMENTO COMPLETO DO FLUXO DO NODE-RED (`flows.json`)
 
-O fluxo do Node-RED é composto por 51 nós funcionais organizados em 7 blocos lógicos operando em harmonia.
+O fluxo do Node-RED é composto por 52 nós funcionais organizados em 8 blocos lógicos operando em harmonia.
 
 ### 4.1 Visão Geral dos Blocos Lógicos
 
 ```
 [IHM: Nome Equipamento] ------> (fn_set_eq: Salvar)
-[IHM: Motor Switch] ----------> (fn_cache_motor) ----------+
-[IHM: Válvula Switch] --------> (fn_cache_valvula_manual) -+
-[IHM: Setpoint Numérico] -----> (fn_cache_setpoint) -------+
-[CLP: RETORNO_BAR (200ms)] ---> (7d655f41: Coleta Pressão) -+
-                                                           |
-[IHM: INICIAR TESTE] ---------> (49589c46: Inicia Teste) --+---> [CLP: ciclo_node = true]
-                                        |                   +---> [InfluxDB: Setpoint Travado]
-                                        v                   +---> (fn_ui_lock: Bloqueia UI)
+[IHM: Motor 3 Estados] -------> (fn_ctrl_motor_manual) ------> [CLP: on_node / off_node]
+[IHM: Válvula 3 Estados] -----> (fn_ctrl_valvula_manual) ----> [CLP: onval_node / offval_node]
+[IHM: Setpoint Numérico] -----> (fn_cache_setpoint) ---------> [CLP: setpoint_node]
+[CLP: RETORNO_BAR (200ms)] ---> (7d655f41: Coleta Pressão) --+
+                            +-> (fn_auto_cutoff_sp) ---------> [CLP: on_node/off_node = 0] & [IHM: Libera Manual]
+[CLP: _IO_EM_DO_01 (Bomba)] --> (fn_cache_bomba) ------------+
+[CLP: _IO_EM_DO_00 (Válvula)] > (fn_cache_valvula) ----------+
+                                                             |
+[IHM: INICIAR TESTE] ---------> (49589c46: Inicia Teste) ---+---> [CLP: ciclo_node = true]
+                                        |                    +---> [InfluxDB: Setpoint Travado]
+                                        v                    +---> (fn_ui_lock: Bloqueia UI & Zera Tags)
                                  (Contagem Ativa)
                                         |
-(Inject 1s) ------------------> (5214bd83: Cronômetro) ---> [IHM: Display Tempo & Status]
+(Inject 1s) ------------------> (5214bd83: Cronômetro) ----> [IHM: Display Tempo & Status]
                                         | (tempo esgotado)
                                         v
 [IHM: FINALIZAR TESTE] -------> (6d54da28: Finaliza Teste) ----> [CLP: ciclo_node = false]
-                                        |                  ----> (fn_ui_lock: Libera UI)
+                                        |                   ----> (fn_ui_lock: Libera UI & Zera Tags)
                                         v
                                [Template HTML/SVG]
                                         v
@@ -512,13 +516,14 @@ O fluxo do Node-RED é composto por 51 nós funcionais organizados em 7 blocos l
                            ./relatorios/<Equip>_<Data>.pdf
 ```
 
-1. **Leitura CLP:** Nó `eth-ip in` monitora a cada 200 ms a tag `RETORNO_BAR` do Micro850 e envia os pontos para a memória de curto prazo e para o InfluxDB (medição `pressao`). O nó `eth-ip in` de `_IO_EM_DO_00` lê o estado físico da válvula solenoide.
-2. **Escrita CLP:** Nós `eth-ip out` controlam os comandos manuais (`on_node`, `off_node`, `onval_node`, `offval_node`), o setpoint analógico (`setpoint_node`) e a tag booleana de ciclo (`ciclo_node`).
-3. **Intertravamento e Bloqueio de UI:** O nó `Inicia teste` audita 4 condições de segurança antes de permitir o início. O nó `Habilitar / Bloquear UI` desativa todos os controles durante o teste para impedir interferência humana no ensaio.
-4. **Cronômetro:** O nó `Decremento de tempo` decrementa a cada 1 segundo o tempo restante (padrão 60 minutos), calculando a hora final real e disparando automaticamente o encerramento ao atingir zero.
-5. **Cálculo de Relatório e Vetor SVG:** O nó `Finaliza _Teste` processa o histórico coletado durante o intervalo `[hora_inicio_date, hora_fim_date]`, calcula média, mínima, máxima, erro e desenha a curva vetorial SVG embutida na grade de tempo.
-6. **Renderização PDF Headless:** O nó `template` monta o HTML 100% inline (sem CSS nem fontes remotas). Em seguida, `Comando Chromium` formata os parâmetros e o nó `exec` invoca `chromium-browser` gerando o arquivo `<Equipamento>_<DataHora>.pdf` de forma independente.
-7. **Séries Temporais InfluxDB:** Nós `influxdb out` registram a pressão instantânea a cada 200 ms e, durante o teste, o nó `Keepalive InfluxDB` garante que o setpoint travado e o status da válvula permaneçam visíveis em tempo real nas consultas Flux do Grafana.
+1. **Leitura CLP:** Nós `eth-ip in` monitoram a tag `RETORNO_BAR` (pressão instantânea enviada para a memória e InfluxDB `pressao`), `_IO_EM_DO_00` (feedback físico da válvula solenoide), `_IO_EM_DO_01` (feedback físico da bomba hidráulica) e `setpoint_node` (setpoint atual do controlador).
+2. **Escrita CLP:** Nós `eth-ip out` escrevem comandos manuais (`on_node`, `off_node`, `onval_node`, `offval_node`), o setpoint analógico (`setpoint_node`) e a tag booleana de ciclo (`ciclo_node`).
+3. **Controles Manuais de 3 Posições (Linhas 1-9 Ladder Micro850):** Seletores `ui_dropdown` na UI permitem "LIGADO/ABERTO", "DESLIGADO/FECHADO" ou "LIBERAR MANUAL". Na posição "LIBERAR MANUAL", ambos os sinais de comando no CLP são colocados em `false` (0), liberando as botoeiras físicas `_IO_EM_DI_02` / `_IO_EM_DI_01` e seletoras `_IO_EM_DI_03` / `_IO_EM_DI_04` do painel físico.
+4. **Zeramento Automático de `on_node` no Setpoint (Proteção Linha 5/6 CLP):** O nó `fn_auto_cutoff_sp` monitora `RETORNO_BAR`. Se `motor_on === true` e `pressao >= sp`, o Node-RED automaticamente desativa `on_node` e `off_node`, atualiza a flag em memória e reposiciona o seletor da UI em "LIBERAR MANUAL".
+5. **Intertravamento Real de Partida e Bloqueio de UI:** O nó `Inicia teste` exige simultaneamente: Equipamento preenchido, motor desligado (em comando e na saída física `_IO_EM_DO_01`), válvula fechada (em comando e na saída física `_IO_EM_DO_00`) e setpoint definido. O nó `fn_ui_lock` gerencia `msg.enabled` e garante a liberação manual ao iniciar, no boot e ao finalizar o teste.
+6. **Responsividade Mobile Isolada:** O nó `ui_template` com `templateScope: "global"` aplica regras CSS exclusivas para telas `<= 768px` com zoom proporcional abaixo de 650px, sem tocar em nada para computadores (`min-width: 769px`).
+7. **Cálculo de Relatório e Vetor SVG:** O nó `Finaliza _Teste` processa o histórico coletado durante o intervalo `[hora_inicio_date, hora_fim_date]`, calcula média, mínima, máxima, erro e desenha a curva vetorial SVG embutida na grade de tempo.
+8. **Renderização PDF Headless e Séries InfluxDB:** O nó `template` monta o HTML 100% inline e invoca `chromium-browser` gerando o arquivo `<Equipamento>_<DataHora>.pdf`. Nós `influxdb out` registram a pressão instantânea e o keepalive do setpoint travado e status da válvula.
 
 ---
 
@@ -540,28 +545,112 @@ return null;
 
 ---
 
-#### 2. Nó `fn_cache_motor` — `Cache Motor Manual`
-- **ID:** `fn_cache_motor`
-- **Tipo:** `function` (1 entrada, 0 saídas)
-- **Função:** Captura o clique no botão/switch de acionamento manual do motor (onde 1 = ligado, 2 = desligado) e atualiza a flag de intertravamento.
+#### 2. Nó `fn_ctrl_motor_manual` — `Controle Motor Manual (3 Posições)`
+- **ID:** `fn_ctrl_motor_manual`
+- **Tipo:** `function` (1 entrada, 2 saídas)
+  - *Saída 0:* `on_node` (CLP)
+  - *Saída 1:* `off_node` (CLP)
+- **Função:** Gerencia o seletor de 3 posições do motor manual: 1 = Liga (`on_node = true`, `off_node = false`), 2 = Desliga (`on_node = false`, `off_node = true`), 3 = Liberar Manual (`on_node = false`, `off_node = false`, liberando as botoeiras físicas `_IO_EM_DI_02` / `_IO_EM_DI_01`).
 
 ```javascript
-// 1 = ligado | 2 = desligado (valores do switch). Usado no intertravamento do INICIAR TESTE.
-flow.set('motor_on', msg.payload === 1 || msg.payload === true);
+const val = Number(msg.payload);
+let on = false;
+let off = false;
+
+if (val === 1) {
+    on = true;
+    off = false;
+    flow.set('motor_on', true);
+} else if (val === 2) {
+    on = false;
+    off = true;
+    flow.set('motor_on', false);
+} else { // 3: LIBERAR MANUAL
+    on = false;
+    off = false;
+    flow.set('motor_on', false);
+}
+
+return [{ payload: on }, { payload: off }];
+```
+
+---
+
+#### 3. Nó `fn_ctrl_valvula_manual` — `Controle Válvula Manual (3 Posições)`
+- **ID:** `fn_ctrl_valvula_manual`
+- **Tipo:** `function` (1 entrada, 2 saídas)
+  - *Saída 0:* `onval_node` (CLP)
+  - *Saída 1:* `offval_node` (CLP)
+- **Função:** Gerencia o seletor de 3 posições da válvula manual: 1 = Aberta (`onval_node = true`, `offval_node = false`), 2 = Fechada (`onval_node = false`, `offval_node = true`), 3 = Liberar Manual (`onval_node = false`, `offval_node = false`, liberando as seletoras físicas `_IO_EM_DI_03` / `_IO_EM_DI_04`).
+
+```javascript
+const val = Number(msg.payload);
+let onval = false;
+let offval = false;
+
+if (val === 1) {
+    onval = true;
+    offval = false;
+    flow.set('valvula_manual_on', true);
+} else if (val === 2) {
+    onval = false;
+    offval = true;
+    flow.set('valvula_manual_on', false);
+} else { // 3: LIBERAR MANUAL
+    onval = false;
+    offval = false;
+    flow.set('valvula_manual_on', false);
+}
+
+return [{ payload: onval }, { payload: offval }];
+```
+
+---
+
+#### 3A. Nó `fn_auto_cutoff_sp` — `Zeramento Automático Setpoint (Proteção Linha 5/6 CLP)`
+- **ID:** `fn_auto_cutoff_sp`
+- **Tipo:** `function` (1 entrada, 3 saídas)
+  - *Saída 0:* `on_node` (CLP) -> `false`
+  - *Saída 1:* `off_node` (CLP) -> `false`
+  - *Saída 2:* `MOTOR MANUAL` (IHM) -> `{ payload: 3 }` (posição "LIBERAR MANUAL")
+- **Função:** Monitora `RETORNO_BAR`. Se `motor_on === true` e a pressão atinge ou supera o setpoint configurado (`pressao >= sp`), desativa `on_node` e `off_node`, reseta o estado em memória e reposiciona o seletor da tela em "LIBERAR MANUAL".
+
+```javascript
+// Monitora RETORNO_BAR e zera automaticamente o comando do motor ao atingir o setpoint (Proteção Linha 5/6 CLP)
+const pressao = Number(msg.payload);
+if (isNaN(pressao)) return null;
+
+const motorOn = flow.get('motor_on') === true;
+if (!motorOn) return null;
+
+// Setpoint vigente: durante teste usa sp_travado; fora de teste usa sp_ui ou sp_plc
+const sp = Number(flow.get('sp_travado') ?? flow.get('sp_ui') ?? flow.get('sp_plc') ?? 0);
+if (sp <= 0) return null;
+
+// Linha 1/6 CLP: ao atingir ou superar o setpoint, corta on_node e off_node e libera manual
+if (pressao >= sp) {
+    flow.set('motor_on', false);
+    return [
+        { payload: false },
+        { payload: false },
+        { payload: 3 }
+    ];
+}
+
 return null;
 ```
 
 ---
 
-#### 3. Nó `fn_cache_valvula_manual` — `Cache Válvula Manual`
-- **ID:** `fn_cache_valvula_manual`
-- **Tipo:** `function` (1 entrada, 0 saídas)
-- **Função:** Captura o acionamento manual da válvula solenoide (1 = aberta, 2 = fechada) para proteção de intertravamento.
+#### 3B. Nó `fn_cache_bomba` — `Cache Bomba Física (_IO_EM_DO_01)`
+- **ID:** `fn_cache_bomba`
+- **Tipo:** `function` (1 entrada, 1 saída)
+- **Função:** Captura a leitura digital da tag `_IO_EM_DO_01` (saída física digital da Bomba na Linha 7 do Ladder do Micro850) e armazena em `flow.bomba_fisica` para validação no intertravamento do ensaio.
 
 ```javascript
-// 1 = aberta | 2 = fechada (valores do switch). Usado no intertravamento do INICIAR TESTE.
-flow.set('valvula_manual_on', msg.payload === 1 || msg.payload === true);
-return null;
+let b = msg.payload === true || msg.payload === 1 || msg.payload === 'true';
+flow.set('bomba_fisica', b);
+return { payload: b };
 ```
 
 ---
@@ -620,12 +709,11 @@ return null;
   - *Saída 1:* Escrita no CLP (`ciclo_node = true`)
   - *Saída 2:* Ponto inicial do setpoint no InfluxDB
   - *Saída 3:* Notificação visual de bloqueio/status
-- **Função:** Núcleo de segurança operacional. Verifica:
-  1. Se já há teste ativo (`flow.ativo === true`).
-  2. Se o nome do equipamento foi preenchido.
-  3. Se a bomba/motor está desligada.
-  4. Se a válvula está fechada (tanto no switch manual quanto no feedback físico do CLP).
-  5. Se há um setpoint numérico válido definido.
+- **Função:** Núcleo de segurança operacional. Verifica 4 condições obrigatórias:
+  1. Se o nome do equipamento foi preenchido.
+  2. Se a bomba está desligada tanto no comando (`flow.motor_on === false`) quanto no feedback da saída digital física do CLP (`flow.bomba_fisica === false`, lida de `_IO_EM_DO_01`).
+  3. Se a válvula está fechada tanto no comando (`flow.valvula_manual_on === false`) quanto no feedback da saída digital física do CLP (`flow.valvula === false`, lida de `_IO_EM_DO_00`).
+  4. Se há um setpoint numérico válido definido.
   Se qualquer condição falhar, bloqueia a partida e exibe mensagem em vermelho por 8 segundos. Se todas passarem, trava o setpoint e inicializa o ensaio.
 
 ```javascript
@@ -636,8 +724,13 @@ if (flow.get('ativo') === true) return null;   // já existe um teste em andamen
 const valido = (v) => v !== null && v !== undefined && v !== '' && !isNaN(Number(v));
 
 const equipamento   = String(flow.get('equipamento') ?? '').trim();
-const motorLigado   = flow.get('motor_on') === true;
-const valvulaAberta = flow.get('valvula_manual_on') === true || flow.get('valvula') === true;
+const bombaFisica   = flow.get('bomba_fisica') === true || flow.get('bomba_fisica') === 1;
+const motorComando  = flow.get('motor_on') === true;
+const motorLigado   = motorComando || bombaFisica;
+
+const valvulaFisica  = flow.get('valvula') === true || flow.get('valvula') === 1;
+const valvulaComando = flow.get('valvula_manual_on') === true;
+const valvulaAberta  = valvulaComando || valvulaFisica;
 
 // Setpoint vigente = valor mais recente entre o campo da tela e o lido do CLP
 const tUi = flow.get('sp_ui_t') || 0;
@@ -648,7 +741,7 @@ const spBruto = valido(primeiro) ? primeiro : segundo;
 
 const motivos = [];
 if (!equipamento) motivos.push('PREENCHA O EQUIPAMENTO');
-if (motorLigado) motivos.push('DESLIGUE O MOTOR');
+if (motorLigado) motivos.push('DESLIGUE O MOTOR / BOMBA');
 if (valvulaAberta) motivos.push('FECHE A VÁLVULA');
 if (!valido(spBruto)) motivos.push('DEFINA A PRESSÃO DESEJADA');
 
@@ -699,34 +792,60 @@ return [
 
 #### 8. Nó `fn_ui_lock` — `Habilitar / Bloquear UI`
 - **ID:** `fn_ui_lock`
-- **Tipo:** `function` (1 entrada, 6 saídas)
+- **Tipo:** `function` (1 entrada, 10 saídas)
   - *Saída 0:* Campo Nome do Equipamento (`msg.enabled`)
-  - *Saída 1:* Switch Motor Manual (`msg.enabled`)
-  - *Saída 2:* Switch Válvula Manual (`msg.enabled`)
+  - *Saída 1:* Seletor Motor Manual (`msg.enabled` + `{ payload: 3 }` "LIBERAR MANUAL")
+  - *Saída 2:* Seletor Válvula Manual (`msg.enabled` + `{ payload: 3 }` "LIBERAR MANUAL")
   - *Saída 3:* Campo Pressão Desejada (`msg.enabled` + setpoint travado)
   - *Saída 4:* Botão Iniciar Teste (`msg.enabled`)
   - *Saída 5:* Botão Finalizar Teste (`msg.enabled`)
-- **Função:** Controla a propriedade `msg.enabled` nos widgets do painel do operador. Durante o ensaio, desativa todos os botões de ajuste e permite exclusivamente o botão de cancelamento/finalização de emergência.
+  - *Saída 6:* `on_node` (CLP) -> `{ payload: false }`
+  - *Saída 7:* `off_node` (CLP) -> `{ payload: false }`
+  - *Saída 8:* `onval_node` (CLP) -> `{ payload: false }`
+  - *Saída 9:* `offval_node` (CLP) -> `{ payload: false }`
+- **Função:** Controla a propriedade `msg.enabled` nos widgets do painel do operador. Ao iniciar o ensaio, ao finalizar e durante o boot inicial, força as 4 tags CIP de comando manual para `false` e ambos os seletores da IHM para a posição "LIBERAR MANUAL". Durante o ensaio, desativa todos os botões de ajuste e permite exclusivamente o botão de cancelamento/finalização de emergência.
 
 ```javascript
 // Entrada: msg.payload = 'RODANDO' | 'PARADO' | 'BOOT'
 // Durante o teste: tudo desabilitado (msg.enabled = false), exceto FINALIZAR TESTE.
 // Fora do teste:   tudo habilitado, FINALIZAR TESTE desabilitado.
-// Saídas: [0] Equipamento | [1] MOTOR MANUAL | [2] VALVULA MANUAL | [3] PRESSÃO DESEJADA | [4] INICIAR TESTE | [5] FINALIZAR TESTE
+// Ao iniciar o teste, no boot e ao finalizar: força on_node, off_node, onval_node e offval_node = false (LIBERAR MANUAL).
+// Saídas:
+// [0] Equipamento
+// [1] MOTOR MANUAL -> { enabled, payload: 3 }
+// [2] VALVULA MANUAL -> { enabled, payload: 3 }
+// [3] PRESSÃO DESEJADA -> { enabled, payload: sp }
+// [4] INICIAR TESTE -> { enabled }
+// [5] FINALIZAR TESTE -> { enabled }
+// [6] on_node (CLP) -> { payload: false }
+// [7] off_node (CLP) -> { payload: false }
+// [8] onval_node (CLP) -> { payload: false }
+// [9] offval_node (CLP) -> { payload: false }
+
 let estado = msg.payload;
 if (estado === 'BOOT') estado = flow.get('ativo') === true ? 'RODANDO' : 'PARADO';
 const rodando = estado === 'RODANDO';
 
+// Sempre garante que o estado do contexto reflita a liberação manual
+flow.set('motor_on', false);
+flow.set('valvula_manual_on', false);
+
 const sp = flow.get('sp_travado');
 const mostraSp = rodando && sp !== undefined && sp !== null;
 
+const falseMsg = { payload: false };
+
 return [
     { enabled: !rodando },
-    { enabled: !rodando },
-    { enabled: !rodando },
+    { enabled: !rodando, payload: 3 },
+    { enabled: !rodando, payload: 3 },
     mostraSp ? { enabled: !rodando, payload: Number(sp) } : { enabled: !rodando },
     { enabled: !rodando },
-    { enabled: rodando }
+    { enabled: rodando },
+    falseMsg,
+    falseMsg,
+    falseMsg,
+    falseMsg
 ];
 ```
 
