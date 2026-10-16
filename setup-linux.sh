@@ -66,14 +66,26 @@ else
     echo "       [INFO] CLP 192.168.1.33 ainda não respondeu ao ping (verifique o cabo e se o CLP está ligado)."
 fi
 
-# 4. Build e Inicialização dos Contêineres Docker
-echo "[4/5] Construindo imagem customizada do Node-RED e subindo contêineres..."
-docker compose up -d --build
+# 4. Inicialização dos Contêineres Docker (100% Offline)
+echo "[4/5] Verificando imagens e iniciando contêineres em modo 100% offline..."
+# Carrega imagens offline (.tar) se existirem
+for tar in *.tar; do
+    [ -f "$tar" ] && echo "       Carregando imagem offline: $tar..." && docker load -i "$tar"
+done
+
+if docker images -q clp_iot-nodered:latest 2>/dev/null | grep -q .; then
+    echo "       [MODO OFFLINE] Imagem 'clp_iot-nodered:latest' encontrada no cache local."
+    echo "       Subindo serviços sem qualquer consulta à internet..."
+    docker compose up -d
+else
+    echo "       [AVISO] Imagem 'clp_iot-nodered:latest' ausente. Tentando compilação local..."
+    docker compose up -d --build
+fi
 
 # 5. Conclusão e Links de Acesso
 echo "[5/5] Serviços inicializados com sucesso!"
 echo "================================================================="
-echo "   PAINÉIS DE ACESSO:                                            "
+echo "   PAINÉIS DE ACESSO (100% OFFLINE):                             "
 echo "   - Supervisório / IHM Operador : http://localhost:1880/ui      "
 echo "   - Editor de Fluxos Node-RED   : http://localhost:1880         "
 echo "   - InfluxDB 2.7 (Dados/Auth)   : http://localhost:8086         "

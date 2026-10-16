@@ -5,12 +5,14 @@ services:
       dockerfile: Dockerfile.nodered
     image: clp_iot-nodered:latest
     container_name: nodered
+    pull_policy: missing
     # Linux: network_mode: host permite comunicação direta em camada 2/3 com o Micro850 (192.168.1.33)
     # via interface física enp58s0 sem passar pelo NAT do Docker.
     network_mode: host
     volumes:
       - ./nodered_data:/data
       - ./relatorios:/data/relatorios
+      - ./docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped
@@ -20,6 +22,7 @@ services:
   influxdb:
     image: influxdb:2.7
     container_name: influxdb
+    pull_policy: missing
     ports:
       - "8086:8086"
     environment:
@@ -30,6 +33,7 @@ services:
       - DOCKER_INFLUXDB_INIT_BUCKET=${DOCKER_INFLUXDB_INIT_BUCKET:-carrinho}
       - DOCKER_INFLUXDB_INIT_RETENTION=${DOCKER_INFLUXDB_INIT_RETENTION:-0}
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN}
+      - INFLUXD_REPORTING_DISABLED=true
     volumes:
       - ./influxdb_data:/var/lib/influxdb2
       - ./influxdb_config:/etc/influxdb2
@@ -40,12 +44,18 @@ services:
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
+    pull_policy: missing
     ports:
       - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN}
+      # 100% Offline: desativa envio de telemetria, checagem de atualizações e notícias externas
+      - GF_ANALYTICS_REPORTING_ENABLED=false
+      - GF_ANALYTICS_CHECK_FOR_UPDATES=false
+      - GF_NEWS_NEWS_FEED_ENABLED=false
+      - GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=
     volumes:
       - ./grafana_data:/var/lib/grafana
       - ./grafana_provisioning:/etc/grafana/provisioning:ro
@@ -58,3 +68,4 @@ services:
 networks:
   iot-network:
     driver: bridge
+

@@ -6,9 +6,11 @@ influxdb_data/
 influxdb_config/
 .env
 
-# ---- Node-RED: reinstallable dependencies / caches ----
+# ---- Node-RED: Dependências locais / caches (para pacotes offline via pen drive, incluir manualmente) ----
 nodered_data/node_modules/
 nodered_data/.npm/
+
+
 
 # ---- Node-RED: credentials + encryption key + runtime state (secrets) ----
 nodered_data/flows_cred.json

@@ -5,6 +5,7 @@ services:
       dockerfile: Dockerfile.nodered
     image: clp_iot-nodered:latest
     container_name: nodered
+    pull_policy: missing
     # Windows (Docker Desktop via WSL2): expõe a porta 1880 diretamente no Windows
     # e conecta na iot-network. A comunicação com InfluxDB é feita via host.docker.internal.
     ports:
@@ -16,6 +17,7 @@ services:
     volumes:
       - ./nodered_data:/data
       - ./relatorios:/data/relatorios
+      - ./docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh:ro
     restart: unless-stopped
     depends_on:
       - influxdb
@@ -23,6 +25,7 @@ services:
   influxdb:
     image: influxdb:2.7
     container_name: influxdb
+    pull_policy: missing
     ports:
       - "8086:8086"
     environment:
@@ -33,6 +36,7 @@ services:
       - DOCKER_INFLUXDB_INIT_BUCKET=${DOCKER_INFLUXDB_INIT_BUCKET:-carrinho}
       - DOCKER_INFLUXDB_INIT_RETENTION=${DOCKER_INFLUXDB_INIT_RETENTION:-0}
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN}
+      - INFLUXD_REPORTING_DISABLED=true
     volumes:
       - ./influxdb_data:/var/lib/influxdb2
       - ./influxdb_config:/etc/influxdb2
@@ -46,12 +50,18 @@ services:
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
+    pull_policy: missing
     ports:
       - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN}
+      # 100% Offline: desativa envio de telemetria, checagem de atualizações e notícias externas
+      - GF_ANALYTICS_REPORTING_ENABLED=false
+      - GF_ANALYTICS_CHECK_FOR_UPDATES=false
+      - GF_NEWS_NEWS_FEED_ENABLED=false
+      - GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=
     volumes:
       - ./grafana_data:/var/lib/grafana
       - ./grafana_provisioning:/etc/grafana/provisioning:ro
@@ -64,3 +74,4 @@ services:
 networks:
   iot-network:
     driver: bridge
+

@@ -63,7 +63,7 @@ module.exports = {
      * node-red from being able to decrypt your existing credentials and they will be
      * lost.
      */
-    //credentialSecret: "a-secret-key",
+    credentialSecret: false,
 
     /** By default, the flow JSON will be formatted over multiple lines making
      * it easier to compare changes when using version control.
@@ -338,19 +338,10 @@ module.exports = {
     },
     telemetry: {
         /**
-         * By default, telemetry is disabled until the user provides consent the first
-         * time they open the editor.
-         *
-         * The following property can be uncommented and set to true/false to enable/disable
-         * telemetry without seeking further consent in the editor.
-         * The user can override this setting via the user settings dialog within the editor
+         * 100% OFFLINE: Telemetria e verificação de atualização desativadas
          */
-        // enabled: true,
-        /**
-         * If telemetry is enabled, the editor will notify the user if a new version of Node-RED
-         * is available. Set the following property to false to disable this notification.
-         */
-        // updateNotification: true
+        enabled: false,
+        updateNotification: false
     },
     /** Configure the logging output */
     logging: {
@@ -380,7 +371,7 @@ module.exports = {
      */
     //contextStorage: {
     //    default: {
-    //        module:"localfilesystem"
+     //        module:"localfilesystem"
     //    },
     //},
 
@@ -395,30 +386,15 @@ module.exports = {
     exportGlobalContextKeys: false,
 
     /** Configure how the runtime will handle external npm modules.
-     * This covers:
-     *  - whether the editor will allow new node modules to be installed
-     *  - whether nodes, such as the Function node are allowed to have their
-     * own dynamically configured dependencies.
-     * The allow/denyList options can be used to limit what modules the runtime
-     * will install/load. It can use '*' as a wildcard that matches anything.
+     * In 100% offline environments, autoInstall is disabled.
      */
     externalModules: {
-        // autoInstall: false,   /** Whether the runtime will attempt to automatically install missing modules */
-        // autoInstallRetry: 30, /** Interval, in seconds, between reinstall attempts */
-        // palette: {              /** Configuration for the Palette Manager */
-        //     allowInstall: true, /** Enable the Palette Manager in the editor */
-        //     allowUpdate: true,  /** Allow modules to be updated in the Palette Manager */
-        //     allowUpload: true,  /** Allow module tgz files to be uploaded and installed */
-        //     allowList: ['*'],
-        //     denyList: [],
-        //     allowUpdateList: ['*'],
-        //     denyUpdateList: []
-        // },
-        // modules: {              /** Configuration for node-specified modules */
-        //     allowInstall: true,
-        //     allowList: [],
-        //     denyList: []
-        // }
+        autoInstall: false,
+        palette: {
+            allowInstall: false,
+            allowUpdate: false,
+            allowUpload: true
+        }
     },
 
 
@@ -448,17 +424,11 @@ module.exports = {
         /** To disable the 'Welcome to Node-RED' tour that is displayed the first
          * time you access the editor for each release of Node-RED, set this to false
          */
-        //tours: false,
+        tours: false,
 
         palette: {
-            /** The following property can be used to order the categories in the editor
-             * palette. If a node's category is not in the list, the category will get
-             * added to the end of the palette.
-             * If not set, the following default order is used:
-             */
-            //categories: {
-            //     order: ['subflows', 'common', 'function', 'network', 'sequence', 'parser', 'storage'],
-            // },
+            /** 100% OFFLINE: Remove catálogo online (catalogue.nodered.org) para evitar timeouts sem internet */
+            catalogues: []
         },
 
         projects: {
