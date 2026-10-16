@@ -1,6 +1,6 @@
 # Resumo de Execução - Bancada de Testes de Pressão Hidrostática
 **Status do Projeto:** Ativo, Auditado e Homologado em Bancada  
-**Versão Atual:** [06 - Controles de 3 Posições, Zeramento no Setpoint, Leitura Física da Bomba e Responsividade Mobile](historico_execucoes/06_RESUMO_EXECUCAO_controles_3_posicoes_intertravamento_fisico_mobile.md)  
+**Versão Atual:** [08 - Corte de Setpoint via Tag CIP COMPARACAO e Reset Efetivo de Liberar Manual](historico_execucoes/08_RESUMO_EXECUCAO_corte_setpoint_comparacao_e_reset_liberar_manual.md)  
 **Data da Última Intervenção:** 16 de Outubro de 2026  
 **Documento Mestre de Engenharia:** [DOSSIE_TECNICO_MANUTENCAO.md](DOSSIE_TECNICO_MANUTENCAO.md)  
 
@@ -12,18 +12,15 @@
 
 ---
 
-## 📌 Execução Mais Recente: Versão 06
+## 📌 Execução Mais Recente: Versão 08
 
 Para acessar o relatório técnico completo da última intervenção, abra:  
-👉 **[historico_execucoes/06_RESUMO_EXECUCAO_controles_3_posicoes_intertravamento_fisico_mobile.md](historico_execucoes/06_RESUMO_EXECUCAO_controles_3_posicoes_intertravamento_fisico_mobile.md)**
+👉 **[historico_execucoes/08_RESUMO_EXECUCAO_corte_setpoint_comparacao_e_reset_liberar_manual.md](historico_execucoes/08_RESUMO_EXECUCAO_corte_setpoint_comparacao_e_reset_liberar_manual.md)**
 
-### Destaques da Versão 06:
-* **Controles Manuais de 3 Posições (`ui_dropdown`):** Substituição dos switches binários de Motor e Válvula por seletores de 3 posições ("LIGADO/ABERTO", "DESLIGADO/FECHADO", "LIBERAR MANUAL"), alinhados com as Linhas 1 a 9 do programa Ladder do Micro850 e desengatando sinais lógicos para permitir operação pelas botoeiras/seletoras físicas da bancada.
-* **Zeramento Automático de `on_node` no Setpoint:** Nó `fn_auto_cutoff_sp` monitora `RETORNO_BAR` e, ao atingir ou ultrapassar o setpoint configurado com o motor manual ativo, reseta `on_node` e `off_node` para `false`, desliga o estado em memória e atualiza a interface para "LIBERAR MANUAL".
-* **Leitura Física da Bomba (`_IO_EM_DO_01`):** Adicionada a leitura direta da saída física da Bomba via CIP no endpoint do Micro850, armazenada em `flow.bomba_fisica`.
-* **Intertravamento Estrito em `Inicia teste`:** Bloqueio da partida caso o nome do Equipamento esteja vazio, a bomba esteja ligada (em comando ou na saída física), a válvula esteja aberta (em comando ou na saída física `_IO_EM_DO_00`), ou o setpoint seja inválido.
-* **Responsividade Mobile via CSS Isolado:** Injeção de CSS via `ui_template` restrito a `@media only screen and (max-width: 768px)`, com escala proporcional de zoom para celulares (< 650px), mantendo o layout de computadores (>= 769px) 100% inalterado.
-* **Comunicação CIP Multi-Tag:** Validação de 9 tags CIP ativas simultaneamente no Micro850 em modo 100% offline.
+### Destaques da Versão 08:
+* **Corte Definitivo no Setpoint via Tag CIP `COMPARACAO`:** Eliminação do religamento automático do motor após atingir o setpoint. Nó `eth_in_comparacao` lê a tag `COMPARACAO` do Micro850 e força `on_node = false` e `off_node = false` no CLP e reseta `motor_on = false` e a interface para "LIBERAR MANUAL". Ao cair a pressão, o motor não religa sozinho;
+* **Reset Efetivo ao "Liberar Manual":** No controle do motor e da válvula, selecionar "LIBERAR MANUAL" define `on_node = false`, `off_node = false`, `onval_node = false` e `offval_node = false` tanto no estado de contexto quanto fisicamente no CLP via CIP;
+* **Despacho Forçado CIP no `eth-ip out`:** Otimização no tratador `onNewMsg` anulando o cache `controllerValue` para assegurar que qualquer mensagem de comando recebida pelo supervisório seja efetivamente transmitida via CIP sem supressão de duplicatas.
 
 ---
 
