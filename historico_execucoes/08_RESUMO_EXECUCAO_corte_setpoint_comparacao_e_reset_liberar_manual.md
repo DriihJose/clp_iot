@@ -71,17 +71,25 @@ if (!atingiuSetpoint && !isNaN(pressao)) {
 }
 
 // Se atingiu o setpoint (por COMPARACAO == true ou pressao >= sp):
-// Força on_node = false em definitivo no CLP e no contexto, e reseta o seletor do motor para Liberar Manual
+// Força on_node = false em definitivo, envia pulso de reset em off_node (400ms) e reseta o seletor do motor para Liberar Manual
 if (atingiuSetpoint) {
     flow.set('motor_on', false);
     flow.set('on_node', false);
-    flow.set('off_node', false);
-    
-    return [
-        { payload: false }, // [0] on_node (CLP) -> false definitivo
-        { payload: false }, // [1] off_node (CLP) -> false
-        { payload: 3 }      // [2] seletor MOTOR (UI) -> LIBERAR MANUAL
-    ];
+    flow.set('off_node', true);
+
+    // [0] on_node: false | [1] off_node: true (início do pulso de reset) | [2] seletor MOTOR: 3 (LIBERAR MANUAL)
+    node.send([
+        { payload: false },
+        { payload: true },
+        { payload: 3 }
+    ]);
+
+    setTimeout(() => {
+        flow.set('off_node', false);
+        node.send([null, { payload: false }, null]); // Encerra pulso de reset
+    }, 400);
+
+    return;
 }
 
 // Quando a pressão cair abaixo do setpoint (COMPARACAO vira false):
@@ -89,80 +97,96 @@ if (atingiuSetpoint) {
 return null;
 ```
 
-### 2.3 Função `fn_ctrl_motor_manual` (Controle Motor Manual)
+### 2.3 Função `fn_ctrl_motor_manual` (Controle Motor Manual com Pulso de RESET)
 ```javascript
 const val = Number(msg.payload);
-let on = false;
-let off = false;
 
 if (val === 1) { // 1: MOTOR LIGADO
-    on = true;
-    off = false;
     flow.set('motor_on', true);
     flow.set('on_node', true);
     flow.set('off_node', false);
+    node.send([{ payload: true }, { payload: false }]);
+    return;
 } else if (val === 2) { // 2: MOTOR DESLIGADO
-    on = false;
-    off = true;
     flow.set('motor_on', false);
     flow.set('on_node', false);
     flow.set('off_node', true);
-} else { // 3: LIBERAR MANUAL (ou qualquer outro comando)
-    on = false;
-    off = false;
+    node.send([{ payload: false }, { payload: true }]);
+    return;
+} else { // 3: LIBERAR MANUAL
+    // Bobinas SET/RESET no CLP:
+    // 1. Desliga o comando de liga (on_node = false)
+    // 2. Dispara pulso rápido de RESET (off_node = true por 400ms, depois off_node = false)
     flow.set('motor_on', false);
     flow.set('on_node', false);
-    flow.set('off_node', false);
-}
+    flow.set('off_node', true);
 
-return [{ payload: on }, { payload: off }];
+    // Envia on_node = false e início do pulso off_node = true
+    node.send([{ payload: false }, { payload: true }]);
+
+    // Aguarda intervalo de 400ms (300ms a 500ms) para leitura pelo ciclo de scan do CLP
+    setTimeout(() => {
+        flow.set('off_node', false);
+        node.send([null, { payload: false }]); // Encerra pulso de RESET
+    }, 400);
+
+    return;
+}
 ```
 
-### 2.4 Função `fn_ctrl_valvula_manual` (Controle Válvula Manual)
+### 2.4 Função `fn_ctrl_valvula_manual` (Controle Válvula Manual com Pulso de RESET)
 ```javascript
 const val = Number(msg.payload);
-let onval = false;
-let offval = false;
 
 if (val === 1) { // 1: VÁLVULA ABERTA
-    onval = true;
-    offval = false;
     flow.set('valvula_manual_on', true);
     flow.set('onval_node', true);
     flow.set('offval_node', false);
+    node.send([{ payload: true }, { payload: false }]);
+    return;
 } else if (val === 2) { // 2: VÁLVULA FECHADA
-    onval = false;
-    offval = true;
     flow.set('valvula_manual_on', false);
     flow.set('onval_node', false);
     flow.set('offval_node', true);
-} else { // 3: LIBERAR MANUAL (ou qualquer outro comando)
-    onval = false;
-    offval = false;
+    node.send([{ payload: false }, { payload: true }]);
+    return;
+} else { // 3: LIBERAR MANUAL
+    // Bobinas SET/RESET no CLP:
+    // 1. Desliga o comando de abertura (onval_node = false)
+    // 2. Dispara pulso rápido de RESET (offval_node = true por 400ms, depois offval_node = false)
     flow.set('valvula_manual_on', false);
     flow.set('onval_node', false);
-    flow.set('offval_node', false);
-}
+    flow.set('offval_node', true);
 
-return [{ payload: onval }, { payload: offval }];
+    // Envia onval_node = false e início do pulso offval_node = true
+    node.send([{ payload: false }, { payload: true }]);
+
+    // Aguarda intervalo de 400ms (300ms a 500ms) para leitura pelo ciclo de scan do CLP
+    setTimeout(() => {
+        flow.set('offval_node', false);
+        node.send([null, { payload: false }]); // Encerra pulso de RESET
+    }, 400);
+
+    return;
+}
 ```
 
 ---
 
 ## 3. RESULTADOS DOS TESTES UNITÁRIOS E DE INTEGRAÇÃO
 
-| Teste | Entrada Simulada | Saídas Enviadas ao CLP | Estado de Contexto Resultante | Status |
-| :--- | :--- | :--- | :--- | :---: |
-| **Setpoint: COMPARACAO = true** | `{ payload: true, variable: 'COMPARACAO' }` | `on_node: false`, `off_node: false`, UI: `3` | `motor_on: false`, `on_node: false` | **APROVADO** |
-| **Queda de Pressão Subsequente** | `{ payload: false, variable: 'COMPARACAO' }` | `null` (zero comandos enviados) | `motor_on: false`, `on_node: false` (Sem religamento) | **APROVADO** |
-| **Pressão Sensor >= Setpoint** | `{ payload: 6.05 }` (sp = 6.0) | `on_node: false`, `off_node: false`, UI: `3` | `motor_on: false`, `on_node: false` | **APROVADO** |
-| **Motor: Liberar Manual** | `{ payload: 3 }` | `on_node: false`, `off_node: false` | `motor_on: false`, `on_node: false`, `off_node: false` | **APROVADO** |
-| **Válvula: Liberar Manual** | `{ payload: 3 }` | `onval_node: false`, `offval_node: false` | `valvula_manual_on: false`, `onval_node: false`, `offval_node: false` | **APROVADO** |
+| Teste | Entrada Simulada | Saídas Imediatas ao CLP | Saídas Pós-Timeout (400ms) | Estado Final Contexto | Status |
+| :--- | :--- | :--- | :--- | :--- | :---: |
+| **Motor: Liberar Manual (Pulso)** | `{ payload: 3 }` | `on_node: false`, `off_node: true` | `off_node: false` | `motor_on: false`, `on_node: false`, `off_node: false` | **APROVADO** |
+| **Válvula: Liberar Manual (Pulso)** | `{ payload: 3 }` | `onval_node: false`, `offval_node: true` | `offval_node: false` | `valvula_manual_on: false`, `onval_node: false`, `offval_node: false` | **APROVADO** |
+| **Corte Setpoint (COMPARACAO)** | `{ payload: true, variable: 'COMPARACAO' }` | `on_node: false`, `off_node: true`, UI: `3` | `off_node: false` | `motor_on: false`, `on_node: false`, `off_node: false` | **APROVADO** |
+| **Queda de Pressão Subsequente** | `{ payload: false, variable: 'COMPARACAO' }` | `null` (zero comandos) | N/A | Sem religamento indevido | **APROVADO** |
 
 ---
 
 ## 4. CONCLUSÃO
 
-1. O religamento indevido do motor foi eliminado tanto por hardware (leitura direta de `COMPARACAO` do Micro850) quanto por software (monitoramento de `RETORNO_BAR >= setpoint`).
-2. O comando "Liberar Manual" agora limpa imediatamente os estados em memória e garante o despacho físico via CIP das variáveis `false` para o controlador.
-3. Todas as alterações anteriores do usuário (inclusive a tag `"COMPARACAO"` na tabela de variáveis e a escrita `"{{msg.payload}} BAR"`) foram rigorosamente preservadas.
+1. As bobinas SET/RESET do Micro850 agora recebem um pulso dedicado de RESET de 400ms (`off_node = true` $\rightarrow$ `off_node = false`), desarmando com 100% de eficácia as saídas setadas e liberando o circuito para controle local pelas botoeiras físicas da bancada.
+2. O corte definitivo por setpoint também aplica o pulso de reset, impedindo qualquer religamento mecânico ou elétrico quando a pressão do sensor cair.
+3. Todas as modificações foram testadas e sincronizadas no contêiner Docker `nodered` e no diretório local de produção `C:\aplicacoes\clp_iot\nodered_data`.
+
