@@ -1,11 +1,20 @@
-# ==============================================================================
+﻿# ==============================================================================
 # INICIALIZAÇÃO DO SISTEMA SCADA / IoT - BANCADA DE PRESSÃO HIDROSTÁTICA
 # Ambiente: Windows (Docker Desktop com WSL2)
 # ==============================================================================
 
+# Garante que o diretório de trabalho seja a raiz do projeto (onde está docker-compose.windows.yml)
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
+if (Test-Path "$scriptDir\..\..\docker-compose.windows.yml") {
+    Set-Location (Resolve-Path "$scriptDir\..\..")
+} elseif (Test-Path "$scriptDir\docker-compose.windows.yml") {
+    Set-Location $scriptDir
+}
+
 Write-Host "=================================================================" -ForegroundColor Cyan
 Write-Host "   INICIALIZAÇÃO DO SISTEMA SCADA / IoT - BANCADA DE PRESSÃO     " -ForegroundColor Cyan
 Write-Host "             Ambiente: Windows (Docker Desktop)                  " -ForegroundColor Cyan
+Write-Host "             Diretório: $(Get-Location)                          " -ForegroundColor Cyan
 Write-Host "=================================================================" -ForegroundColor Cyan
 
 # 1. Configuração do arquivo de variáveis de ambiente (.env)

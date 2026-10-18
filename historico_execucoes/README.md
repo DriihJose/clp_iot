@@ -19,6 +19,9 @@ Este diretório mantém o registro cronológico, auditável e cumulativo de toda
 | **03** | 15/10/2026 | [`03_RESUMO_EXECUCAO_intertravamentos_laudo_individual_grafana.md`](03_RESUMO_EXECUCAO_intertravamentos_laudo_individual_grafana.md) | Intertravamento de partida (Equipamento / Motor / Válvula), bloqueio seletivo de UI (`msg.enabled`), controle da tag `ciclo_node` no CLP, laudos PDF independentes com layout A4 e cartões superiores reorganizados no Grafana. | Adriano J. / Antigravity | Aprovado |
 | **04** | 15/10/2026 | [`04_RESUMO_EXECUCAO_auditoria_limpeza_dossie.md`](04_RESUMO_EXECUCAO_auditoria_limpeza_dossie.md) | Auditoria linha por linha, remoção total de pacotes órfãos (`@flowfuse/node-red-dashboard`) e nós residuais, revisão multiplataforma e confecção do Dossiê Técnico Definitivo (`DOSSIE_TECNICO_MANUTENCAO.md`). | Adriano J. / Antigravity | Aprovado |
 | **05** | 16/10/2026 | [`05_RESUMO_EXECUCAO_operacao_100pct_offline_windows_linux.md`](05_RESUMO_EXECUCAO_operacao_100pct_offline_windows_linux.md) | Homologação de operação 100% offline (air-gapped): remoção de `--build` forçado, diretiva `pull_policy: missing`, desativação de telemetria/catálogos, scripts batch de automação e exportador de imagens Docker `.tar`. | Adriano J. / Antigravity | Aprovado |
+| **06** | 16/10/2026 | [`06_RESUMO_EXECUCAO_controles_3_posicoes_intertravamento_fisico_mobile.md`](06_RESUMO_EXECUCAO_controles_3_posicoes_intertravamento_fisico_mobile.md) | Controles de 3 posições (Motor/Válvula) alinhados às Linhas 1-9 Ladder Micro850, zeramento automático de `on_node` no setpoint, leitura física da bomba (`_IO_EM_DO_01`), intertravamento estrito e responsividade mobile CSS. | Adriano J. / Antigravity | Aprovado |
+| **07** | 16/10/2026 | [`07_RESUMO_EXECUCAO_tempo_restante_selecionavel_e_responsividade_mobile.md`](07_RESUMO_EXECUCAO_tempo_restante_selecionavel_e_responsividade_mobile.md) | Tempo restante configurável (10 a 60 min, passo 5), eliminação completa de overflow horizontal no mobile, manômetro renomeado para "Pressão do sensor" e centralização milimétrica com BBox SVG. | Adriano J. / Antigravity | Aprovado |
+| **08** | 16/10/2026 | [`08_RESUMO_EXECUCAO_corte_setpoint_comparacao_e_reset_liberar_manual.md`](08_RESUMO_EXECUCAO_corte_setpoint_comparacao_e_reset_liberar_manual.md) | Resolução do religamento indevido do motor no setpoint via tag CIP `COMPARACAO` e corte de `on_node=false`, reset das variáveis ao Liberar Manual e otimização do despacho CIP. | Adriano J. / Antigravity | Aprovado |
 
 ---
 
@@ -31,8 +34,12 @@ historico_execucoes/
 ├── 02_RESUMO_EXECUCAO_multiplataforma_docker_pdf.md                      # Execução 02
 ├── 03_RESUMO_EXECUCAO_intertravamentos_laudo_individual_grafana.md       # Execução 03
 ├── 04_RESUMO_EXECUCAO_auditoria_limpeza_dossie.md                         # Execução 04
-└── 05_RESUMO_EXECUCAO_operacao_100pct_offline_windows_linux.md           # Execução 05 (Atual)
+├── 05_RESUMO_EXECUCAO_operacao_100pct_offline_windows_linux.md           # Execução 05
+├── 06_RESUMO_EXECUCAO_controles_3_posicoes_intertravamento_fisico_mobile.md # Execução 06
+├── 07_RESUMO_EXECUCAO_tempo_restante_selecionavel_e_responsividade_mobile.md # Execução 07
+└── 08_RESUMO_EXECUCAO_corte_setpoint_comparacao_e_reset_liberar_manual.md # Execução 08 (Atual)
 ```
 
-O arquivo [`RESUMO_EXECUCAO.md`](../RESUMO_EXECUCAO.md) na raiz do repositório funciona como ponteiro de leitura rápida direcionando para a versão mais recente (**05**).
+O arquivo [`RESUMO_EXECUCAO.md`](../RESUMO_EXECUCAO.md) na raiz do repositório funciona como ponteiro de leitura rápida direcionando para a versão mais recente (**08**).
+
 
