@@ -12,8 +12,6 @@ services:
       - "1880:1880"
     networks:
       - iot-network
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     volumes:
       - ./nodered_data:/data
       - ./relatorios:/data/relatorios

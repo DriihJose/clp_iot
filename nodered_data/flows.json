@@ -321,8 +321,7 @@
         "y": 756.9318181818181,
         "wires": [
             [
-                "gauge",
-                "bb3820654f2359db"
+                "gauge"
             ]
         ]
     },
@@ -463,24 +462,6 @@
         "className": "",
         "x": 970,
         "y": 800,
-        "wires": []
-    },
-    {
-        "id": "bb3820654f2359db",
-        "type": "influxdb out",
-        "z": "flow_pressao_full",
-        "influxdb": "235fd83d5ce9ea5d",
-        "name": "pressao",
-        "measurement": "PT-010",
-        "precision": "",
-        "retentionPolicy": "",
-        "database": "database",
-        "precisionV18FluxV20": "ms",
-        "retentionPolicyV18Flux": "",
-        "org": "vigor",
-        "bucket": "carrinho",
-        "x": 740,
-        "y": 820,
         "wires": []
     },
     {
@@ -864,8 +845,7 @@
         "y": 900,
         "wires": [
             [
-                "fn_cache_setpoint_plc",
-                "9c879e7c29e0e8de"
+                "fn_cache_setpoint_plc"
             ]
         ]
     },
@@ -874,7 +854,7 @@
         "type": "function",
         "z": "flow_pressao_full",
         "name": "Cache Setpoint (tela)",
-        "func": "// Valor digitado na tela (PRESSÃO DESEJADA). Apenas memoriza: o Influx só recebe o setpoint TRAVADO durante o teste.\nconst sp = Number(msg.payload);\nif (!isNaN(sp)) {\n    flow.set('sp_ui', sp);\n    flow.set('sp_ui_t', Date.now());\n}\nreturn null;",
+        "func": "// Valor digitado na tela (PRESSÃO DESEJADA). Apenas memoriza: o Influx só recebe o setpoint TRAVADO durante o teste.\nif (msg.payload === null || msg.payload === undefined || msg.payload === '') return null;\nconst sp = Math.round(Number(msg.payload) * 100) / 100;\nif (!isNaN(sp)) {\n    flow.set('sp_ui', sp);\n    flow.set('sp_ui_t', Date.now());\n}\nreturn null;",
         "outputs": 0,
         "timeout": "",
         "noerr": 0,
@@ -956,8 +936,8 @@
         "type": "function",
         "z": "flow_pressao_full",
         "name": "Cache Setpoint (CLP)",
-        "func": "// Último setpoint lido do CLP (setpoint_node). Apenas memoriza; não grava no Influx.\nconst sp = Number(msg.payload);\nif (!isNaN(sp)) {\n    flow.set('sp_plc', sp);\n    flow.set('sp_plc_t', Date.now());\n}\nreturn null;",
-        "outputs": 0,
+        "func": "// Último setpoint lido do CLP (setpoint_node). Sincroniza tela sem eco atrasado; não grava no Influx.\nif (msg.payload === null || msg.payload === undefined || msg.payload === '') return null;\nconst bruto = Number(msg.payload);\nif (isNaN(bruto)) return null;\nconst sp = Math.round(bruto * 100) / 100;\n\n// Filtro anti-eco atrasado: descarta leitura antiga caso o operador tenha acabado de alterar na tela\nif (Date.now() - (flow.get('sp_ui_t') || 0) < 1500 && Math.abs(sp - Number(flow.get('sp_ui'))) > 0.001) {\n    return null;\n}\n\nflow.set('sp_plc', sp);\nflow.set('sp_plc_t', Date.now());\nreturn [\n    { payload: sp },\n    flow.get('ativo') === true ? null : { payload: sp }\n];",
+        "outputs": 2,
         "timeout": "",
         "noerr": 0,
         "initialize": "",
@@ -965,7 +945,14 @@
         "libs": [],
         "x": 720,
         "y": 960,
-        "wires": []
+        "wires": [
+            [
+                "9c879e7c29e0e8de"
+            ],
+            [
+                "c27f650072a158be"
+            ]
+        ]
     },
     {
         "id": "eth_out_ciclo",
@@ -1228,7 +1215,7 @@
         "program": "",
         "name": "COMPARACAO",
         "x": 160,
-        "y": 840,
+        "y": 620,
         "wires": [
             [
                 "fn_auto_cutoff_sp"

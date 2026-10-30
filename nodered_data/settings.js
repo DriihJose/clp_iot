@@ -32,12 +32,114 @@
  * Remove this block if a ControlLogix/CompactLogix (routed) PLC is ever used.
  ******************************************************************************/
 try {
-    const { Controller } = require("/data/node_modules/ethernet-ip");
+    const { Controller, Tag, TagGroup, EthernetIP } = require("/data/node_modules/ethernet-ip");
+    const { MessageRouter } = EthernetIP.CIP;
+    const { MULTIPLE_SERVICE_PACKET } = MessageRouter.services;
+
+    // 1. Roteamento Direto Micro800 (envia direto ao Message Router sem Unconnected Send / backplane)
     const ENIP = Object.getPrototypeOf(Controller.prototype);
     Controller.prototype.write_cip = function (data, connected = false, timeout = 10, cb = null) {
         ENIP.write_cip.call(this, data, connected, timeout, cb);
     };
-    console.log("[micro800-shim] ethernet-ip patched: direct Message Router (no backplane route)");
+
+    // 2. Despacho Forçado CIP via write_ready (stage_write), inclusive quando tag.value === tag.controller_value
+    TagGroup.prototype.generateWriteMessageRequests = function () {
+        const { tags } = this.state;
+
+        let messages = [];
+        let msgArr = [];
+        let tagIds = [];
+        let messageLength = 0;
+
+        for (let key of Object.keys(tags)) {
+            const tag = tags[key];
+
+            if (tag.value !== null && (tag.write_ready || tag.value !== tag.controller_value)) {
+                let msg = tag.generateWriteMessageRequest();
+
+                messageLength += msg.length + 2;
+
+                tagIds.push(tag.instance_id);
+                msgArr.push(msg);
+
+                if (messageLength >= 300) {
+                    let buf = Buffer.alloc(2 + 2 * msgArr.length);
+                    buf.writeUInt16LE(msgArr.length, 0);
+
+                    let ptr = 2;
+                    let offset = buf.length;
+
+                    for (let i = 0; i < msgArr.length; i++) {
+                        buf.writeUInt16LE(offset, ptr);
+                        ptr += 2;
+                        offset += msgArr[i].length;
+                    }
+
+                    buf = Buffer.concat([buf, ...msgArr]);
+                    buf = MessageRouter.build(MULTIPLE_SERVICE_PACKET, this.state.path, buf);
+
+                    messages.push({ data: buf, tag_ids: tagIds });
+                    messageLength = 0;
+                    msgArr = [];
+                    tagIds = [];
+                }
+            }
+        }
+
+        if (msgArr.length > 0) {
+            let buf = Buffer.alloc(2 + 2 * msgArr.length);
+            buf.writeUInt16LE(msgArr.length, 0);
+
+            let ptr = 2;
+            let offset = buf.length;
+
+            for (let i = 0; i < msgArr.length; i++) {
+                buf.writeUInt16LE(offset, ptr);
+                ptr += 2;
+                offset += msgArr[i].length;
+            }
+
+            buf = Buffer.concat([buf, ...msgArr]);
+            buf = MessageRouter.build(MULTIPLE_SERVICE_PACKET, this.state.path, buf);
+
+            messages.push({ data: buf, tag_ids: tagIds });
+        }
+
+        return messages;
+    };
+
+    // 3. Supressão de leitura antiga durante escrita pendente (stage_write === true)
+    const ctrlValDesc = Object.getOwnPropertyDescriptor(Tag.prototype, "controller_value");
+    if (ctrlValDesc && typeof ctrlValDesc.set === "function") {
+        Object.defineProperty(Tag.prototype, "controller_value", {
+            get: ctrlValDesc.get,
+            set: function (newValue) {
+                if (this.state && this.state.tag && this.state.tag.stage_write === true) {
+                    if (this.state.tag.value !== null) {
+                        this.state.tag.controllerValue = newValue;
+                        return;
+                    }
+                    this.state.tag.stage_write = false;
+                }
+                return ctrlValDesc.set.call(this, newValue);
+            },
+            enumerable: ctrlValDesc.enumerable,
+            configurable: true
+        });
+    }
+
+    // 4. Confirmação imediata pós-escrita com normalização IEEE-754 Float32 para tags REAL (0xca)
+    Tag.prototype.unstageWriteRequest = function () {
+        const { tag } = this.state;
+        tag.stage_write = false;
+        if (tag.type === 0xca && tag.value !== null && !isNaN(Number(tag.value))) {
+            const val = Math.fround(Number(tag.value));
+            tag.value = val;
+        }
+        this.controller_value = tag.value;
+    };
+
+    console.log("[micro800-shim] ethernet-ip patched: direct Message Router + stage_write forced dispatch + REAL sync");
 } catch (e) {
     console.warn("[micro800-shim] not applied:", e.message);
 }
