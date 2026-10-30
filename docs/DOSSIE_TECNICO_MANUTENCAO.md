@@ -522,7 +522,7 @@ O fluxo do Node-RED é composto por 52 nós funcionais organizados em 8 blocos l
 4. **Zeramento Automático de `on_node` no Setpoint (Proteção Linha 5/6 CLP):** O nó `fn_auto_cutoff_sp` monitora `RETORNO_BAR`. Se `motor_on === true` e `pressao >= sp`, o Node-RED automaticamente desativa `on_node` e `off_node`, atualiza a flag em memória e reposiciona o seletor da UI em "LIBERAR MANUAL".
 5. **Intertravamento Real de Partida e Bloqueio de UI:** O nó `Inicia teste` exige simultaneamente: Equipamento preenchido, motor desligado (em comando e na saída física `_IO_EM_DO_01`), válvula fechada (em comando e na saída física `_IO_EM_DO_00`) e setpoint definido. O nó `fn_ui_lock` gerencia `msg.enabled` e garante a liberação manual ao iniciar, no boot e ao finalizar o teste.
 6. **Responsividade Mobile Isolada:** O nó `ui_template` com `templateScope: "global"` aplica regras CSS exclusivas para telas `<= 768px` com zoom proporcional abaixo de 650px, sem tocar em nada para computadores (`min-width: 769px`).
-7. **Cálculo de Relatório e Vetor SVG Panorâmico:** O nó `Finaliza _Teste` processa o histórico coletado durante o intervalo `[hora_inicio_date, hora_fim_date]`, calcula média, mínima, máxima, erro, e projeta a curva vetorial SVG no sistema de coordenadas panorâmico `1200 x 460` (escala `36` px/bar, base `y = 390`, eixo X útil de `60` a `1140` px), calculando a faixa de tolerância e marcador de falha.
+7. **Cálculo de Relatório e Vetor SVG Panorâmico Dinâmico:** O nó `Finaliza _Teste` processa o histórico coletado durante o intervalo `[hora_inicio_date, hora_fim_date]`, calcula média, mínima, máxima, erro, e projeta a curva vetorial SVG no sistema de coordenadas panorâmico `1200 x 460` (escala `36` px/bar, base `y = 390`, eixo X útil de `60` a `1140` px proporcional à duração escolhida de 10 a 60 min, sem repetição de `HH:mm`), calculando a faixa de tolerância e marcador de falha.
 8. **Renderização PDF A4 Paisagem (1 Página Full-Landscape):** O nó `Relatório  HTML` (`8525c1d000560d34`) monta o HTML/CSS 100% inline no formato **A4 Horizontal (Paisagem / Landscape 297×210 mm)** com container flex de 188 mm (encaixe perfeito em 1 única folha, sem overflow ou 2ª página em branco) e invoca `chromium-browser` gerando o arquivo `<Equipamento>_<DataHora>.pdf`. Nós `influxdb out` registram a pressão instantânea e o keepalive do setpoint travado e status da válvula.
 
 ---
@@ -792,7 +792,8 @@ return [
 
 #### 8. Nó `fn_ui_lock` — `Habilitar / Bloquear UI`
 - **ID:** `fn_ui_lock`
-- **Tipo:** `function` (1 entrada, 10 saídas)
+- **Tipo:** `function` (1 entrada, 11 saídas)
+  - *Saída 10:* Trava/destrava do Seletor Tempo Restante (`{ enabled, minutos }`)
   - *Saída 0:* Campo Nome do Equipamento (`msg.enabled`)
   - *Saída 1:* Seletor Motor Manual (`msg.enabled` + `{ payload: 3 }` "LIBERAR MANUAL")
   - *Saída 2:* Seletor Válvula Manual (`msg.enabled` + `{ payload: 3 }` "LIBERAR MANUAL")
@@ -1250,6 +1251,7 @@ No Node-RED, você pode inspecionar e forçar todas as variáveis abrindo o menu
 | `flow.sp_travado` | `Number` | Pressão de teste travada no início do ensaio | Ex: `8.0` |
 | `flow.hora_inicio_date` | `Number (ms)` | Timestamp epoch do instante que o teste começou | Ex: `1792074944000` |
 | `flow.duracao_teste` | `Number (ms)` | Duração do ensaio em milissegundos | `3600000` (1 hora) |
+| `flow.duracao_travada` | `Number (ms)` | Duração travada na partida (imutável durante o ensaio) | `600000` a `3600000` |
 | `flow.tempo_restante` | `Number` | Minutos inteiros restantes para o fim do teste | `60` a `0` |
 | `flow.min` | `Number` | Menor pressão registrada desde o início | Ex: `7.85` |
 | `flow.max` | `Number` | Maior pressão registrada desde o início | Ex: `8.05` |
