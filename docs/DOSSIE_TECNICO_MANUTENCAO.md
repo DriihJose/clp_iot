@@ -522,8 +522,8 @@ O fluxo do Node-RED é composto por 52 nós funcionais organizados em 8 blocos l
 4. **Zeramento Automático de `on_node` no Setpoint (Proteção Linha 5/6 CLP):** O nó `fn_auto_cutoff_sp` monitora `RETORNO_BAR`. Se `motor_on === true` e `pressao >= sp`, o Node-RED automaticamente desativa `on_node` e `off_node`, atualiza a flag em memória e reposiciona o seletor da UI em "LIBERAR MANUAL".
 5. **Intertravamento Real de Partida e Bloqueio de UI:** O nó `Inicia teste` exige simultaneamente: Equipamento preenchido, motor desligado (em comando e na saída física `_IO_EM_DO_01`), válvula fechada (em comando e na saída física `_IO_EM_DO_00`) e setpoint definido. O nó `fn_ui_lock` gerencia `msg.enabled` e garante a liberação manual ao iniciar, no boot e ao finalizar o teste.
 6. **Responsividade Mobile Isolada:** O nó `ui_template` com `templateScope: "global"` aplica regras CSS exclusivas para telas `<= 768px` com zoom proporcional abaixo de 650px, sem tocar em nada para computadores (`min-width: 769px`).
-7. **Cálculo de Relatório e Vetor SVG:** O nó `Finaliza _Teste` processa o histórico coletado durante o intervalo `[hora_inicio_date, hora_fim_date]`, calcula média, mínima, máxima, erro e desenha a curva vetorial SVG embutida na grade de tempo.
-8. **Renderização PDF Headless e Séries InfluxDB:** O nó `template` monta o HTML 100% inline e invoca `chromium-browser` gerando o arquivo `<Equipamento>_<DataHora>.pdf`. Nós `influxdb out` registram a pressão instantânea e o keepalive do setpoint travado e status da válvula.
+7. **Cálculo de Relatório e Vetor SVG Panorâmico:** O nó `Finaliza _Teste` processa o histórico coletado durante o intervalo `[hora_inicio_date, hora_fim_date]`, calcula média, mínima, máxima, erro, e projeta a curva vetorial SVG no sistema de coordenadas panorâmico `1200 x 460` (escala `36` px/bar, base `y = 390`, eixo X útil de `60` a `1140` px), calculando a faixa de tolerância e marcador de falha.
+8. **Renderização PDF A4 Paisagem (1 Página Full-Landscape):** O nó `Relatório  HTML` (`8525c1d000560d34`) monta o HTML/CSS 100% inline no formato **A4 Horizontal (Paisagem / Landscape 297×210 mm)** com container flex de 188 mm (encaixe perfeito em 1 única folha, sem overflow ou 2ª página em branco) e invoca `chromium-browser` gerando o arquivo `<Equipamento>_<DataHora>.pdf`. Nós `influxdb out` registram a pressão instantânea e o keepalive do setpoint travado e status da válvula.
 
 ---
 
@@ -966,7 +966,7 @@ return [tempo(restante), null, rodando];
   - *Saída 2:* Destravamento da IHM (`payload: 'PARADO'`)
   - *Saída 3:* Desativação no CLP (`ciclo_node = false`)
   - *Saída 4:* Ponto final do setpoint no InfluxDB
-- **Função:** Encerra o ciclo, calcula o desvio `erro = sp - min` comparando com a tolerância de 0.5 bar, gera a string de pontos e linhas para o gráfico SVG do relatório e define o nome único do arquivo PDF a ser salvo.
+- **Função:** Encerra o ciclo, calcula o desvio `erro = sp - min` comparando com a tolerância de 0.5 bar, gera a string de coordenadas e linhas do gráfico panorâmico SVG (`viewBox="0 0 1200 460"`, escala 36 px/bar, eixo X útil de 60 a 1140, faixa de tolerância e detecção visual de falha) e define as propriedades visuais (`statusCor`, `statusBg`, `statusBorda`, etc.) para renderização do laudo em formato A4 Paisagem (Landscape).
 
 ```javascript
 // Entradas: botão FINALIZAR TESTE (payload 0) ou cronômetro (payload "FINALIZAR_AUTO").
@@ -1017,7 +1017,7 @@ if (min == null || max == null || historico.length === 0) {
     return liberar(null);
 }
 
-// TEMPO OFICIAL
+// 🔥 TEMPO OFICIAL
 let inicio = flow.get("hora_inicio_date");
 let fim = flow.get("hora_fim_date") || Date.now();
 
@@ -1028,78 +1028,92 @@ if (!inicio) {
 
 let fimDate = new Date(fim);
 
-// NORMALIZA INÍCIO (remove segundos)
+// 🔥 NORMALIZA INÍCIO (remove segundos)
 let inicioBase = new Date(inicio);
 inicioBase.setSeconds(0);
 inicioBase.setMilliseconds(0);
 inicio = inicioBase.getTime();
 
-// HISTÓRICO FILTRADO
+// 🔥 HISTÓRICO FILTRADO
 let historicoFiltrado = historico.filter(p => p.t >= inicio);
 
-// ERRO E TOLERÂNCIA DE APROVAÇÃO (0.5 BAR)
+// ERRO
 let erro = sp - min;
 let tolerancia = 0.5;
 let status = erro <= tolerancia ? "APROVADO" : "REPROVADO";
 
-// ESCALA DO GRÁFICO (20 px por bar)
-let escala = 20;
+// ESCALA
+let escala = 36;
 
-// BASE FIXA DE 1 HORA (60 min * 60 s * 1000 ms)
+// 🔥 BASE FIXA 1H
 let duracao = 60 * 60 * 1000;
 
-// PONTOS SVG DA CURVA DE PRESSÃO
+// 🔥 PONTOS
 let pontos = "";
 
+// 🔥 PONTO INICIAL
 let primeiroValor = historicoFiltrado.length > 0 ? historicoFiltrado[0].v : sp;
-let x0 = 50;
-let y0 = 240 - ((Number(primeiroValor) || 0) * escala);
+
+let x0 = 60;
+let y0 = 390 - ((Number(primeiroValor) || 0) * escala);
+
 pontos += x0 + "," + y0 + " ";
 
+// 🔥 LINHA DA PRESSÃO
 historicoFiltrado.forEach((p) => {
+
     if (p.t > fim) return;
+
     let proporcao = (p.t - inicio) / duracao;
+
     if (proporcao < 0) proporcao = 0;
     if (proporcao > 1) proporcao = 1;
-    let x = 50 + (proporcao * 900);
-    let y = 240 - (Number(p.v) * escala);
+
+    let x = 60 + (proporcao * 1080);
+    let y = 390 - (Number(p.v) * escala);
+
     pontos += x + "," + y + " ";
 });
 
-let ultimoPonto = historicoFiltrado[historicoFiltrado.length - 1];
-let duracaoReal = fim - inicio;
-let proporcaoFinal = duracaoReal / duracao;
-if (proporcaoFinal < 0) proporcaoFinal = 0;
-if (proporcaoFinal > 1) proporcaoFinal = 1;
+// 🔥 SETPOINT
+let linhaSP = 390 - (sp * escala);
 
-let xFinal = 50 + (proporcaoFinal * 900);
-let yFinal = 240 - ((Number(ultimoPonto ? ultimoPonto.v : sp) || 0) * escala);
-pontos += xFinal + "," + yFinal;
-
-// LINHA GUIA DO SETPOINT
-let ySP = 240 - (sp * escala);
-let linhaSP = `50,${ySP} 950,${ySP}`;
-
-// MARCADOR DE FALHA (SE REPROVADO)
+// 🔥 FALHA
 let falhaX = null;
 let falhaY = null;
 let falhaValor = null;
 
-if (status === "REPROVADO") {
-    let pFalha = historicoFiltrado.find(p => (sp - p.v) > tolerancia);
-    if (pFalha) {
-        let proporcaoFalha = (pFalha.t - inicio) / duracao;
-        falhaX = 50 + (proporcaoFalha * 900);
-        falhaY = 240 - (Number(pFalha.v) * escala);
-        falhaValor = Number(pFalha.v).toFixed(2);
+for (let i = 0; i < historicoFiltrado.length; i++) {
+
+    let p = historicoFiltrado[i];
+
+    if (p.t > fim) break;
+
+    let erroPonto = sp - p.v;
+
+    if (erroPonto > tolerancia) {
+
+        let proporcao = (p.t - inicio) / duracao;
+
+        falhaX = 60 + (proporcao * 1080);
+        falhaY = 390 - (Number(p.v) * escala);
+        falhaValor = Number(p.v).toFixed(2);
+
+        break;
     }
 }
 
-// MARCADORES DE TEMPO NO EIXO X A CADA 5 MINUTOS (FUSO BRASILEIRO)
-function horaOffset(minutos) {
-    let d = new Date(inicio + (minutos * 60 * 1000));
-    let o = partesBR(d);
-    return `${o.hour}:${o.minute}`;
+// =======================================================
+// 🔥 EIXO X PERFEITO (5 EM 5 MIN)
+// =======================================================
+
+function horaOffset(min){
+    return new Date(inicio + (min * 60000))
+        .toLocaleTimeString('pt-BR', {
+            timeZone: BR,
+            hour:'2-digit',
+            minute:'2-digit'
+        });
 }
 
 let t0  = horaOffset(0);
@@ -1116,35 +1130,58 @@ let t10 = horaOffset(50);
 let t11 = horaOffset(55);
 let t12 = horaOffset(60);
 
-// OBJETO DO RELATÓRIO
+// =======================================================
+
+// Faixa visual da zona de tolerância aprovada ([Math.max(0, sp - tolerancia), sp])
+let faixaTolY = 390 - (Math.min(10, Math.max(0, sp)) * 36);
+let faixaTolAltura = Math.max(0, (Math.min(10, Math.max(0, sp)) - Math.max(0, sp - tolerancia)) * 36);
+
+// RELATÓRIO
 let rel = {
     equipamento: flow.get('equipamento_teste') ?? flow.get('equipamento'),
+
     inicio: dataHoraBR(inicio),
     fim: dataHoraBR(fimDate),
+
     media: media.toFixed(2),
     min: Number(min).toFixed(2),
     max: Number(max).toFixed(2),
+
     sp: sp,
+    spFmt: Number(sp).toFixed(2),
+    toleranciaFmt: tolerancia.toFixed(2),
+    statusCor: status === "APROVADO" ? "#15803d" : "#b91c1c",
+    statusBg: status === "APROVADO" ? "#dcfce7" : "#fee2e2",
+    statusBorda: status === "APROVADO" ? "#16a34a" : "#dc2626",
+    faixaTolY: faixaTolY,
+    faixaTolAltura: faixaTolAltura,
+
     erro: erro.toFixed(2),
     status: status,
+
     pontos: pontos,
     linhaSP: linhaSP,
+
     falhaX: falhaX,
     falhaY: falhaY,
     falhaValor: falhaValor,
-    falhaYTxt: falhaY !== null ? falhaY + 15 : null,
+    falhaYTxt: falhaY !== null ? (falhaY > 365 ? falhaY - 10 : falhaY + 16) : null,
+
+    // 🔥 AGORA SIM COMPLETO
     t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12
 };
 
-// RESET
-flow.set('tempo_restante', 60);
+// RESET mantendo a duração configurada (ou 60 min padrão)
+let duracaoCfg = flow.get('duracao_selecionada') || 3600000;
+flow.set('tempo_restante', Math.ceil(duracaoCfg / 60000));
+flow.set('duracao_teste', duracaoCfg);
 
-// DATA DE EMISSÃO BRASILEIRA
+// DATA DE EMISSÃO (formato brasileiro) exibida abaixo da assinatura
 let agora = new Date();
 let o = partesBR(agora);
 rel.emissao = `${o.day}/${o.month}/${o.year} - ${o.hour}:${o.minute}:${o.second}`;
 
-// NOME ÚNICO DO ARQUIVO PDF: <Equipamento>_<DD-MM-AAAA_HH-mm-ss>.pdf
+// NOME ÚNICO DO PDF: <Equipamento>_<DD-MM-AAAA_HH-mm-ss>.pdf (sanitizado, sem acentos/espaços)
 let equip = String(flow.get('equipamento_teste') ?? flow.get('equipamento') ?? '')
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .replace(/[^A-Za-z0-9]+/g, '_')
@@ -1152,8 +1189,9 @@ let equip = String(flow.get('equipamento_teste') ?? flow.get('equipamento') ?? '
     .slice(0, 60) || 'Equipamento';
 let carimbo = `${o.day}-${o.month}-${o.year}_${o.hour}-${o.minute}-${o.second}`;
 
-msg.filename = "/data/relatorios/relatorio.html";                      // HTML temporário
-msg.pdfFile  = "/data/relatorios/" + equip + "_" + carimbo + ".pdf";   // PDF definitivo
+// Caminhos POSIX dentro do contêiner (/data/relatorios -> ./relatorios no host)
+msg.filename = "/data/relatorios/relatorio.html";                      // HTML temporário renderizado pelo Chromium
+msg.pdfFile  = "/data/relatorios/" + equip + "_" + carimbo + ".pdf";   // PDF final, único por teste
 
 return liberar({ payload: rel, filename: msg.filename, pdfFile: msg.pdfFile });
 ```
