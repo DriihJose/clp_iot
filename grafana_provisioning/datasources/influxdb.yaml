@@ -1,7 +1,12 @@
 apiVersion: 1
 
+deleteDatasources:
+  - name: InfluxDB-Flux
+    orgId: 1
+
 datasources:
   - name: InfluxDB-Flux
+    uid: InfluxDB-Flux
     type: influxdb
     access: proxy
     url: http://influxdb:8086

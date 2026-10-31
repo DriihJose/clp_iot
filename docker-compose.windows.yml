@@ -21,7 +21,7 @@ services:
       - influxdb
 
   influxdb:
-    image: influxdb:2.7
+    image: influxdb:2.7.12
     container_name: influxdb
     pull_policy: missing
     ports:
@@ -46,7 +46,7 @@ services:
           - host.docker.internal
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:13.2.4
     container_name: grafana
     pull_policy: missing
     ports:

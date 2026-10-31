@@ -145,6 +145,7 @@ A interface foi remodelada com foco operacional e ergonomia visual:
   * Inclusão do nó `ui_led` (`TESTE RODANDO`), com transição vermelho (parado) e verde (em teste).
   * Botões `INICIAR TESTE` e `FINALIZAR TESTE` alinhados com o LED em 4 + 4 + 4 = 12 colunas.
 * **Manômetro de Pressão (`ui_gauge`):** Reescalonado para `12 x 6`, recebendo a variável real `RETORNO_BAR`.
+* *(Nota de evolução — Versões 06 a 09):* Nas revisões subsequentes de bancada, as chaves `ui_switch` e o indicador `ui_led` foram substituídos por seletores de 3 posições (`ui_dropdown` para Motor e Válvula, compatíveis com a botoeira física da bancada), seletor dinâmico de duração (`10 a 60 min`, passo `5 min`) e tarja textual dinâmica de status/intertravamento (`ui_text`). Consulte [`DOSSIE_TECNICO_MANUTENCAO.md`](DOSSIE_TECNICO_MANUTENCAO.md) para a arquitetura vigente completa.
 
 ---
 
@@ -153,13 +154,15 @@ A interface foi remodelada com foco operacional e ergonomia visual:
 | Tag no CLP | Tipo de Dado | Direção | Descrição no Sistema |
 | :--- | :--- | :--- | :--- |
 | `RETORNO_BAR` | `REAL` | Entrada (Read) | Leitura de pressão analógica (bar) exibida no Manômetro e salva no InfluxDB. |
-| `_IO_EM_DO_00` | `BOOL` | Entrada (Read) | Status físico da saída digital (válvula solenóide principal). |
-| `on_node` | `BOOL` | Saída (Write) | Pulso para ligar motor/bomba hidráulica. |
-| `off_node` | `BOOL` | Saída (Write) | Pulso para desligar motor/bomba hidráulica. |
-| `onval_node` | `BOOL` | Saída (Write) | Comando de abertura da válvula solenóide. |
-| `offval_node` | `BOOL` | Saída (Write) | Comando de fechamento da válvula solenóide. |
-| `setpoint_node`| `REAL` | Saída (Write) | Ajuste da pressão de teste (3 BAR, 6 BAR, 8 BAR). |
-| `ciclo_node` | `BOOL` | Saída (Write) | Flag de controle do ciclo de teste hidrostático. |
+| `_IO_EM_DO_00` | `BOOL` | Entrada (Read) | Status físico da saída digital da válvula solenoide principal. |
+| `_IO_EM_DO_01` | `BOOL` | Entrada (Read) | Status físico da saída digital do motor/bomba hidráulica. |
+| `COMPARACAO` | `BOOL` | Entrada (Read) | Flag lógica interna do CLP indicando `RETORNO_BAR >= setpoint_node`. |
+| `setpoint_node`| `REAL` | Bidirecional | Ajuste contínuo da pressão desejada de teste (`0 a 10 bar`, passo `0,5 bar`). |
+| `on_node` | `BOOL` | Saída (Write) | Comando remoto para ligar motor/bomba hidráulica. |
+| `off_node` | `BOOL` | Saída (Write) | Comando remoto para desligar motor/bomba hidráulica (e pulso de `400 ms` ao liberar manual). |
+| `onval_node` | `BOOL` | Saída (Write) | Comando remoto de abertura da válvula solenoide. |
+| `offval_node` | `BOOL` | Saída (Write) | Comando remoto de fechamento da válvula solenoide (e pulso de `400 ms` ao liberar manual). |
+| `ciclo_node` | `BOOL` | Saída (Write) | Flag de controle do ciclo de teste hidrostático (`true` em ensaio, `false` parado). |
 
 ---
 
@@ -167,9 +170,9 @@ A interface foi remodelada com foco operacional e ergonomia visual:
 
 Se a bancada operar em local isolado sem acesso à internet, atente-se a:
 
-1. **Imagens Docker:** Devem ser exportadas na máquina com internet antes de ir a campo:
+1. **Imagens Docker:** Devem ser exportadas na máquina com internet antes de ir a campo (incluindo a imagem customizada `clp_iot-nodered:latest` com Chromium Headless — no Windows utilize `scripts\windows\exportar-imagens-offline.bat`):
    ```bash
-   docker save -o imagens_scada.tar nodered/node-red:latest influxdb:2.7 grafana/grafana:latest
+   docker save -o imagens_scada.tar clp_iot-nodered:latest influxdb:2.7 grafana/grafana:latest
    # Na máquina de bancada:
    docker load -i imagens_scada.tar
    ```

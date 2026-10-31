@@ -32,17 +32,104 @@
  * Remove this block if a ControlLogix/CompactLogix (routed) PLC is ever used.
  ******************************************************************************/
 try {
+    // 0. Limpeza imediata de timers de timeout (10 s) em ethernet-ip/src/utilities ANTES de carregar Controller
+    const eipUtilities = require("/data/node_modules/ethernet-ip/src/utilities");
+    eipUtilities.promiseTimeout = (promise, ms, error = new Error("ASYNC Function Call Timed Out!!!")) => {
+        return new Promise((resolve, reject) => {
+            const timer = setTimeout(() => reject(error), ms);
+            promise.then(
+                (val) => {
+                    clearTimeout(timer);
+                    resolve(val);
+                },
+                (err) => {
+                    clearTimeout(timer);
+                    reject(err);
+                }
+            );
+        });
+    };
+
     const { Controller, Tag, TagGroup, EthernetIP } = require("/data/node_modules/ethernet-ip");
     const { MessageRouter } = EthernetIP.CIP;
     const { MULTIPLE_SERVICE_PACKET } = MessageRouter.services;
 
     // 1. Roteamento Direto Micro800 (envia direto ao Message Router sem Unconnected Send / backplane)
-    const ENIP = Object.getPrototypeOf(Controller.prototype);
+    // Nota: Object.getPrototypeOf(Controller.prototype) retorna diretamente ENIP.prototype
+    const ENIPProto = Object.getPrototypeOf(Controller.prototype);
     Controller.prototype.write_cip = function (data, connected = false, timeout = 10, cb = null) {
-        ENIP.write_cip.call(this, data, connected, timeout, cb);
+        ENIPProto.write_cip.call(this, data, connected, timeout, cb);
     };
 
-    // 2. Despacho Forçado CIP via write_ready (stage_write), inclusive quando tag.value === tag.controller_value
+    // 2. Buffer de Remontagem de Stream TCP ENIP (trata pacotes fragmentados < 24+len e pacotes coalescidos > 24+len)
+    const origHandleData = ENIPProto._handleDataEvent;
+    const origHandleClose = ENIPProto._handleCloseEvent;
+    if (typeof origHandleData === "function") {
+        ENIPProto._handleDataEvent = function (data) {
+            if (!Buffer.isBuffer(data) || data.length === 0) return;
+
+            this._rxBuf = (this._rxBuf && this._rxBuf.length > 0)
+                ? Buffer.concat([this._rxBuf, data])
+                : data;
+
+            while (this._rxBuf && this._rxBuf.length >= 24) {
+                const payloadLen = this._rxBuf.readUInt16LE(2);
+                const frameLen = 24 + payloadLen;
+
+                // Pacote TCP fragmentado: aguarda o restante dos bytes no próximo evento 'data'
+                if (this._rxBuf.length < frameLen) break;
+
+                let frame;
+                if (this._rxBuf.length === frameLen) {
+                    frame = this._rxBuf;
+                    this._rxBuf = null;
+                } else {
+                    // Dois ou mais pacotes ENIP coalescidos no mesmo segmento TCP
+                    frame = Buffer.from(this._rxBuf.subarray(0, frameLen));
+                    this._rxBuf = Buffer.from(this._rxBuf.subarray(frameLen));
+                }
+
+                try {
+                    origHandleData.call(this, frame);
+                } catch (err) {
+                    this._rxBuf = null;
+                    this.emit("error", err);
+                    break;
+                }
+            }
+        };
+    }
+    if (typeof origHandleClose === "function") {
+        ENIPProto._handleCloseEvent = function (hadError) {
+            this._rxBuf = null;
+            return origHandleClose.call(this, hadError);
+        };
+    }
+
+    // 3. Rastreamento de sequência de escrita (protege pulsos rápidos de 400 ms como TRUE -> FALSE em trânsito)
+    const valDesc = Object.getOwnPropertyDescriptor(Tag.prototype, "value");
+    if (valDesc && typeof valDesc.set === "function") {
+        Object.defineProperty(Tag.prototype, "value", {
+            get: valDesc.get,
+            set: function (newValue) {
+                if (this.state && this.state.tag) {
+                    this.state.tag._write_seq = (this.state.tag._write_seq || 0) + 1;
+                    if (newValue === null) {
+                        this.state.tag.value = null;
+                        this.state.tag.stage_write = false;
+                        this.state.tag._inflight_seq = undefined;
+                        this.state.tag._inflight_val = undefined;
+                        return;
+                    }
+                }
+                return valDesc.set.call(this, newValue);
+            },
+            enumerable: valDesc.enumerable,
+            configurable: true
+        });
+    }
+
+    // 4. Despacho Forçado CIP via write_ready (stage_write) com snapshot da escrita em voo (_inflight_seq)
     TagGroup.prototype.generateWriteMessageRequests = function () {
         const { tags } = this.state;
 
@@ -55,6 +142,10 @@ try {
             const tag = tags[key];
 
             if (tag.value !== null && (tag.write_ready || tag.value !== tag.controller_value)) {
+                if (tag.state && tag.state.tag) {
+                    tag.state.tag._inflight_seq = tag.state.tag._write_seq || 0;
+                    tag.state.tag._inflight_val = tag.value;
+                }
                 let msg = tag.generateWriteMessageRequest();
 
                 messageLength += msg.length + 2;
@@ -108,7 +199,7 @@ try {
         return messages;
     };
 
-    // 3. Supressão de leitura antiga durante escrita pendente (stage_write === true)
+    // 5. Supressão de leitura antiga durante escrita pendente (stage_write === true)
     const ctrlValDesc = Object.getOwnPropertyDescriptor(Tag.prototype, "controller_value");
     if (ctrlValDesc && typeof ctrlValDesc.set === "function") {
         Object.defineProperty(Tag.prototype, "controller_value", {
@@ -128,18 +219,35 @@ try {
         });
     }
 
-    // 4. Confirmação imediata pós-escrita com normalização IEEE-754 Float32 para tags REAL (0xca)
+    // 6. Confirmação pós-escrita segura contra corrida em voo + normalização IEEE-754 Float32 para REAL (0xca)
     Tag.prototype.unstageWriteRequest = function () {
         const { tag } = this.state;
+        const hasInflight = tag._inflight_seq !== undefined;
+        const sentRaw = hasInflight ? tag._inflight_val : tag.value;
+        const normalizedSent = (tag.type === 0xca && sentRaw !== null && !isNaN(Number(sentRaw)))
+            ? Math.fround(Number(sentRaw))
+            : sentRaw;
+
+        const superseded = hasInflight && tag._write_seq !== tag._inflight_seq;
+        tag._inflight_seq = undefined;
+        tag._inflight_val = undefined;
+
+        if (superseded) {
+            // Uma nova escrita (ex.: fim do pulso FALSE após 400 ms) entrou na fila enquanto o pacote anterior estava em trânsito.
+            // Registra o valor confirmado no CLP sem apagar stage_write, garantindo o envio da nova escrita no próximo ciclo.
+            tag.controllerValue = normalizedSent;
+            tag.stage_write = (tag.value !== null);
+            return;
+        }
+
         tag.stage_write = false;
         if (tag.type === 0xca && tag.value !== null && !isNaN(Number(tag.value))) {
-            const val = Math.fround(Number(tag.value));
-            tag.value = val;
+            tag.value = normalizedSent;
         }
-        this.controller_value = tag.value;
+        this.controller_value = normalizedSent;
     };
 
-    console.log("[micro800-shim] ethernet-ip patched: direct Message Router + stage_write forced dispatch + REAL sync");
+    console.log("[micro800-shim] ethernet-ip patched: direct Message Router + TCP framing + inflight write guard + timer cleanup + REAL sync");
 } catch (e) {
     console.warn("[micro800-shim] not applied:", e.message);
 }

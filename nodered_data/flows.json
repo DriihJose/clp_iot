@@ -1,1225 +1,1300 @@
 [
-    {
-        "id": "flow_pressao_full",
-        "type": "tab",
-        "label": "Teste Pressão",
-        "disabled": false,
-        "info": ""
-    },
-    {
-        "id": "ui_tab_pressao",
-        "type": "ui_tab",
-        "name": "Teste Pressão Vigor Alimentos",
-        "icon": "dashboard",
-        "disabled": false,
-        "hidden": false
-    },
-    {
-        "id": "ui_group_pressao",
-        "type": "ui_group",
-        "name": "Controle",
-        "tab": "ui_tab_pressao",
-        "order": 1,
-        "disp": false,
-        "width": "12",
-        "collapse": false,
-        "className": ""
-    },
-    {
-        "id": "2c653cbedc3ce8af",
-        "type": "ui_base",
-        "theme": {
-            "name": "theme-light",
-            "lightTheme": {
-                "default": "#0094CE",
-                "baseColor": "#3d3846",
-                "baseFont": "Times New Roman,Times,serif",
-                "edited": true,
-                "reset": false
-            },
-            "darkTheme": {
-                "default": "#097479",
-                "baseColor": "#097479",
-                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
-                "edited": true,
-                "reset": false
-            },
-            "customTheme": {
-                "name": "Untitled Theme 1",
-                "default": "#4B7930",
-                "baseColor": "#4B7930",
-                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
-                "reset": false
-            },
-            "themeState": {
-                "base-color": {
-                    "default": "#0094CE",
-                    "value": "#3d3846",
-                    "edited": true
-                },
-                "page-titlebar-backgroundColor": {
-                    "value": "#3d3846",
-                    "edited": false
-                },
-                "page-backgroundColor": {
-                    "value": "#fafafa",
-                    "edited": false
-                },
-                "page-sidebar-backgroundColor": {
-                    "value": "#333333",
-                    "edited": false
-                },
-                "group-textColor": {
-                    "value": "#625a70",
-                    "edited": false
-                },
-                "group-borderColor": {
-                    "value": "#ffffff",
-                    "edited": false
-                },
-                "group-backgroundColor": {
-                    "value": "#ffffff",
-                    "edited": false
-                },
-                "widget-textColor": {
-                    "value": "#111111",
-                    "edited": false
-                },
-                "widget-backgroundColor": {
-                    "value": "#3d3846",
-                    "edited": false
-                },
-                "widget-borderColor": {
-                    "value": "#ffffff",
-                    "edited": false
-                },
-                "base-font": {
-                    "value": "Times New Roman,Times,serif"
-                }
-            },
-            "angularTheme": {
-                "primary": "indigo",
-                "accents": "blue",
-                "warn": "red",
-                "background": "grey",
-                "palette": "light"
-            }
+  {
+    "id": "flow_pressao_full",
+    "type": "tab",
+    "label": "Teste Pressão",
+    "disabled": false,
+    "info": ""
+  },
+  {
+    "id": "ui_tab_pressao",
+    "type": "ui_tab",
+    "name": "Teste Pressão Vigor Alimentos",
+    "icon": "dashboard",
+    "disabled": false,
+    "hidden": false
+  },
+  {
+    "id": "ui_group_pressao",
+    "type": "ui_group",
+    "name": "Controle",
+    "tab": "ui_tab_pressao",
+    "order": 1,
+    "disp": false,
+    "width": "12",
+    "collapse": false,
+    "className": ""
+  },
+  {
+    "id": "2c653cbedc3ce8af",
+    "type": "ui_base",
+    "theme": {
+      "name": "theme-light",
+      "lightTheme": {
+        "default": "#0094CE",
+        "baseColor": "#3d3846",
+        "baseFont": "Times New Roman,Times,serif",
+        "edited": true,
+        "reset": false
+      },
+      "darkTheme": {
+        "default": "#097479",
+        "baseColor": "#097479",
+        "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+        "edited": true,
+        "reset": false
+      },
+      "customTheme": {
+        "name": "Untitled Theme 1",
+        "default": "#4B7930",
+        "baseColor": "#4B7930",
+        "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+        "reset": false
+      },
+      "themeState": {
+        "base-color": {
+          "default": "#0094CE",
+          "value": "#3d3846",
+          "edited": true
         },
-        "site": {
-            "name": "TESTE PRESSAO",
-            "hideToolbar": "false",
-            "allowSwipe": "false",
-            "lockMenu": "false",
-            "allowTempTheme": "true",
-            "dateFormat": "DD/MM/YYYY",
-            "sizes": {
-                "sx": 48,
-                "sy": 48,
-                "gx": 6,
-                "gy": 6,
-                "cx": 6,
-                "cy": 6,
-                "px": 0,
-                "py": 0
-            }
+        "page-titlebar-backgroundColor": {
+          "value": "#3d3846",
+          "edited": false
+        },
+        "page-backgroundColor": {
+          "value": "#fafafa",
+          "edited": false
+        },
+        "page-sidebar-backgroundColor": {
+          "value": "#333333",
+          "edited": false
+        },
+        "group-textColor": {
+          "value": "#625a70",
+          "edited": false
+        },
+        "group-borderColor": {
+          "value": "#ffffff",
+          "edited": false
+        },
+        "group-backgroundColor": {
+          "value": "#ffffff",
+          "edited": false
+        },
+        "widget-textColor": {
+          "value": "#111111",
+          "edited": false
+        },
+        "widget-backgroundColor": {
+          "value": "#3d3846",
+          "edited": false
+        },
+        "widget-borderColor": {
+          "value": "#ffffff",
+          "edited": false
+        },
+        "base-font": {
+          "value": "Times New Roman,Times,serif"
         }
+      },
+      "angularTheme": {
+        "primary": "indigo",
+        "accents": "blue",
+        "warn": "red",
+        "background": "grey",
+        "palette": "light"
+      }
     },
-    {
-        "id": "235fd83d5ce9ea5d",
-        "type": "influxdb",
-        "hostname": "host.docker.internal",
-        "port": 8086,
-        "protocol": "http",
-        "database": "database",
-        "name": "influxd",
-        "usetls": false,
-        "tls": "",
-        "influxdbVersion": "2.0",
-        "url": "http://host.docker.internal:8086",
-        "timeout": 10,
-        "rejectUnauthorized": true
-    },
-    {
-        "id": "da562bad96c4eafe",
-        "type": "eth-ip endpoint",
-        "address": "192.168.1.33",
-        "slot": "0",
-        "cycletime": "500",
-        "name": "",
-        "vartable": {
-            "": {
-                "on_node": {
-                    "type": "BOOL"
-                },
-                "off_node": {
-                    "type": "BOOL"
-                },
-                "onval_node": {
-                    "type": "BOOL"
-                },
-                "offval_node": {
-                    "type": "BOOL"
-                },
-                "setpoint_node": {
-                    "type": "REAL"
-                },
-                "ciclo_node": {
-                    "type": "BOOL"
-                },
-                "RETORNO_BAR": {
-                    "type": "REAL"
-                },
-                "_IO_EM_DO_00": {
-                    "type": "BOOL"
-                },
-                "_IO_EM_DO_01": {
-                    "type": "BOOL"
-                },
-                "COMPARACAO": {
-                    "type": "BOOL"
-                }
-            }
-        }
-    },
-    {
-        "id": "fn_set_eq",
-        "type": "function",
-        "z": "flow_pressao_full",
-        "name": "Salvar Equipamento",
-        "func": "flow.set('equipamento', msg.payload);\nreturn null;",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 660,
-        "y": 60,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "4e72940d3bb63eec",
-        "type": "file",
-        "z": "flow_pressao_full",
-        "name": "",
-        "filename": "filename",
-        "filenameType": "msg",
-        "appendNewline": false,
-        "createDir": true,
-        "overwriteFile": "true",
-        "encoding": "utf8",
-        "x": 980,
-        "y": 493.1818181818184,
-        "wires": [
-            [
-                "e32ec29ac871e4f2"
-            ]
-        ]
-    },
-    {
-        "id": "38510ae3de26350c",
-        "type": "exec",
-        "z": "flow_pressao_full",
-        "command": "chromium-browser",
-        "addpay": "payload",
-        "append": "",
-        "useSpawn": "false",
-        "timer": "",
-        "winHide": false,
-        "oldrc": false,
-        "name": "Gerar PDF (Chromium)",
-        "x": 1290,
-        "y": 517.8409090909093,
-        "wires": [
-            [],
-            [],
-            []
-        ]
-    },
-    {
-        "id": "e32ec29ac871e4f2",
-        "type": "function",
-        "z": "flow_pressao_full",
-        "name": "Comando Chromium",
-        "func": "// Argumentos do Chromium headless (o executável está no nó \"Gerar PDF (Chromium)\").\n// --no-pdf-header-footer remove a data em inglês e o título \"relatorio.html\" impressos pelo navegador.\nconst pdf  = msg.pdfFile;\nconst html = msg.filename || \"/data/relatorios/relatorio.html\";\nmsg.payload = `--headless --no-sandbox --disable-gpu --no-pdf-header-footer --print-to-pdf=\"${pdf}\" \"${html}\"`;\nreturn msg;\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1160,
-        "y": 640,
-        "wires": [
-            [
-                "38510ae3de26350c"
-            ]
-        ]
-    },
-    {
-        "id": "e6f4ca59a0787570",
-        "type": "inject",
-        "z": "flow_pressao_full",
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "1",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 120,
-        "y": 673.2954545454546,
-        "wires": [
-            [
-                "5214bd83dc5b5467"
-            ]
-        ]
-    },
-    {
-        "id": "8525c1d000560d34",
-        "type": "template",
-        "z": "flow_pressao_full",
-        "name": "Relatório  HTML",
-        "field": "payload",
-        "fieldType": "msg",
-        "format": "html",
-        "syntax": "mustache",
-        "template": "<!DOCTYPE html>\n<html lang=\"pt-BR\">\n<head>\n<meta charset=\"UTF-8\">\n<title>Relatório de Teste de Pressão</title>\n<style>\n    @page {\n        size: A4 landscape;\n        margin: 10mm;\n    }\n\n    *, *::before, *::after {\n        box-sizing: border-box;\n    }\n\n    html, body {\n        margin: 0;\n        padding: 0;\n        width: 100%;\n        font-family: Arial, Helvetica, sans-serif;\n        color: #111827;\n        -webkit-print-color-adjust: exact;\n        print-color-adjust: exact;\n    }\n\n    .container {\n        width: 100%;\n        height: 188mm;\n        max-height: 188mm;\n        overflow: hidden;\n        border: 2px solid #111827;\n        padding: 10px 14px;\n        display: flex;\n        flex-direction: column;\n        justify-content: space-between;\n        page-break-inside: avoid;\n        break-inside: avoid;\n    }\n\n    /* Cabeçalho horizontal */\n    .header {\n        display: flex;\n        justify-content: space-between;\n        align-items: center;\n        padding-bottom: 6px;\n        border-bottom: 1.5px solid #e5e7eb;\n    }\n\n    .header-info {\n        display: flex;\n        flex-direction: column;\n        gap: 3px;\n    }\n\n    .header-title {\n        margin: 0;\n        font-size: 18px;\n        font-weight: 800;\n        letter-spacing: 0.5px;\n        color: #111827;\n        text-transform: uppercase;\n    }\n\n    .header-meta {\n        display: flex;\n        align-items: center;\n        gap: 12px;\n        font-size: 11px;\n        color: #4b5563;\n    }\n\n    .meta-sep {\n        color: #9ca3af;\n    }\n\n    .header-badge {\n        font-size: 15px;\n        font-weight: 800;\n        letter-spacing: 1px;\n        padding: 6px 20px;\n        border-radius: 6px;\n        text-align: center;\n        white-space: nowrap;\n        text-transform: uppercase;\n    }\n\n    /* Faixa de Indicadores (6 colunas) */\n    .kpis {\n        display: grid;\n        grid-template-columns: repeat(6, 1fr);\n        gap: 8px;\n        margin: 6px 0;\n    }\n\n    .kpi-card {\n        background: #f9fafb;\n        border: 1px solid #e5e7eb;\n        border-radius: 6px;\n        padding: 5px 4px;\n        text-align: center;\n    }\n\n    .kpi-label {\n        font-size: 10px;\n        font-weight: 600;\n        color: #6b7280;\n        text-transform: uppercase;\n        letter-spacing: 0.3px;\n        margin-bottom: 2px;\n        white-space: nowrap;\n        overflow: hidden;\n        text-overflow: ellipsis;\n    }\n\n    .kpi-value {\n        font-size: 13px;\n        font-weight: 800;\n        color: #111827;\n    }\n\n    /* Quadro Central do Gráfico */\n    .chart-box {\n        border: 1px solid #d1d5db;\n        border-radius: 6px;\n        padding: 6px 10px 4px 10px;\n        display: flex;\n        flex-direction: column;\n        flex: 1;\n        min-height: 0;\n        background: #ffffff;\n    }\n\n    .chart-title {\n        text-align: center;\n        font-size: 11px;\n        font-weight: 700;\n        color: #374151;\n        margin-bottom: 2px;\n        text-transform: uppercase;\n        letter-spacing: 0.3px;\n    }\n\n    .chart-box svg {\n        display: block;\n        width: 100%;\n        height: 100%;\n        flex: 1;\n        min-height: 0;\n    }\n\n    /* Rodapé */\n    .footer {\n        display: flex;\n        justify-content: space-between;\n        align-items: flex-end;\n        padding-top: 6px;\n        border-top: 1px solid #e5e7eb;\n    }\n\n    .signature-block {\n        display: flex;\n        flex-direction: column;\n        align-items: center;\n        width: 250px;\n    }\n\n    .signature-line {\n        width: 100%;\n        border-top: 1px solid #4b5563;\n        margin-bottom: 4px;\n    }\n\n    .signature-text {\n        font-size: 10px;\n        color: #4b5563;\n        text-transform: uppercase;\n        letter-spacing: 0.5px;\n    }\n\n    .emission-date {\n        font-size: 10.5px;\n        color: #4b5563;\n    }\n</style>\n</head>\n<body>\n\n<div class=\"container\">\n\n    <!-- Cabeçalho Integrado no Topo -->\n    <header class=\"header\">\n        <div class=\"header-info\">\n            <h1 class=\"header-title\">RELATÓRIO DE TESTE DE PRESSÃO</h1>\n            <div class=\"header-meta\">\n                <span><strong>Equipamento:</strong> {{payload.equipamento}}</span>\n                <span class=\"meta-sep\">•</span>\n                <span><strong>Início:</strong> {{payload.inicio}}</span>\n                <span class=\"meta-sep\">•</span>\n                <span><strong>Fim:</strong> {{payload.fim}}</span>\n                <span class=\"meta-sep\">•</span>\n                <span><strong>Duração:</strong> {{payload.duracaoMin}} min</span>\n            </div>\n        </div>\n        <div class=\"header-badge\" style=\"color: {{payload.statusCor}}; background: {{payload.statusBg}}; border: 1.5px solid {{payload.statusBorda}};\">\n            {{payload.status}}\n        </div>\n    </header>\n\n    <!-- Faixa Horizontal Única de Indicadores -->\n    <section class=\"kpis\">\n        <div class=\"kpi-card\">\n            <div class=\"kpi-label\">Setpoint</div>\n            <div class=\"kpi-value\">{{payload.spFmt}} bar</div>\n        </div>\n        <div class=\"kpi-card\">\n            <div class=\"kpi-label\">Pressão Média</div>\n            <div class=\"kpi-value\">{{payload.media}} bar</div>\n        </div>\n        <div class=\"kpi-card\">\n            <div class=\"kpi-label\">Pressão Mínima</div>\n            <div class=\"kpi-value\">{{payload.min}} bar</div>\n        </div>\n        <div class=\"kpi-card\">\n            <div class=\"kpi-label\">Pressão Máxima</div>\n            <div class=\"kpi-value\">{{payload.max}} bar</div>\n        </div>\n        <div class=\"kpi-card\">\n            <div class=\"kpi-label\">Erro Máximo</div>\n            <div class=\"kpi-value\">{{payload.erro}} bar</div>\n        </div>\n        <div class=\"kpi-card\">\n            <div class=\"kpi-label\">Tolerância Máx.</div>\n            <div class=\"kpi-value\">≤ {{payload.toleranciaFmt}} bar</div>\n        </div>\n    </section>\n\n    <!-- Quadro Central do Gráfico Panorâmico -->\n    <section class=\"chart-box\">\n        <div class=\"chart-title\">Gráfico de Estabilidade de Pressão (0 a 10 bar)</div>\n        <svg viewBox=\"0 0 1200 460\" preserveAspectRatio=\"xMidYMid meet\" xmlns=\"http://www.w3.org/2000/svg\">\n            <defs>\n                <style>\n                    .grid-sub { stroke: #f1f5f9; stroke-width: 1; stroke-dasharray: 3,3; }\n                    .grid-main { stroke: #e2e8f0; stroke-width: 1; }\n                    .axis-base { stroke: #334155; stroke-width: 1.5; }\n                    .axis-text { font-family: Arial, Helvetica, sans-serif; font-size: 11px; fill: #64748b; }\n                    .time-text { font-family: Arial, Helvetica, sans-serif; font-size: 11px; fill: #475569; text-anchor: middle; }\n                    .legend-text { font-family: Arial, Helvetica, sans-serif; font-size: 11px; fill: #334155; font-weight: 600; }\n                </style>\n            </defs>\n\n            <!-- Faixa Visual da Zona de Tolerância Aprovada -->\n            <rect x=\"60\" y=\"{{payload.faixaTolY}}\" width=\"1080\" height=\"{{payload.faixaTolAltura}}\" fill=\"#dcfce7\" opacity=\"0.75\" />\n\n            <!-- Sub-grade tracejada leve a cada 0.5 bar (a cada 18 unidades) -->\n            <line x1=\"60\" y1=\"372\" x2=\"1140\" y2=\"372\" class=\"grid-sub\" />\n            <line x1=\"60\" y1=\"336\" x2=\"1140\" y2=\"336\" class=\"grid-sub\" />\n            <line x1=\"60\" y1=\"300\" x2=\"1140\" y2=\"300\" class=\"grid-sub\" />\n            <line x1=\"60\" y1=\"264\" x2=\"1140\" y2=\"264\" class=\"grid-sub\" />\n            <line x1=\"60\" y1=\"228\" x2=\"1140\" y2=\"228\" class=\"grid-sub\" />\n            <line x1=\"60\" y1=\"192\" x2=\"1140\" y2=\"192\" class=\"grid-sub\" />\n            <line x1=\"60\" y1=\"156\" x2=\"1140\" y2=\"156\" class=\"grid-sub\" />\n            <line x1=\"60\" y1=\"120\" x2=\"1140\" y2=\"120\" class=\"grid-sub\" />\n            <line x1=\"60\" y1=\"84\" x2=\"1140\" y2=\"84\" class=\"grid-sub\" />\n            <line x1=\"60\" y1=\"48\" x2=\"1140\" y2=\"48\" class=\"grid-sub\" />\n\n            <!-- Linhas de grade principais horizontais (0 a 10 bar a cada 36 unidades) e rótulos do eixo Y -->\n            <line x1=\"60\" y1=\"390\" x2=\"1140\" y2=\"390\" class=\"axis-base\" />\n            <text x=\"50\" y=\"394\" class=\"axis-text\" text-anchor=\"end\">0</text>\n\n            <line x1=\"60\" y1=\"354\" x2=\"1140\" y2=\"354\" class=\"grid-main\" />\n            <text x=\"50\" y=\"358\" class=\"axis-text\" text-anchor=\"end\">1</text>\n\n            <line x1=\"60\" y1=\"318\" x2=\"1140\" y2=\"318\" class=\"grid-main\" />\n            <text x=\"50\" y=\"322\" class=\"axis-text\" text-anchor=\"end\">2</text>\n\n            <line x1=\"60\" y1=\"282\" x2=\"1140\" y2=\"282\" class=\"grid-main\" />\n            <text x=\"50\" y=\"286\" class=\"axis-text\" text-anchor=\"end\">3</text>\n\n            <line x1=\"60\" y1=\"246\" x2=\"1140\" y2=\"246\" class=\"grid-main\" />\n            <text x=\"50\" y=\"250\" class=\"axis-text\" text-anchor=\"end\">4</text>\n\n            <line x1=\"60\" y1=\"210\" x2=\"1140\" y2=\"210\" class=\"grid-main\" />\n            <text x=\"50\" y=\"214\" class=\"axis-text\" text-anchor=\"end\">5</text>\n\n            <line x1=\"60\" y1=\"174\" x2=\"1140\" y2=\"174\" class=\"grid-main\" />\n            <text x=\"50\" y=\"178\" class=\"axis-text\" text-anchor=\"end\">6</text>\n\n            <line x1=\"60\" y1=\"138\" x2=\"1140\" y2=\"138\" class=\"grid-main\" />\n            <text x=\"50\" y=\"142\" class=\"axis-text\" text-anchor=\"end\">7</text>\n\n            <line x1=\"60\" y1=\"102\" x2=\"1140\" y2=\"102\" class=\"grid-main\" />\n            <text x=\"50\" y=\"106\" class=\"axis-text\" text-anchor=\"end\">8</text>\n\n            <line x1=\"60\" y1=\"66\" x2=\"1140\" y2=\"66\" class=\"grid-main\" />\n            <text x=\"50\" y=\"70\" class=\"axis-text\" text-anchor=\"end\">9</text>\n\n            <line x1=\"60\" y1=\"30\" x2=\"1140\" y2=\"30\" class=\"grid-main\" />\n            <text x=\"50\" y=\"34\" class=\"axis-text\" text-anchor=\"end\">10</text>\n\n            <!-- Linhas de grade verticais e rótulos de tempo dinâmicos no eixo X -->\n            {{#payload.eixoX}}\n            <line x1=\"{{x}}\" y1=\"30\" x2=\"{{x}}\" y2=\"390\" class=\"{{classe}}\" />\n            <text x=\"{{x}}\" y=\"415\" class=\"time-text\">{{rotulo}}</text>\n            {{/payload.eixoX}}\n\n            <!-- Linha de Setpoint Vermelha Tracejada -->\n            <line x1=\"60\" y1=\"{{payload.linhaSP}}\" x2=\"1140\" y2=\"{{payload.linhaSP}}\" stroke=\"#dc2626\" stroke-width=\"2\" stroke-dasharray=\"7,4\" />\n\n            <!-- Curva de Pressão Azul -->\n            <polyline fill=\"none\" stroke=\"#2563eb\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" points=\"{{payload.pontos}}\" />\n\n            <!-- Marcador de Falha Condicional -->\n            {{#payload.falhaX}}\n            <circle cx=\"{{payload.falhaX}}\" cy=\"{{payload.falhaY}}\" r=\"5.5\" fill=\"#dc2626\" stroke=\"#ffffff\" stroke-width=\"2\" />\n            <text x=\"{{payload.falhaX}}\" y=\"{{payload.falhaYTxt}}\" font-family=\"Arial, Helvetica, sans-serif\" font-size=\"12\" font-weight=\"bold\" text-anchor=\"middle\" fill=\"#b91c1c\">\n                FALHA: {{payload.falhaValor}} bar\n            </text>\n            {{/payload.falhaX}}\n\n            <!-- Legenda Horizontal na Base do SVG (y=442) -->\n            <line x1=\"320\" y1=\"442\" x2=\"350\" y2=\"442\" stroke=\"#2563eb\" stroke-width=\"2.5\" />\n            <text x=\"358\" y=\"446\" class=\"legend-text\">Pressão</text>\n\n            <line x1=\"470\" y1=\"442\" x2=\"505\" y2=\"442\" stroke=\"#dc2626\" stroke-width=\"2\" stroke-dasharray=\"6,3\" />\n            <text x=\"513\" y=\"446\" class=\"legend-text\">Setpoint</text>\n\n            <rect x=\"635\" y=\"434\" width=\"24\" height=\"15\" fill=\"#dcfce7\" stroke=\"#16a34a\" stroke-width=\"1\" rx=\"2\" />\n            <text x=\"667\" y=\"446\" class=\"legend-text\">Faixa de Tolerância Aprovada</text>\n        </svg>\n    </section>\n\n    <!-- Rodapé Horizontal Compacto -->\n    <footer class=\"footer\">\n        <div class=\"signature-block\">\n            <div class=\"signature-line\"></div>\n            <div class=\"signature-text\">Responsável pelo teste</div>\n        </div>\n        <div class=\"emission-date\">\n            <strong>Data de Emissão:</strong> {{payload.emissao}}\n        </div>\n    </footer>\n\n</div>\n\n</body>\n</html>",
-        "x": 900,
-        "y": 580,
-        "wires": [
-            [
-                "4e72940d3bb63eec"
-            ]
-        ]
-    },
-    {
-        "id": "7d655f418f1c0085",
-        "type": "function",
-        "z": "flow_pressao_full",
-        "name": "Coleta pressão",
-        "func": "let ativo = flow.get('ativo');\n\n//if (!ativo) return null; // só grava quando ativo\n\nlet valor = Number(msg.payload);\n\n// ignora valores inválidos (0, null, NaN)\nif (!valor || valor <= 0) return null;\n\n// média\nlet soma = flow.get('soma') || 0;\nlet qtd = flow.get('qtd') || 0;\n\nsoma += valor;\nqtd += 1;\n\nflow.set('soma', soma);\nflow.set('qtd', qtd);\n\n// min max\nlet min = flow.get('min');\nlet max = flow.get('max');\n\nif (min === null || valor < min) flow.set('min', valor);\nif (max === null || valor > max) flow.set('max', valor);\n\n// histórico LIMPO\nlet historico = flow.get('historico') || [];\n\nhistorico.push({\n    v: valor,\n    t: Date.now()\n});\n\n// Janela de retenção dinâmica: preserva todo o teste em andamento\nlet agora = Date.now();\nif (ativo === true) {\n    const janelaMs = (flow.get('duracao_travada') || flow.get('duracao_teste') || 3600000) + 120000;\n    historico = historico.filter(p => agora - p.t <= janelaMs);\n} else {\n    historico = historico.filter(p => agora - p.t <= 600000);\n}\n\nflow.set('historico', historico);\n\nreturn msg;",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 480,
-        "y": 756.9318181818181,
-        "wires": [
-            [
-                "gauge"
-            ]
-        ]
-    },
-    {
-        "id": "5214bd83dc5b5467",
-        "type": "function",
-        "z": "flow_pressao_full",
-        "name": "Decremento de tempo",
-        "func": "// Roda a cada 1 s (inject). Saídas: 1 = tempo restante | 2 = finalização automática | 3 = status do teste\nconst fmt = (ms) => {\n    const total = Math.max(0, Math.ceil(ms / 1000));      // segundos restantes (arredonda p/ cima)\n    const mm = String(Math.floor(total / 60)).padStart(2, '0');\n    const ss = String(total % 60).padStart(2, '0');\n    return `${mm}:${ss}`;\n};\nconst tempo = (ms, enabled, minSelect) => {\n    const totalSec = Math.max(0, Math.ceil(ms / 1000));\n    const crono = fmt(ms);\n    return {\n        payload: `TEMPO RESTANTE: ${crono}`,\n        cronometro: crono,\n        segundos: totalSec,\n        minutos: minSelect,\n        enabled: enabled\n    };\n};\n\nconst AGUARDANDO = { payload: \"AGUARDANDO INÍCIO DO TESTE\", color: \"#B26A00\" };  // âmbar\n\nlet ativo   = flow.get('ativo');\nlet inicio  = flow.get(\"hora_inicio_date\");\nlet duracao = (ativo === true ? flow.get(\"duracao_travada\") : null) || flow.get(\"duracao_selecionada\") || flow.get(\"duracao_teste\") || 3600000;\nlet minSelect = Math.round(duracao / 60000);\n\n// NUNCA INICIOU / NÃO ESTÁ ATIVO -> contagem parada\nif (!inicio || !ativo) {\n    let status = AGUARDANDO;\n    const aviso = flow.get('aviso_status');          // alerta de intertravamento (INICIAR bloqueado)\n    if (aviso && aviso.ate > Date.now()) status = { payload: aviso.payload, color: aviso.color };\n    return [tempo(duracao, true, minSelect), null, status];\n}\n\nlet restante = (inicio + duracao) - Date.now();\n\n// CHEGOU EM ZERO -> FINALIZA AUTOMÁTICO\nif (restante <= 0 && ativo === true) {\n    flow.set('tempo_restante', 0);\n    flow.set('ativo', false);\n\n    // FINAL REAL\n    flow.set('hora_fim_date', Date.now());\n\n    // chama finalização automática\n    return [tempo(0, true, minSelect), { payload: \"FINALIZAR_AUTO\" }, AGUARDANDO];\n}\n\n// CONTAGEM NORMAL\nflow.set('tempo_restante', Math.ceil(restante / 60000));   // mantido em minutos (compatibilidade)\n\nconst sp = flow.get('sp_travado');\nconst rodando = { payload: `TESTE RODANDO - SETPOINT ${sp !== undefined && sp !== null ? Number(sp).toFixed(2) : '--'} BAR`, color: \"#2E7D32\" };  // verde\nreturn [tempo(restante, false, minSelect), null, rodando];",
-        "outputs": 3,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 380,
-        "y": 640,
-        "wires": [
-            [
-                "82d8edb1336a7da3"
-            ],
-            [
-                "6d54da2809aedd4d"
-            ],
-            [
-                "a7c3f1d2b9e84f10"
-            ]
-        ]
-    },
-    {
-        "id": "6d54da2809aedd4d",
-        "type": "function",
-        "z": "flow_pressao_full",
-        "name": "Finaliza _Teste",
-        "func": "// Entradas: botão FINALIZAR TESTE (payload 0) ou cronômetro (payload \"FINALIZAR_AUTO\").\n// Saídas: [0] livre | [1] relatório (HTML -> PDF) | [2] libera a UI ('PARADO') | [3] ciclo_node = false (CLP) | [4] ponto final do setpoint travado (InfluxDB)\nconst auto = msg.payload === 'FINALIZAR_AUTO';\nif (!auto && flow.get('ativo') !== true) return null;   // nenhum teste em andamento\n\nconst spTravado = flow.get('sp_travado');\n// SEMPRE libera a tela e zera o ciclo_node, mesmo que o relatório não possa ser gerado\nconst liberar = (rel) => {\n    flow.set('ativo', false);\n    return [\n        null,\n        rel,\n        { payload: 'PARADO' },\n        { payload: false },\n        (spTravado !== undefined && spTravado !== null && !isNaN(Number(spTravado))) ? { payload: Number(spTravado) } : null\n    ];\n};\n\n// Datas/horas SEMPRE no fuso e formato brasileiros (o contêiner roda em UTC)\nconst BR = 'America/Sao_Paulo';\nconst partesBR = (d) => {\n    const o = {};\n    new Intl.DateTimeFormat('pt-BR', {\n        timeZone: BR, year: 'numeric', month: '2-digit', day: '2-digit',\n        hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'\n    }).formatToParts(new Date(d)).forEach(p => { o[p.type] = p.value; });\n    return o;\n};\nconst dataHoraBR = (d) => {\n    const o = partesBR(d);\n    return `${o.day}/${o.month}/${o.year} ${o.hour}:${o.minute}:${o.second}`;\n};\n\nlet soma = flow.get('soma') || 0;\nlet qtd = flow.get('qtd') || 1;\nlet media = soma / qtd;\n\nlet min = flow.get('min');\nlet max = flow.get('max');\nlet sp = Number(flow.get('sp_travado') ?? flow.get('sp') ?? 0) || 0;\nlet historico = flow.get('historico') || [];\n\n// PROTEÇÃO\nif (min == null || max == null || historico.length === 0) {\n    node.error(\"Dados insuficientes\");\n    return liberar(null);\n}\n\n// 🔥 TEMPO OFICIAL EXATO (sem truncamento de segundos)\nlet inicio = Number(flow.get(\"hora_inicio_date\"));\nlet fim = Number(flow.get(\"hora_fim_date\") || Date.now());\n\nif (!inicio) {\n    node.error(\"hora_inicio_date não encontrada\");\n    return liberar(null);\n}\n\nlet fimDate = new Date(fim);\n\n// 🔥 BASE DE TEMPO DINÂMICA\nlet duracao = Number(flow.get('duracao_travada') || flow.get('duracao_teste') || flow.get('duracao_selecionada') || 3600000);\nlet duracaoMin = Math.max(10, Math.round(duracao / 60000));\n\n// 🔥 HISTÓRICO FILTRADO EXATO\nlet historicoFiltrado = historico.filter(p => p.t >= inicio && p.t <= fim);\n\n// ERRO\nlet erro = sp - min;\nlet tolerancia = 0.5;\nlet status = erro <= tolerancia ? \"APROVADO\" : \"REPROVADO\";\n\n// ESCALA\nlet escala = 36;\n\n// 🔥 PONTOS\nlet pontos = \"\";\n\n// 🔥 PONTO INICIAL\nlet primeiroValor = historicoFiltrado.length > 0 ? historicoFiltrado[0].v : sp;\n\nlet x0 = 60;\nlet y0 = 390 - ((Number(primeiroValor) || 0) * escala);\n\npontos += x0 + \",\" + y0 + \" \";\n\n// 🔥 LINHA DA PRESSÃO\nhistoricoFiltrado.forEach((p) => {\n    let proporcao = (p.t - inicio) / duracao;\n\n    if (proporcao < 0) proporcao = 0;\n    if (proporcao > 1) proporcao = 1;\n\n    let x = Number((60 + (proporcao * 1080)).toFixed(2));\n    let y = Number((390 - (Number(p.v) * escala)).toFixed(2));\n\n    pontos += x + \",\" + y + \" \";\n});\n\n// 🔥 SETPOINT\nlet linhaSP = 390 - (sp * escala);\n\n// 🔥 FALHA\nlet falhaX = null;\nlet falhaY = null;\nlet falhaValor = null;\n\nfor (let i = 0; i < historicoFiltrado.length; i++) {\n    let p = historicoFiltrado[i];\n    let erroPonto = sp - p.v;\n\n    if (erroPonto > tolerancia) {\n        let proporcao = (p.t - inicio) / duracao;\n        if (proporcao < 0) proporcao = 0;\n        if (proporcao > 1) proporcao = 1;\n\n        falhaX = Number((60 + (proporcao * 1080)).toFixed(2));\n        falhaY = Number((390 - (Number(p.v) * escala)).toFixed(2));\n        falhaValor = Number(p.v).toFixed(2);\n        break;\n    }\n}\n\n// =======================================================\n// 🔥 GRADE VERTICAL E RÓTULOS DO EIXO X DINÂMICOS\n// =======================================================\nlet passoMin = 5;\nif (duracaoMin <= 15) {\n    passoMin = 1;\n} else if (duracaoMin === 20) {\n    passoMin = 2;\n} else {\n    passoMin = 5;\n}\n\nfunction horaOffset(minutos) {\n    return new Date(inicio + (minutos * 60000))\n        .toLocaleTimeString('pt-BR', {\n            timeZone: BR,\n            hour: '2-digit',\n            minute: '2-digit'\n        });\n}\n\nlet eixoX = [];\nfor (let m = 0; m <= duracaoMin; m += passoMin) {\n    let x = Number((60 + ((m / duracaoMin) * 1080)).toFixed(2));\n    let classe = (m === 0) ? \"axis-base\" : \"grid-main\";\n    let rotulo = horaOffset(m);\n    eixoX.push({ x: x, classe: classe, rotulo: rotulo });\n}\n\n// =======================================================\n\n// Faixa visual da zona de tolerância aprovada ([Math.max(0, sp - tolerancia), sp])\nlet faixaTolY = 390 - (Math.min(10, Math.max(0, sp)) * 36);\nlet faixaTolAltura = Math.max(0, (Math.min(10, Math.max(0, sp)) - Math.max(0, sp - tolerancia)) * 36);\n\n// RELATÓRIO\nlet rel = {\n    equipamento: flow.get('equipamento_teste') ?? flow.get('equipamento'),\n\n    inicio: dataHoraBR(inicio),\n    fim: dataHoraBR(fimDate),\n    duracaoMin: duracaoMin,\n\n    media: media.toFixed(2),\n    min: Number(min).toFixed(2),\n    max: Number(max).toFixed(2),\n\n    sp: sp,\n    spFmt: Number(sp).toFixed(2),\n    toleranciaFmt: tolerancia.toFixed(2),\n    statusCor: status === \"APROVADO\" ? \"#15803d\" : \"#b91c1c\",\n    statusBg: status === \"APROVADO\" ? \"#dcfce7\" : \"#fee2e2\",\n    statusBorda: status === \"APROVADO\" ? \"#16a34a\" : \"#dc2626\",\n    faixaTolY: faixaTolY,\n    faixaTolAltura: faixaTolAltura,\n\n    erro: erro.toFixed(2),\n    status: status,\n\n    pontos: pontos,\n    linhaSP: linhaSP,\n\n    falhaX: falhaX,\n    falhaY: falhaY,\n    falhaValor: falhaValor,\n    falhaYTxt: falhaY !== null ? (falhaY > 365 ? falhaY - 10 : falhaY + 16) : null,\n\n    // Grade dinâmica do eixo X\n    eixoX: eixoX\n};\n\n// RESET mantendo a duração configurada (ou 60 min padrão)\nlet duracaoCfg = flow.get('duracao_selecionada') || 3600000;\nflow.set('tempo_restante', Math.ceil(duracaoCfg / 60000));\nflow.set('duracao_teste', duracaoCfg);\nflow.set('duracao_travada', null);\n\n// DATA DE EMISSÃO (formato brasileiro) exibida abaixo da assinatura\nlet agora = new Date();\nlet o = partesBR(agora);\nrel.emissao = `${o.day}/${o.month}/${o.year} - ${o.hour}:${o.minute}:${o.second}`;\n\n// NOME ÚNICO DO PDF: <Equipamento>_<DD-MM-AAAA_HH-mm-ss>.pdf (sanitizado, sem acentos/espaços)\nlet equip = String(flow.get('equipamento_teste') ?? flow.get('equipamento') ?? '')\n    .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')\n    .replace(/[^A-Za-z0-9]+/g, '_')\n    .replace(/^_+|_+$/g, '')\n    .slice(0, 60) || 'Equipamento';\nlet carimbo = `${o.day}-${o.month}-${o.year}_${o.hour}-${o.minute}-${o.second}`;\n\n// Caminhos POSIX dentro do contêiner (/data/relatorios -> ./relatorios no host)\nmsg.filename = \"/data/relatorios/relatorio.html\";                      // HTML temporário renderizado pelo Chromium\nmsg.pdfFile  = \"/data/relatorios/\" + equip + \"_\" + carimbo + \".pdf\";   // PDF final, único por teste\n\nreturn liberar({ payload: rel, filename: msg.filename, pdfFile: msg.pdfFile });",
-        "outputs": 5,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 600,
-        "y": 560,
-        "wires": [
-            [],
-            [
-                "8525c1d000560d34"
-            ],
-            [
-                "fn_ui_lock"
-            ],
-            [
-                "eth_out_ciclo"
-            ],
-            [
-                "influx_out_setpoint"
-            ]
-        ]
-    },
-    {
-        "id": "49589c46b3396a0f",
-        "type": "function",
-        "z": "flow_pressao_full",
-        "name": "Inicia teste",
-        "func": "// Botão INICIAR TESTE: valida o intertravamento, trava o setpoint e inicia o ciclo.\n// Saídas: [0] bloqueia a UI ('RODANDO') | [1] ciclo_node = true (CLP) | [2] 1º ponto do setpoint travado (InfluxDB) | [3] texto de STATUS\nif (flow.get('ativo') === true) return null;   // já existe um teste em andamento\n\nconst valido = (v) => v !== null && v !== undefined && v !== '' && !isNaN(Number(v));\n\nconst equipamento   = String(flow.get('equipamento') ?? '').trim();\nconst bombaFisica   = flow.get('bomba_fisica') === true || flow.get('bomba_fisica') === 1;\nconst motorComando  = flow.get('motor_on') === true;\nconst motorLigado   = motorComando || bombaFisica;\n\nconst valvulaFisica  = flow.get('valvula') === true || flow.get('valvula') === 1;\nconst valvulaComando = flow.get('valvula_manual_on') === true;\nconst valvulaAberta  = valvulaComando || valvulaFisica;\n\n// Setpoint vigente = valor mais recente entre o campo da tela e o lido do CLP\nconst tUi = flow.get('sp_ui_t') || 0;\nconst tPlc = flow.get('sp_plc_t') || 0;\nconst primeiro = tUi >= tPlc ? flow.get('sp_ui') : flow.get('sp_plc');\nconst segundo  = tUi >= tPlc ? flow.get('sp_plc') : flow.get('sp_ui');\nconst spBruto = valido(primeiro) ? primeiro : segundo;\n\nconst motivos = [];\nif (!equipamento) motivos.push('PREENCHA O EQUIPAMENTO');\nif (motorLigado) motivos.push('DESLIGUE O MOTOR / BOMBA');\nif (valvulaAberta) motivos.push('FECHE A VÁLVULA');\nif (!valido(spBruto)) motivos.push('DEFINA A PRESSÃO DESEJADA');\n\nif (motivos.length > 0) {\n    const aviso = { payload: 'BLOQUEADO - ' + motivos.join(' / '), color: '#C62828' };\n    // o aviso fica visível por 8 s (o cronômetro de 1 s reescreve o STATUS)\n    flow.set('aviso_status', { payload: aviso.payload, color: aviso.color, ate: Date.now() + 8000 });\n    return [null, null, null, aviso];\n}\n\nconst sp = Math.round(Number(spBruto) * 100) / 100;\n\nflow.set('ativo', true);\nflow.set('aviso_status', null);\nflow.set('inicio', new Date().toLocaleString('pt-BR'));\n\nflow.set('soma', 0);\nflow.set('qtd', 0);\nflow.set('min', null);\nflow.set('max', null);\n\n// limpa histórico\nflow.set('historico', []);\n\n// hora oficial de início\nflow.set(\"hora_inicio_date\", Date.now());\n\n// Duração configurada pelo seletor (padrão 60 min se não selecionada)\nlet duracaoTeste = flow.get(\"duracao_selecionada\") || flow.get(\"duracao_teste\") || 3600000;\nflow.set(\"duracao_teste\", duracaoTeste);\nflow.set(\"duracao_travada\", duracaoTeste);\nflow.set(\"tempo_restante\", Math.ceil(duracaoTeste / 60000));\n\n// IMPORTANTE: limpa fim anterior\nflow.set(\"hora_fim_date\", null);\n\n// SETPOINT TRAVADO: capturado uma única vez, no instante do início, e mantido até o fim do teste\nflow.set('sp_travado', sp);\nflow.set('sp', sp);\nflow.set('equipamento_teste', equipamento);\n\nreturn [\n    { payload: 'RODANDO' },\n    { payload: true },\n    { payload: sp },\n    null\n];",
-        "outputs": 4,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 590,
-        "y": 443.86363636363654,
-        "wires": [
-            [
-                "fn_ui_lock"
-            ],
-            [
-                "eth_out_ciclo"
-            ],
-            [
-                "influx_out_setpoint"
-            ],
-            [
-                "a7c3f1d2b9e84f10"
-            ]
-        ]
-    },
-    {
-        "id": "input_eq",
-        "type": "ui_text_input",
-        "z": "flow_pressao_full",
-        "name": "Equipamento",
-        "label": "Equipamento",
-        "tooltip": "",
-        "group": "ui_group_pressao",
-        "order": 1,
-        "width": 12,
-        "height": 1,
-        "passthru": false,
-        "mode": "text",
-        "delay": "300",
-        "topic": "",
-        "sendOnBlur": true,
-        "className": "",
-        "topicType": "str",
-        "x": 430,
-        "y": 20,
-        "wires": [
-            [
-                "fn_set_eq"
-            ]
-        ]
-    },
-    {
-        "id": "gauge",
-        "type": "ui_gauge",
-        "z": "flow_pressao_full",
-        "name": "",
-        "group": "ui_group_pressao",
-        "order": 8,
-        "width": 12,
-        "height": 6,
-        "gtype": "gage",
-        "title": "Pressão do sensor",
-        "label": "bar",
-        "format": "{{value | number:2}}",
-        "min": 0,
-        "max": 10,
-        "colors": [
-            "#00b500",
-            "#e6e600",
-            "#ca3838"
-        ],
-        "seg1": "8",
-        "seg2": "8.5",
-        "diff": false,
-        "className": "",
-        "x": 970,
-        "y": 800,
-        "wires": []
-    },
-    {
-        "id": "15e0a5b19569ae15",
-        "type": "influxdb out",
-        "z": "flow_pressao_full",
-        "influxdb": "235fd83d5ce9ea5d",
-        "name": "valvula",
-        "measurement": "vp-01",
-        "precision": "",
-        "retentionPolicy": "",
-        "database": "database",
-        "precisionV18FluxV20": "ms",
-        "retentionPolicyV18Flux": "",
-        "org": "vigor",
-        "bucket": "carrinho",
-        "x": 640,
-        "y": 860,
-        "wires": []
-    },
-    {
-        "id": "398b99857e5197e4",
-        "type": "influxdb out",
-        "z": "flow_pressao_full",
-        "influxdb": "235fd83d5ce9ea5d",
-        "name": "pressao",
-        "measurement": "PT-010",
-        "precision": "",
-        "retentionPolicy": "",
-        "database": "database",
-        "precisionV18FluxV20": "ms",
-        "retentionPolicyV18Flux": "",
-        "org": "vigor",
-        "bucket": "carrinho",
-        "x": 540,
-        "y": 808.4090909090908,
-        "wires": []
-    },
-    {
-        "id": "c5db1e77bf518ab4",
-        "type": "eth-ip in",
-        "z": "flow_pressao_full",
-        "endpoint": "da562bad96c4eafe",
-        "mode": "single",
-        "variable": "_IO_EM_DO_00",
-        "program": "",
-        "name": "VALVULA",
-        "x": 160,
-        "y": 840,
-        "wires": [
-            [
-                "fn_cache_valvula"
-            ]
-        ]
-    },
-    {
-        "id": "fba7dcc329b4be25",
-        "type": "eth-ip in",
-        "z": "flow_pressao_full",
-        "endpoint": "da562bad96c4eafe",
-        "mode": "single",
-        "variable": "RETORNO_BAR",
-        "program": "",
-        "name": "PRESSAO",
-        "x": 160,
-        "y": 780,
-        "wires": [
-            [
-                "398b99857e5197e4",
-                "7d655f418f1c0085",
-                "fn_auto_cutoff_sp"
-            ]
-        ]
-    },
-    {
-        "id": "7a612cafc5aaba50",
-        "type": "eth-ip out",
-        "z": "flow_pressao_full",
-        "endpoint": "da562bad96c4eafe",
-        "variable": "onval_node",
-        "program": "",
-        "name": "",
-        "x": 830,
-        "y": 343.06818181818187,
-        "wires": []
-    },
-    {
-        "id": "0f43d59264e5b79e",
-        "type": "eth-ip out",
-        "z": "flow_pressao_full",
-        "endpoint": "da562bad96c4eafe",
-        "variable": "offval_node",
-        "program": "",
-        "name": "",
-        "x": 790,
-        "y": 394.5454545454547,
-        "wires": []
-    },
-    {
-        "id": "daa4f8544153c40e",
-        "type": "eth-ip out",
-        "z": "flow_pressao_full",
-        "endpoint": "da562bad96c4eafe",
-        "variable": "on_node",
-        "program": "",
-        "name": "",
-        "x": 780,
-        "y": 111.47727272727272,
-        "wires": []
-    },
-    {
-        "id": "faecf82f35480bfa",
-        "type": "eth-ip out",
-        "z": "flow_pressao_full",
-        "endpoint": "da562bad96c4eafe",
-        "variable": "off_node",
-        "program": "",
-        "name": "",
-        "x": 760,
-        "y": 162.95454545454544,
-        "wires": []
-    },
-    {
-        "id": "fcc8d4b3097f775a",
-        "type": "eth-ip out",
-        "z": "flow_pressao_full",
-        "endpoint": "da562bad96c4eafe",
-        "variable": "setpoint_node",
-        "program": "",
-        "name": "",
-        "x": 660,
-        "y": 220,
-        "wires": []
-    },
-    {
-        "id": "9641c0e83444adc3",
-        "type": "ui_dropdown",
-        "z": "flow_pressao_full",
-        "name": "",
-        "label": "MOTOR",
-        "tooltip": "",
-        "place": "LIBERAR MANUAL",
-        "group": "ui_group_pressao",
-        "order": 2,
-        "width": 6,
-        "height": 1,
-        "passthru": false,
-        "multiple": false,
-        "options": [
-            {
-                "label": "MOTOR LIGADO",
-                "value": 1,
-                "type": "num"
-            },
-            {
-                "label": "MOTOR DESLIGADO",
-                "value": 2,
-                "type": "num"
-            },
-            {
-                "label": "LIBERAR MANUAL",
-                "value": 3,
-                "type": "num"
-            }
-        ],
-        "payload": "",
-        "topic": "topic",
-        "topicType": "msg",
-        "className": "",
-        "x": 270,
-        "y": 145.79545454545453,
-        "wires": [
-            [
-                "fn_ctrl_motor_manual"
-            ]
-        ]
-    },
-    {
-        "id": "f20962dfb01ffb40",
-        "type": "ui_dropdown",
-        "z": "flow_pressao_full",
-        "name": "",
-        "label": "VALVULA",
-        "tooltip": "",
-        "place": "LIBERAR MANUAL",
-        "group": "ui_group_pressao",
-        "order": 3,
-        "width": 6,
-        "height": 1,
-        "passthru": false,
-        "multiple": false,
-        "options": [
-            {
-                "label": "VÁLVULA ABERTA",
-                "value": 1,
-                "type": "num"
-            },
-            {
-                "label": "VÁLVULA FECHADA",
-                "value": 2,
-                "type": "num"
-            },
-            {
-                "label": "LIBERAR MANUAL",
-                "value": 3,
-                "type": "num"
-            }
-        ],
-        "payload": "",
-        "topic": "topic",
-        "topicType": "msg",
-        "className": "",
-        "x": 290,
-        "y": 377.38636363636374,
-        "wires": [
-            [
-                "fn_ctrl_valvula_manual"
-            ]
-        ]
-    },
-    {
-        "id": "82d8edb1336a7da3",
-        "type": "ui_template",
-        "z": "flow_pressao_full",
-        "group": "ui_group_pressao",
-        "name": "Seletor Tempo Restante",
-        "order": 9,
-        "width": 6,
-        "height": 1,
-        "format": "<div class=\"tempo-selector-container\">\n  <div class=\"tempo-display-col\">\n    <span class=\"tempo-title\">TEMPO RESTANTE</span>\n    <span class=\"tempo-timer\">{{ cronometro || '60:00' }}</span>\n  </div>\n  <div class=\"tempo-control-col\">\n    <button type=\"button\" class=\"tempo-step-btn\" ng-click=\"ajustar(-5)\" ng-disabled=\"disabled || selectedMin <= '10'\" title=\"Diminuir 5 min\">-</button>\n    <select class=\"tempo-dropdown\" ng-model=\"selectedMin\" ng-change=\"onTempoChange()\" ng-disabled=\"disabled\">\n      <option value=\"10\">10 min</option>\n      <option value=\"15\">15 min</option>\n      <option value=\"20\">20 min</option>\n      <option value=\"25\">25 min</option>\n      <option value=\"30\">30 min</option>\n      <option value=\"35\">35 min</option>\n      <option value=\"40\">40 min</option>\n      <option value=\"45\">45 min</option>\n      <option value=\"50\">50 min</option>\n      <option value=\"55\">55 min</option>\n      <option value=\"60\">60 min</option>\n    </select>\n    <button type=\"button\" class=\"tempo-step-btn\" ng-click=\"ajustar(5)\" ng-disabled=\"disabled || selectedMin >= '60'\" title=\"Aumentar 5 min\">+</button>\n  </div>\n</div>\n\n<style>\n.tempo-selector-container {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  width: 100%;\n  height: 100%;\n  padding: 0 6px;\n  box-sizing: border-box;\n  gap: 6px;\n  background: transparent;\n}\n.tempo-display-col {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  min-width: 0;\n  flex: 1 1 auto;\n}\n.tempo-title {\n  font-size: 11px;\n  font-weight: 700;\n  color: #625a70;\n  letter-spacing: 0.5px;\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  line-height: 1.1;\n}\n.tempo-timer {\n  font-size: 17px;\n  font-weight: 800;\n  font-family: 'Roboto Mono', 'SF Mono', Consolas, monospace;\n  color: #111;\n  letter-spacing: 0.5px;\n  line-height: 1.3;\n}\n.tempo-control-col {\n  display: flex;\n  align-items: center;\n  gap: 3px;\n  flex-shrink: 0;\n}\n.tempo-step-btn {\n  width: 26px;\n  height: 28px;\n  background-color: #3d3846;\n  color: #fff;\n  border: none;\n  border-radius: 4px;\n  font-weight: bold;\n  font-size: 15px;\n  line-height: 28px;\n  text-align: center;\n  padding: 0;\n  cursor: pointer;\n  transition: background-color 0.15s ease;\n  user-select: none;\n}\n.tempo-step-btn:hover:not([disabled]) {\n  background-color: #554e60;\n}\n.tempo-step-btn[disabled] {\n  opacity: 0.4;\n  cursor: not-allowed;\n}\n.tempo-dropdown {\n  height: 28px;\n  background-color: #fff;\n  color: #111;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n  padding: 2px 4px;\n  font-size: 13px;\n  font-weight: 600;\n  cursor: pointer;\n  outline: none;\n  box-sizing: border-box;\n}\n.tempo-dropdown:focus {\n  border-color: #3d3846;\n}\n.tempo-dropdown[disabled] {\n  opacity: 0.5;\n  cursor: not-allowed;\n  background-color: #e5e7eb;\n}\n</style>\n\n<script>\n(function(scope) {\n  scope.selectedMin = scope.selectedMin ? String(scope.selectedMin) : \"60\";\n  scope.cronometro = scope.cronometro || \"60:00\";\n  scope.disabled = false;\n\n  scope.$watch('msg', function(msg) {\n    if (!msg) return;\n    if (typeof msg.cronometro === 'string' && msg.cronometro.length > 0) {\n      scope.cronometro = msg.cronometro;\n    } else if (typeof msg.payload === 'string') {\n      if (msg.payload.indexOf('TEMPO RESTANTE:') !== -1) {\n        scope.cronometro = msg.payload.replace('TEMPO RESTANTE:', '').trim();\n      } else {\n        scope.cronometro = msg.payload;\n      }\n    }\n    if (msg.minutos !== undefined && msg.minutos !== null) {\n      scope.selectedMin = String(msg.minutos);\n    }\n    if (msg.enabled !== undefined) {\n      scope.disabled = !msg.enabled;\n    }\n  });\n\n  scope.onTempoChange = function() {\n    if (scope.disabled) return;\n    var val = parseInt(scope.selectedMin, 10);\n    if (isNaN(val)) val = 60;\n    val = Math.max(10, Math.min(60, Math.round(val / 5) * 5));\n    scope.selectedMin = String(val);\n    scope.cronometro = (val < 10 ? '0' : '') + val + ':00';\n    scope.send({ payload: val });\n  };\n\n  scope.ajustar = function(delta) {\n    if (scope.disabled) return;\n    var val = parseInt(scope.selectedMin, 10);\n    if (isNaN(val)) val = 60;\n    val += delta;\n    val = Math.max(10, Math.min(60, Math.round(val / 5) * 5));\n    scope.selectedMin = String(val);\n    scope.cronometro = (val < 10 ? '0' : '') + val + ':00';\n    scope.send({ payload: val });\n  };\n})(this.scope || $scope);\n</script>",
-        "storeOutMessages": true,
-        "fwdInMessages": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 600,
-        "y": 722.6136363636364,
-        "wires": [
-            [
-                "fn_set_tempo_restante"
-            ]
-        ]
-    },
-    {
-        "id": "fbdf6e655e629e2d",
-        "type": "ui_button",
-        "z": "flow_pressao_full",
-        "name": "",
-        "group": "ui_group_pressao",
-        "order": 5,
-        "width": 6,
-        "height": 1,
-        "passthru": false,
-        "label": "INICIAR TESTE",
-        "tooltip": "",
-        "color": "",
-        "bgcolor": "#3D3846",
-        "className": "",
-        "icon": "",
-        "payload": "1",
-        "payloadType": "num",
-        "topic": "topic",
-        "topicType": "msg",
-        "x": 380,
-        "y": 476.0227272727275,
-        "wires": [
-            [
-                "49589c46b3396a0f"
-            ]
-        ]
-    },
-    {
-        "id": "191a5d981abaa499",
-        "type": "ui_button",
-        "z": "flow_pressao_full",
-        "name": "",
-        "group": "ui_group_pressao",
-        "order": 6,
-        "width": 6,
-        "height": 1,
-        "passthru": false,
-        "label": "FINALIZAR TESTE",
-        "tooltip": "",
-        "color": "",
-        "bgcolor": "#3D3846",
-        "className": "",
-        "icon": "",
-        "payload": "0",
-        "payloadType": "num",
-        "topic": "topic",
-        "topicType": "msg",
-        "x": 390,
-        "y": 580,
-        "wires": [
-            [
-                "6d54da2809aedd4d"
-            ]
-        ]
-    },
-    {
-        "id": "c27f650072a158be",
-        "type": "ui_numeric",
-        "z": "flow_pressao_full",
-        "name": "",
-        "label": "PRESSÃO DESEJADA:",
-        "tooltip": "",
-        "group": "ui_group_pressao",
-        "order": 7,
-        "width": 0,
-        "height": 0,
-        "wrap": false,
-        "passthru": false,
-        "topic": "topic",
-        "topicType": "msg",
-        "format": "{{value}} BAR",
-        "min": 0,
-        "max": 10,
-        "step": "0.5",
-        "className": "",
-        "x": 350,
-        "y": 214.43181818181816,
-        "wires": [
-            [
-                "fcc8d4b3097f775a",
-                "fn_cache_setpoint",
-                "9c879e7c29e0e8de"
-            ]
-        ]
-    },
-    {
-        "id": "a7c3f1d2b9e84f10",
-        "type": "ui_text",
-        "z": "flow_pressao_full",
-        "group": "ui_group_pressao",
-        "order": 4,
-        "width": 12,
-        "height": 1,
-        "name": "Status do teste",
-        "label": "STATUS:  ",
-        "format": "<div style=\"text-align:center; width:100%; font-weight:bold; font-size:15px; letter-spacing:1px; padding:6px 0; border-radius:6px; color:#fff; background:{{msg.color}};\">{{msg.payload}}</div>",
-        "layout": "row-center",
-        "className": "",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#000000",
-        "x": 660,
-        "y": 660,
-        "wires": []
-    },
-    {
-        "id": "fn_cache_valvula",
-        "type": "function",
-        "z": "flow_pressao_full",
-        "name": "Cache Válvula",
-        "func": "let val = !!msg.payload;\nflow.set('valvula', val);\nreturn { payload: val };",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 410,
-        "y": 877.0454545454543,
-        "wires": [
-            [
-                "15e0a5b19569ae15"
-            ]
-        ]
-    },
-    {
-        "id": "eth_in_setpoint",
-        "type": "eth-ip in",
-        "z": "flow_pressao_full",
-        "endpoint": "da562bad96c4eafe",
-        "mode": "single",
-        "variable": "setpoint_node",
-        "program": "",
-        "name": "SETPOINT",
-        "x": 160,
-        "y": 900,
-        "wires": [
-            [
-                "fn_cache_setpoint_plc"
-            ]
-        ]
-    },
-    {
-        "id": "fn_cache_setpoint",
-        "type": "function",
-        "z": "flow_pressao_full",
-        "name": "Cache Setpoint (tela)",
-        "func": "// Valor digitado na tela (PRESSÃO DESEJADA). Apenas memoriza: o Influx só recebe o setpoint TRAVADO durante o teste.\nif (msg.payload === null || msg.payload === undefined || msg.payload === '') return null;\nconst sp = Math.round(Number(msg.payload) * 100) / 100;\nif (!isNaN(sp)) {\n    flow.set('sp_ui', sp);\n    flow.set('sp_ui_t', Date.now());\n}\nreturn null;",
-        "outputs": 0,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 920,
-        "y": 180,
-        "wires": []
-    },
-    {
-        "id": "influx_out_setpoint",
-        "type": "influxdb out",
-        "z": "flow_pressao_full",
-        "influxdb": "235fd83d5ce9ea5d",
-        "name": "setpoint",
-        "measurement": "setpoint",
-        "precision": "",
-        "retentionPolicy": "",
-        "database": "database",
-        "precisionV18FluxV20": "ms",
-        "retentionPolicyV18Flux": "",
-        "org": "vigor",
-        "bucket": "carrinho",
-        "x": 980,
-        "y": 860,
-        "wires": []
-    },
-    {
-        "id": "inject_heartbeat",
-        "type": "inject",
-        "z": "flow_pressao_full",
-        "name": "Heartbeat 2s",
-        "props": [
-            {
-                "p": "payload"
-            }
-        ],
-        "repeat": "2",
-        "crontab": "",
-        "once": true,
-        "onceDelay": "1",
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 160,
-        "y": 980,
-        "wires": [
-            [
-                "fn_heartbeat"
-            ]
-        ]
-    },
-    {
-        "id": "fn_heartbeat",
-        "type": "function",
-        "z": "flow_pressao_full",
-        "name": "Keepalive InfluxDB",
-        "func": "// Roda a cada 2 s.\n// Saída 1: setpoint TRAVADO no início do teste -> InfluxDB, SOMENTE enquanto há teste em andamento.\n// Saída 2: estado da válvula (keepalive para o painel de status do Grafana).\nlet out1 = null;\nif (flow.get('ativo') === true) {\n    const sp = flow.get('sp_travado');\n    if (sp !== undefined && sp !== null && !isNaN(Number(sp))) out1 = { payload: Number(sp) };\n}\nconst val = flow.get('valvula');\nreturn [out1, { payload: (val === true || val === 1 || val === 'true') }];\n",
-        "outputs": 2,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 430,
-        "y": 1000,
-        "wires": [
-            [
-                "influx_out_setpoint"
-            ],
-            [
-                "15e0a5b19569ae15"
-            ]
-        ]
-    },
-    {
-        "id": "fn_cache_setpoint_plc",
-        "type": "function",
-        "z": "flow_pressao_full",
-        "name": "Cache Setpoint (CLP)",
-        "func": "// Último setpoint lido do CLP (setpoint_node). Sincroniza tela sem eco atrasado; não grava no Influx.\nif (msg.payload === null || msg.payload === undefined || msg.payload === '') return null;\nconst bruto = Number(msg.payload);\nif (isNaN(bruto)) return null;\nconst sp = Math.round(bruto * 100) / 100;\n\n// Filtro anti-eco atrasado: descarta leitura antiga caso o operador tenha acabado de alterar na tela\nif (Date.now() - (flow.get('sp_ui_t') || 0) < 1500 && Math.abs(sp - Number(flow.get('sp_ui'))) > 0.001) {\n    return null;\n}\n\nflow.set('sp_plc', sp);\nflow.set('sp_plc_t', Date.now());\nreturn [\n    { payload: sp },\n    flow.get('ativo') === true ? null : { payload: sp }\n];",
-        "outputs": 2,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 720,
-        "y": 960,
-        "wires": [
-            [
-                "9c879e7c29e0e8de"
-            ],
-            [
-                "c27f650072a158be"
-            ]
-        ]
-    },
-    {
-        "id": "eth_out_ciclo",
-        "type": "eth-ip out",
-        "z": "flow_pressao_full",
-        "endpoint": "da562bad96c4eafe",
-        "variable": "ciclo_node",
-        "program": "",
-        "name": "ciclo_node",
-        "x": 930,
-        "y": 660,
-        "wires": []
-    },
-    {
-        "id": "fn_ui_lock",
-        "type": "function",
-        "z": "flow_pressao_full",
-        "name": "Habilitar / Bloquear UI",
-        "func": "// Entrada: msg.payload = 'RODANDO' | 'PARADO' | 'BOOT'\n// Durante o teste: tudo desabilitado (msg.enabled = false), exceto FINALIZAR TESTE.\n// Fora do teste:   tudo habilitado, FINALIZAR TESTE desabilitado.\n// Ao iniciar o teste, no boot e ao finalizar: força on_node, off_node, onval_node e offval_node = false (LIBERAR MANUAL).\n// Saídas:\n// [0] Equipamento\n// [1] MOTOR -> { enabled, payload: 3 }\n// [2] VALVULA -> { enabled, payload: 3 }\n// [3] PRESSÃO DESEJADA -> { enabled, payload: sp }\n// [4] INICIAR TESTE -> { enabled }\n// [5] FINALIZAR TESTE -> { enabled }\n// [6] on_node (CLP) -> { payload: false }\n// [7] off_node (CLP) -> { payload: false }\n// [8] onval_node (CLP) -> { payload: false }\n// [9] offval_node (CLP) -> { payload: false }\n// [10] Seletor Tempo Restante -> { enabled, minutos }\n\nlet estado = msg.payload;\nif (estado === 'BOOT') estado = flow.get('ativo') === true ? 'RODANDO' : 'PARADO';\nconst rodando = estado === 'RODANDO';\n\n// Sempre garante que o estado do contexto reflita a liberação manual\nflow.set('motor_on', false);\nflow.set('on_node', false);\nflow.set('off_node', false);\nflow.set('valvula_manual_on', false);\nflow.set('onval_node', false);\nflow.set('offval_node', false);\n\nconst sp = flow.get('sp_travado');\nconst mostraSp = rodando && sp !== undefined && sp !== null;\n\nconst falseMsg = { payload: false };\n\nconst duracaoRef = (rodando ? flow.get('duracao_travada') : flow.get('duracao_selecionada')) || flow.get('duracao_teste') || 3600000;\nconst minutosSeletor = Math.round(Number(duracaoRef) / 60000);\n\nreturn [\n    { enabled: !rodando },\n    { enabled: !rodando, payload: 3 },\n    { enabled: !rodando, payload: 3 },\n    mostraSp ? { enabled: !rodando, payload: Number(sp) } : { enabled: !rodando },\n    { enabled: !rodando },\n    { enabled: rodando },\n    falseMsg,\n    falseMsg,\n    falseMsg,\n    falseMsg,\n    { enabled: !rodando, minutos: minutosSeletor }\n];",
-        "outputs": 11,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1040,
-        "y": 300,
-        "wires": [
-            [
-                "input_eq"
-            ],
-            [
-                "9641c0e83444adc3"
-            ],
-            [
-                "f20962dfb01ffb40"
-            ],
-            [
-                "c27f650072a158be"
-            ],
-            [
-                "fbdf6e655e629e2d"
-            ],
-            [
-                "191a5d981abaa499"
-            ],
-            [
-                "daa4f8544153c40e"
-            ],
-            [
-                "faecf82f35480bfa"
-            ],
-            [
-                "7a612cafc5aaba50"
-            ],
-            [
-                "0f43d59264e5b79e"
-            ],
-            [
-                "82d8edb1336a7da3"
-            ]
-        ]
-    },
-    {
-        "id": "inject_boot",
-        "type": "inject",
-        "z": "flow_pressao_full",
-        "name": "Estado inicial da UI (boot)",
-        "props": [
-            {
-                "p": "payload"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": true,
-        "onceDelay": "2",
-        "topic": "",
-        "payload": "BOOT",
-        "payloadType": "str",
-        "x": 450,
-        "y": 280,
-        "wires": [
-            [
-                "fn_ui_lock"
-            ]
-        ]
-    },
-    {
-        "id": "9c879e7c29e0e8de",
-        "type": "ui_text",
-        "z": "flow_pressao_full",
-        "group": "ui_group_pressao",
-        "order": 10,
-        "width": 6,
-        "height": 1,
-        "name": "",
-        "label": "Pressão definida do teste:",
-        "format": "{{msg.payload}} BAR",
-        "layout": "row-left",
-        "className": "",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#000000",
-        "x": 150,
-        "y": 280,
-        "wires": []
-    },
-    {
-        "id": "fn_ctrl_motor_manual",
-        "type": "function",
-        "z": "flow_pressao_full",
-        "name": "Controle Motor Manual",
-        "func": "const val = Number(msg.payload);\n\nif (val === 1) { // 1: MOTOR LIGADO\n    flow.set('motor_on', true);\n    flow.set('on_node', true);\n    flow.set('off_node', false);\n    node.send([{ payload: true }, { payload: false }]);\n    return;\n} else if (val === 2) { // 2: MOTOR DESLIGADO\n    flow.set('motor_on', false);\n    flow.set('on_node', false);\n    flow.set('off_node', true);\n    node.send([{ payload: false }, { payload: true }]);\n    return;\n} else { // 3: LIBERAR MANUAL\n    // Bobinas SET/RESET no CLP:\n    // 1. Desliga o comando de liga (on_node = false)\n    // 2. Dispara pulso rápido de RESET (off_node = true por 400ms, depois off_node = false)\n    flow.set('motor_on', false);\n    flow.set('on_node', false);\n    flow.set('off_node', true);\n\n    // Envia on_node = false e início do pulso off_node = true\n    node.send([{ payload: false }, { payload: true }]);\n\n    // Aguarda intervalo de 400ms (300ms a 500ms) para leitura pelo ciclo de scan do CLP\n    setTimeout(() => {\n        flow.set('off_node', false);\n        node.send([null, { payload: false }]); // Encerra pulso de RESET\n    }, 400);\n\n    return;\n}",
-        "outputs": 2,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 520,
-        "y": 140,
-        "wires": [
-            [
-                "daa4f8544153c40e"
-            ],
-            [
-                "faecf82f35480bfa"
-            ]
-        ]
-    },
-    {
-        "id": "fn_ctrl_valvula_manual",
-        "type": "function",
-        "z": "flow_pressao_full",
-        "name": "Controle Válvula Manual",
-        "func": "const val = Number(msg.payload);\n\nif (val === 1) { // 1: VÁLVULA ABERTA\n    flow.set('valvula_manual_on', true);\n    flow.set('onval_node', true);\n    flow.set('offval_node', false);\n    node.send([{ payload: true }, { payload: false }]);\n    return;\n} else if (val === 2) { // 2: VÁLVULA FECHADA\n    flow.set('valvula_manual_on', false);\n    flow.set('onval_node', false);\n    flow.set('offval_node', true);\n    node.send([{ payload: false }, { payload: true }]);\n    return;\n} else { // 3: LIBERAR MANUAL\n    // Bobinas SET/RESET no CLP:\n    // 1. Desliga o comando de abertura (onval_node = false)\n    // 2. Dispara pulso rápido de RESET (offval_node = true por 400ms, depois offval_node = false)\n    flow.set('valvula_manual_on', false);\n    flow.set('onval_node', false);\n    flow.set('offval_node', true);\n\n    // Envia onval_node = false e início do pulso offval_node = true\n    node.send([{ payload: false }, { payload: true }]);\n\n    // Aguarda intervalo de 400ms (300ms a 500ms) para leitura pelo ciclo de scan do CLP\n    setTimeout(() => {\n        flow.set('offval_node', false);\n        node.send([null, { payload: false }]); // Encerra pulso de RESET\n    }, 400);\n\n    return;\n}",
-        "outputs": 2,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 520,
-        "y": 380,
-        "wires": [
-            [
-                "7a612cafc5aaba50"
-            ],
-            [
-                "0f43d59264e5b79e"
-            ]
-        ]
-    },
-    {
-        "id": "fn_auto_cutoff_sp",
-        "type": "function",
-        "z": "flow_pressao_full",
-        "name": "Zeramento Automático Setpoint",
-        "func": "// Monitora a tag COMPARACAO do CLP e a pressão RETORNO_BAR para forçar on_node = false em definitivo ao atingir o setpoint\n\nlet atingiuSetpoint = false;\n\n// Caso 1: Leitura da tag COMPARACAO do CLP (BOOL: true quando pressão do sensor >= setpoint)\nif (typeof msg.payload === 'boolean' || msg.variable === 'COMPARACAO' || msg.topic === 'COMPARACAO') {\n    if (msg.payload === true || msg.payload === 1 || msg.payload === 'true') {\n        atingiuSetpoint = true;\n    }\n}\n\n// Caso 2: Leitura direta de pressão (RETORNO_BAR)\nconst pressao = Number(msg.payload);\nif (!atingiuSetpoint && !isNaN(pressao)) {\n    const sp = Number(flow.get('sp_travado') ?? flow.get('sp_ui') ?? flow.get('sp_plc') ?? 0);\n    if (sp > 0 && pressao >= sp) {\n        atingiuSetpoint = true;\n    }\n}\n\n// Se atingiu o setpoint (por COMPARACAO == true ou pressao >= sp):\n// Força on_node = false em definitivo, envia pulso de reset em off_node (400ms) e reseta o seletor do motor para Liberar Manual\nif (atingiuSetpoint) {\n    flow.set('motor_on', false);\n    flow.set('on_node', false);\n    flow.set('off_node', true);\n\n    // [0] on_node: false | [1] off_node: true (início do pulso de reset) | [2] seletor MOTOR: 3 (LIBERAR MANUAL)\n    node.send([\n        { payload: false },\n        { payload: true },\n        { payload: 3 }\n    ]);\n\n    setTimeout(() => {\n        flow.set('off_node', false);\n        node.send([null, { payload: false }, null]); // Encerra pulso de reset\n    }, 400);\n\n    return;\n}\n\n// Quando a pressão cair abaixo do setpoint (COMPARACAO vira false):\n// NÃO religa o motor sozinho. Permanece desligado até nova ação manual do operador.\nreturn null;",
-        "outputs": 3,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 730,
-        "y": 280,
-        "wires": [
-            [
-                "daa4f8544153c40e"
-            ],
-            [
-                "faecf82f35480bfa"
-            ],
-            [
-                "9641c0e83444adc3"
-            ]
-        ]
-    },
-    {
-        "id": "eth_in_bomba",
-        "type": "eth-ip in",
-        "z": "flow_pressao_full",
-        "endpoint": "da562bad96c4eafe",
-        "mode": "single",
-        "variable": "_IO_EM_DO_01",
-        "program": "",
-        "name": "BOMBA FISICA",
-        "x": 160,
-        "y": 720,
-        "wires": [
-            [
-                "fn_cache_bomba"
-            ]
-        ]
-    },
-    {
-        "id": "fn_cache_bomba",
-        "type": "function",
-        "z": "flow_pressao_full",
-        "name": "Cache Bomba Física",
-        "func": "let b = msg.payload === true || msg.payload === 1 || msg.payload === 'true';\nflow.set('bomba_fisica', b);\nreturn { payload: b };",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 380,
-        "y": 720,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "ui_template_mobile_css",
-        "type": "ui_template",
-        "z": "flow_pressao_full",
-        "group": "",
-        "name": "CSS Mobile Responsivo",
-        "order": 0,
-        "width": 0,
-        "height": 0,
-        "format": "<style>\n@media only screen and (max-width: 768px) {\n    /* 1. Reset Global e Prevenção de Transbordamento Horizontal */\n    *, *::before, *::after {\n        box-sizing: border-box !important;\n    }\n\n    html, body, #nr-dashboard {\n        width: 100% !important;\n        max-width: 100% !important;\n        overflow-x: hidden !important;\n        margin: 0 !important;\n        padding: 0 !important;\n        position: relative !important;\n        -webkit-overflow-scrolling: touch !important;\n    }\n\n    /* 2. Containers Intermediários do Angular Material */\n    md-toolbar,\n    .md-toolbar-tools,\n    section[layout=\"row\"],\n    md-content,\n    md-content.maincontent,\n    div[ui-masonry],\n    ui-card-panel,\n    .nr-dashboard-cardpanel {\n        width: 100% !important;\n        max-width: 100% !important;\n        overflow-x: hidden !important;\n        box-sizing: border-box !important;\n        margin-left: 0 !important;\n        margin-right: 0 !important;\n        padding-left: 4px !important;\n        padding-right: 4px !important;\n    }\n\n    .md-toolbar-tools {\n        padding-left: 8px !important;\n        padding-right: 8px !important;\n    }\n\n    .md-toolbar-tools h1 {\n        font-size: 16px !important;\n        white-space: nowrap !important;\n        overflow: hidden !important;\n        text-overflow: ellipsis !important;\n    }\n\n    p.nr-dashboard-cardtitle {\n        width: 100% !important;\n        max-width: 100% !important;\n        box-sizing: border-box !important;\n    }\n\n    /* 3. Painel e Grid Container Flexível */\n    .nr-dashboard-cardcontainer {\n        display: flex !important;\n        flex-wrap: wrap !important;\n        justify-content: space-between !important;\n        align-items: stretch !important;\n        width: 100% !important;\n        max-width: 100% !important;\n        min-width: 0 !important;\n        height: auto !important;\n        position: relative !important;\n        margin: 0 auto !important;\n        padding: 4px 0 !important;\n        gap: 8px !important;\n        box-sizing: border-box !important;\n        overflow-x: hidden !important;\n    }\n\n    /* 4. Cada card (md-card) filho passa a fluir no layout flex com largura total */\n    .nr-dashboard-cardcontainer > md-card {\n        position: relative !important;\n        left: auto !important;\n        top: auto !important;\n        right: auto !important;\n        bottom: auto !important;\n        width: 100% !important;\n        max-width: 100% !important;\n        min-width: 0 !important;\n        height: auto !important;\n        min-height: 48px !important;\n        margin: 0 !important;\n        box-sizing: border-box !important;\n        overflow: hidden !important;\n        flex: 1 1 100% !important;\n    }\n\n    /* Em tablets pequenos ou telas landscape (481px a 768px), componentes de 6 colunas formam pares lado a lado */\n    @media only screen and (min-width: 481px) and (max-width: 768px) {\n        .nr-dashboard-cardcontainer > md-card[ui-card-size^=\"6x\"] {\n            width: calc(50% - 4px) !important;\n            flex: 1 1 calc(50% - 4px) !important;\n            max-width: calc(50% - 4px) !important;\n        }\n    }\n\n    /* 5. Centralização Perfeita do Manômetro / Gráfico (JustGage) no Mobile */\n    md-card[node-id=\"gauge\"] {\n        display: flex !important;\n        flex-direction: column !important;\n        align-items: center !important;\n        justify-content: center !important;\n        text-align: center !important;\n    }\n\n    .nr-dashboard-gauge,\n    div[id^=\"gauge_\"] {\n        max-width: 100% !important;\n        width: 100% !important;\n        height: auto !important;\n        box-sizing: border-box !important;\n        overflow: hidden !important;\n        display: flex !important;\n        justify-content: center !important;\n        align-items: center !important;\n        margin: 0 auto !important;\n        text-align: center !important;\n    }\n\n    .nr-dashboard-gauge svg {\n        max-width: 100% !important;\n        width: 100% !important;\n        height: auto !important;\n        display: block !important;\n        margin: 0 auto !important;\n        overflow: hidden !important;\n    }\n\n    .nr-dashboard-gauge-title {\n        text-align: center !important;\n        width: 100% !important;\n        margin: 8px auto 4px auto !important;\n    }\n\n    /* 6. Ajustes de botões, inputs, dropdowns e templates */\n    .nr-dashboard-button,\n    .nr-dashboard-button .md-button,\n    .nr-dashboard-dropdown,\n    .nr-dashboard-dropdown md-input-container,\n    .nr-dashboard-dropdown md-select,\n    .nr-dashboard-dropdown .md-select-value,\n    .nr-dashboard-numeric,\n    .nr-dashboard-textinput,\n    .nr-dashboard-textinput md-input-container,\n    .nr-dashboard-text,\n    .nr-dashboard-template {\n        width: 100% !important;\n        max-width: 100% !important;\n        box-sizing: border-box !important;\n        overflow: hidden !important;\n    }\n\n    .nr-dashboard-button .md-button {\n        min-height: 44px !important;\n        margin: 0 !important;\n    }\n\n    .nr-dashboard-numeric input.value {\n        max-width: 80px !important;\n    }\n}\n</style>\n\n<script>\n// Garante centralização e escala perfeita do gráfico de manômetro (JustGage/Raphaël) no celular\n(function() {\n    function autoCenterGauge() {\n        var svg = document.querySelector('.nr-dashboard-gauge svg');\n        if (!svg) return;\n        if (window.innerWidth <= 768) {\n            if (svg.getBBox) {\n                try {\n                    var bb = svg.getBBox();\n                    if (bb.width > 0 && bb.height > 0) {\n                        var pad = 10;\n                        var vx = bb.x - pad;\n                        var vy = bb.y - pad;\n                        var vw = bb.width + (pad * 2);\n                        var vh = bb.height + (pad * 2);\n                        var newVb = vx + \" \" + vy + \" \" + vw + \" \" + vh;\n                        if (svg.getAttribute('viewBox') !== newVb) {\n                            svg.setAttribute('viewBox', newVb);\n                            svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');\n                        }\n                    }\n                } catch(e) {}\n            }\n        } else {\n            if (svg.getAttribute('viewBox')) {\n                svg.removeAttribute('viewBox');\n                svg.removeAttribute('preserveAspectRatio');\n            }\n        }\n    }\n    setInterval(autoCenterGauge, 500);\n})();\n</script>",
-        "storeOutMessages": false,
-        "fwdInMessages": false,
-        "resendOnRefresh": false,
-        "templateScope": "global",
-        "className": "",
-        "x": 170,
-        "y": 60,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "fn_set_tempo_restante",
-        "type": "function",
-        "z": "flow_pressao_full",
-        "name": "Definir Tempo Restante",
-        "func": "if (flow.get('ativo') === true) return null;\n\nconst val = parseInt(msg.payload, 10);\nif (isNaN(val) || val < 10 || val > 60) return null;\n\n// Garante intervalo de 5 em 5 entre 10 e 60 minutos\nconst min = Math.max(10, Math.min(60, Math.round(val / 5) * 5));\nconst duracaoMs = min * 60 * 1000;\n\nflow.set('duracao_selecionada', duracaoMs);\nflow.set('duracao_teste', duracaoMs);\nflow.set('tempo_restante', min);\n\nconst mm = String(min).padStart(2, '0');\nconst texto = `TEMPO RESTANTE: ${mm}:00`;\n\nreturn {\n    payload: texto,\n    cronometro: `${mm}:00`,\n    minutos: min,\n    enabled: true\n};",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 840,
-        "y": 722.6136363636364,
-        "wires": [
-            [
-                "82d8edb1336a7da3"
-            ]
-        ]
-    },
-    {
-        "id": "eth_in_comparacao",
-        "type": "eth-ip in",
-        "z": "flow_pressao_full",
-        "endpoint": "da562bad96c4eafe",
-        "mode": "single",
-        "variable": "COMPARACAO",
-        "program": "",
-        "name": "COMPARACAO",
-        "x": 160,
-        "y": 620,
-        "wires": [
-            [
-                "fn_auto_cutoff_sp"
-            ]
-        ]
+    "site": {
+      "name": "TESTE PRESSAO",
+      "hideToolbar": "false",
+      "allowSwipe": "false",
+      "lockMenu": "false",
+      "allowTempTheme": "true",
+      "dateFormat": "DD/MM/YYYY",
+      "sizes": {
+        "sx": 48,
+        "sy": 48,
+        "gx": 6,
+        "gy": 6,
+        "cx": 6,
+        "cy": 6,
+        "px": 0,
+        "py": 0
+      }
     }
+  },
+  {
+    "id": "235fd83d5ce9ea5d",
+    "type": "influxdb",
+    "hostname": "host.docker.internal",
+    "port": 8086,
+    "protocol": "http",
+    "database": "database",
+    "name": "influxd",
+    "usetls": false,
+    "tls": "",
+    "influxdbVersion": "2.0",
+    "url": "http://host.docker.internal:8086",
+    "timeout": 10,
+    "rejectUnauthorized": true
+  },
+  {
+    "id": "da562bad96c4eafe",
+    "type": "eth-ip endpoint",
+    "address": "192.168.1.33",
+    "slot": "0",
+    "cycletime": "500",
+    "name": "",
+    "vartable": {
+      "": {
+        "on_node": {
+          "type": "BOOL"
+        },
+        "off_node": {
+          "type": "BOOL"
+        },
+        "onval_node": {
+          "type": "BOOL"
+        },
+        "offval_node": {
+          "type": "BOOL"
+        },
+        "setpoint_node": {
+          "type": "REAL"
+        },
+        "ciclo_node": {
+          "type": "BOOL"
+        },
+        "RETORNO_BAR": {
+          "type": "REAL"
+        },
+        "_IO_EM_DO_00": {
+          "type": "BOOL"
+        },
+        "_IO_EM_DO_01": {
+          "type": "BOOL"
+        },
+        "COMPARACAO": {
+          "type": "BOOL"
+        }
+      }
+    }
+  },
+  {
+    "id": "fn_set_eq",
+    "type": "function",
+    "z": "flow_pressao_full",
+    "name": "Salvar Equipamento",
+    "func": "if (flow.get('ativo') === true) return null;\nflow.set('equipamento', msg.payload);\nreturn null;",
+    "outputs": 1,
+    "timeout": "",
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 660,
+    "y": 60,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "4e72940d3bb63eec",
+    "type": "file",
+    "z": "flow_pressao_full",
+    "name": "",
+    "filename": "filename",
+    "filenameType": "msg",
+    "appendNewline": false,
+    "createDir": true,
+    "overwriteFile": "true",
+    "encoding": "utf8",
+    "x": 980,
+    "y": 493.1818181818184,
+    "wires": [
+      [
+        "e32ec29ac871e4f2"
+      ]
+    ]
+  },
+  {
+    "id": "38510ae3de26350c",
+    "type": "exec",
+    "z": "flow_pressao_full",
+    "command": "chromium-browser",
+    "addpay": "payload",
+    "append": "",
+    "useSpawn": "false",
+    "timer": "30",
+    "winHide": false,
+    "oldrc": false,
+    "name": "Gerar PDF (Chromium)",
+    "x": 1290,
+    "y": 517.8409090909093,
+    "wires": [
+      [],
+      [],
+      [
+        "fn_verifica_pdf"
+      ]
+    ]
+  },
+  {
+    "id": "e32ec29ac871e4f2",
+    "type": "function",
+    "z": "flow_pressao_full",
+    "name": "Comando Chromium",
+    "func": "// Argumentos do Chromium headless (o executável está no nó \"Gerar PDF (Chromium)\").\n// --disable-dev-shm-usage evita falha de memória compartilhada (/dev/shm de 64 MB no Docker).\n// --no-pdf-header-footer remove a data em inglês e o título impressos pelo navegador.\nconst pdf  = msg.pdfFile;\nconst html = msg.filename || \"/tmp/relatorio.html\";\nmsg.payload = `--headless --no-sandbox --disable-gpu --disable-dev-shm-usage --no-pdf-header-footer --print-to-pdf=\"${pdf}\" \"${html}\"`;\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 1160,
+    "y": 640,
+    "wires": [
+      [
+        "38510ae3de26350c"
+      ]
+    ]
+  },
+  {
+    "id": "e6f4ca59a0787570",
+    "type": "inject",
+    "z": "flow_pressao_full",
+    "name": "",
+    "props": [
+      {
+        "p": "payload"
+      },
+      {
+        "p": "topic",
+        "vt": "str"
+      }
+    ],
+    "repeat": "1",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 120,
+    "y": 673.2954545454546,
+    "wires": [
+      [
+        "5214bd83dc5b5467"
+      ]
+    ]
+  },
+  {
+    "id": "8525c1d000560d34",
+    "type": "template",
+    "z": "flow_pressao_full",
+    "name": "Relatório  HTML",
+    "field": "payload",
+    "fieldType": "msg",
+    "format": "html",
+    "syntax": "mustache",
+    "template": "<!DOCTYPE html>\n<html lang=\"pt-BR\">\n<head>\n<meta charset=\"UTF-8\">\n<title>Relatório de Teste de Pressão</title>\n<style>\n    @page {\n        size: A4 landscape;\n        margin: 10mm;\n    }\n\n    *, *::before, *::after {\n        box-sizing: border-box;\n    }\n\n    html, body {\n        margin: 0;\n        padding: 0;\n        width: 100%;\n        font-family: Arial, Helvetica, sans-serif;\n        color: #111827;\n        -webkit-print-color-adjust: exact;\n        print-color-adjust: exact;\n    }\n\n    .container {\n        width: 100%;\n        height: 188mm;\n        max-height: 188mm;\n        overflow: hidden;\n        border: 2px solid #111827;\n        padding: 10px 14px;\n        display: flex;\n        flex-direction: column;\n        justify-content: space-between;\n        page-break-inside: avoid;\n        break-inside: avoid;\n    }\n\n    /* Cabeçalho horizontal */\n    .header {\n        display: flex;\n        justify-content: space-between;\n        align-items: center;\n        padding-bottom: 6px;\n        border-bottom: 1.5px solid #e5e7eb;\n    }\n\n    .header-info {\n        display: flex;\n        flex-direction: column;\n        gap: 3px;\n    }\n\n    .header-title {\n        margin: 0;\n        font-size: 18px;\n        font-weight: 800;\n        letter-spacing: 0.5px;\n        color: #111827;\n        text-transform: uppercase;\n    }\n\n    .header-meta {\n        display: flex;\n        align-items: center;\n        gap: 12px;\n        font-size: 11px;\n        color: #4b5563;\n    }\n\n    .meta-sep {\n        color: #9ca3af;\n    }\n\n    .header-badge {\n        font-size: 15px;\n        font-weight: 800;\n        letter-spacing: 1px;\n        padding: 6px 20px;\n        border-radius: 6px;\n        text-align: center;\n        white-space: nowrap;\n        text-transform: uppercase;\n    }\n\n    /* Faixa de Indicadores (6 colunas) */\n    .kpis {\n        display: grid;\n        grid-template-columns: repeat(6, 1fr);\n        gap: 8px;\n        margin: 6px 0;\n    }\n\n    .kpi-card {\n        background: #f9fafb;\n        border: 1px solid #e5e7eb;\n        border-radius: 6px;\n        padding: 5px 4px;\n        text-align: center;\n    }\n\n    .kpi-label {\n        font-size: 10px;\n        font-weight: 600;\n        color: #6b7280;\n        text-transform: uppercase;\n        letter-spacing: 0.3px;\n        margin-bottom: 2px;\n        white-space: nowrap;\n        overflow: hidden;\n        text-overflow: ellipsis;\n    }\n\n    .kpi-value {\n        font-size: 13px;\n        font-weight: 800;\n        color: #111827;\n    }\n\n    /* Quadro Central do Gráfico */\n    .chart-box {\n        border: 1px solid #d1d5db;\n        border-radius: 6px;\n        padding: 6px 10px 4px 10px;\n        display: flex;\n        flex-direction: column;\n        flex: 1;\n        min-height: 0;\n        background: #ffffff;\n    }\n\n    .chart-title {\n        text-align: center;\n        font-size: 11px;\n        font-weight: 700;\n        color: #374151;\n        margin-bottom: 2px;\n        text-transform: uppercase;\n        letter-spacing: 0.3px;\n    }\n\n    .chart-box svg {\n        display: block;\n        width: 100%;\n        height: 100%;\n        flex: 1;\n        min-height: 0;\n    }\n\n    /* Rodapé */\n    .footer {\n        display: flex;\n        justify-content: space-between;\n        align-items: flex-end;\n        padding-top: 6px;\n        border-top: 1px solid #e5e7eb;\n    }\n\n    .signature-block {\n        display: flex;\n        flex-direction: column;\n        align-items: center;\n        width: 250px;\n    }\n\n    .signature-line {\n        width: 100%;\n        border-top: 1px solid #4b5563;\n        margin-bottom: 4px;\n    }\n\n    .signature-text {\n        font-size: 10px;\n        color: #4b5563;\n        text-transform: uppercase;\n        letter-spacing: 0.5px;\n    }\n\n    .emission-date {\n        font-size: 10.5px;\n        color: #4b5563;\n    }\n</style>\n</head>\n<body>\n\n<div class=\"container\">\n\n    <!-- Cabeçalho Integrado no Topo -->\n    <header class=\"header\">\n        <div class=\"header-info\">\n            <h1 class=\"header-title\">RELATÓRIO DE TESTE DE PRESSÃO</h1>\n            <div class=\"header-meta\">\n                <span><strong>Equipamento:</strong> {{payload.equipamento}}</span>\n                <span class=\"meta-sep\">•</span>\n                <span><strong>Início:</strong> {{{payload.inicio}}}</span>\n                <span class=\"meta-sep\">•</span>\n                <span><strong>Fim:</strong> {{{payload.fim}}}</span>\n                <span class=\"meta-sep\">•</span>\n                <span><strong>Duração:</strong> {{payload.duracaoMin}} min</span>\n            </div>\n        </div>\n        <div class=\"header-badge\" style=\"color: {{payload.statusCor}}; background: {{payload.statusBg}}; border: 1.5px solid {{payload.statusBorda}};\">\n            {{payload.status}}\n        </div>\n    </header>\n\n    <!-- Faixa Horizontal Única de Indicadores -->\n    <section class=\"kpis\">\n        <div class=\"kpi-card\">\n            <div class=\"kpi-label\">Setpoint</div>\n            <div class=\"kpi-value\">{{payload.spFmt}} bar</div>\n        </div>\n        <div class=\"kpi-card\">\n            <div class=\"kpi-label\">Pressão Média</div>\n            <div class=\"kpi-value\">{{payload.media}} bar</div>\n        </div>\n        <div class=\"kpi-card\">\n            <div class=\"kpi-label\">Pressão Mínima</div>\n            <div class=\"kpi-value\">{{payload.min}} bar</div>\n        </div>\n        <div class=\"kpi-card\">\n            <div class=\"kpi-label\">Pressão Máxima</div>\n            <div class=\"kpi-value\">{{payload.max}} bar</div>\n        </div>\n        <div class=\"kpi-card\">\n            <div class=\"kpi-label\">Erro Máximo</div>\n            <div class=\"kpi-value\">{{payload.erro}} bar</div>\n        </div>\n        <div class=\"kpi-card\">\n            <div class=\"kpi-label\">Tolerância Máx.</div>\n            <div class=\"kpi-value\">± {{payload.toleranciaFmt}} bar</div>\n        </div>\n    </section>\n\n    <!-- Quadro Central do Gráfico Panorâmico -->\n    <section class=\"chart-box\">\n        <div class=\"chart-title\">Gráfico de Estabilidade de Pressão (0 a 10 bar)</div>\n        <svg viewBox=\"0 0 1200 460\" preserveAspectRatio=\"xMidYMid meet\" xmlns=\"http://www.w3.org/2000/svg\">\n            <defs>\n                <style>\n                    .grid-sub { stroke: #f1f5f9; stroke-width: 1; stroke-dasharray: 3,3; }\n                    .grid-main { stroke: #e2e8f0; stroke-width: 1; }\n                    .axis-base { stroke: #334155; stroke-width: 1.5; }\n                    .axis-text { font-family: Arial, Helvetica, sans-serif; font-size: 11px; fill: #64748b; }\n                    .time-text { font-family: Arial, Helvetica, sans-serif; font-size: 11px; fill: #475569; text-anchor: middle; }\n                    .legend-text { font-family: Arial, Helvetica, sans-serif; font-size: 11px; fill: #334155; font-weight: 600; }\n                </style>\n                <clipPath id=\"plot-clip\">\n                    <rect x=\"60\" y=\"28\" width=\"1080\" height=\"364\" />\n                </clipPath>\n            </defs>\n\n            <!-- Faixa Visual da Zona de Tolerância Aprovada -->\n            <rect x=\"60\" y=\"{{payload.faixaTolY}}\" width=\"1080\" height=\"{{payload.faixaTolAltura}}\" fill=\"#dcfce7\" opacity=\"0.75\" />\n\n            <!-- Sub-grade tracejada leve a cada 0.5 bar (a cada 18 unidades) -->\n            <line x1=\"60\" y1=\"372\" x2=\"1140\" y2=\"372\" class=\"grid-sub\" />\n            <line x1=\"60\" y1=\"336\" x2=\"1140\" y2=\"336\" class=\"grid-sub\" />\n            <line x1=\"60\" y1=\"300\" x2=\"1140\" y2=\"300\" class=\"grid-sub\" />\n            <line x1=\"60\" y1=\"264\" x2=\"1140\" y2=\"264\" class=\"grid-sub\" />\n            <line x1=\"60\" y1=\"228\" x2=\"1140\" y2=\"228\" class=\"grid-sub\" />\n            <line x1=\"60\" y1=\"192\" x2=\"1140\" y2=\"192\" class=\"grid-sub\" />\n            <line x1=\"60\" y1=\"156\" x2=\"1140\" y2=\"156\" class=\"grid-sub\" />\n            <line x1=\"60\" y1=\"120\" x2=\"1140\" y2=\"120\" class=\"grid-sub\" />\n            <line x1=\"60\" y1=\"84\" x2=\"1140\" y2=\"84\" class=\"grid-sub\" />\n            <line x1=\"60\" y1=\"48\" x2=\"1140\" y2=\"48\" class=\"grid-sub\" />\n\n            <!-- Linhas de grade principais horizontais (0 a 10 bar a cada 36 unidades) e rótulos do eixo Y -->\n            <line x1=\"60\" y1=\"390\" x2=\"1140\" y2=\"390\" class=\"axis-base\" />\n            <text x=\"50\" y=\"394\" class=\"axis-text\" text-anchor=\"end\">0</text>\n\n            <line x1=\"60\" y1=\"354\" x2=\"1140\" y2=\"354\" class=\"grid-main\" />\n            <text x=\"50\" y=\"358\" class=\"axis-text\" text-anchor=\"end\">1</text>\n\n            <line x1=\"60\" y1=\"318\" x2=\"1140\" y2=\"318\" class=\"grid-main\" />\n            <text x=\"50\" y=\"322\" class=\"axis-text\" text-anchor=\"end\">2</text>\n\n            <line x1=\"60\" y1=\"282\" x2=\"1140\" y2=\"282\" class=\"grid-main\" />\n            <text x=\"50\" y=\"286\" class=\"axis-text\" text-anchor=\"end\">3</text>\n\n            <line x1=\"60\" y1=\"246\" x2=\"1140\" y2=\"246\" class=\"grid-main\" />\n            <text x=\"50\" y=\"250\" class=\"axis-text\" text-anchor=\"end\">4</text>\n\n            <line x1=\"60\" y1=\"210\" x2=\"1140\" y2=\"210\" class=\"grid-main\" />\n            <text x=\"50\" y=\"214\" class=\"axis-text\" text-anchor=\"end\">5</text>\n\n            <line x1=\"60\" y1=\"174\" x2=\"1140\" y2=\"174\" class=\"grid-main\" />\n            <text x=\"50\" y=\"178\" class=\"axis-text\" text-anchor=\"end\">6</text>\n\n            <line x1=\"60\" y1=\"138\" x2=\"1140\" y2=\"138\" class=\"grid-main\" />\n            <text x=\"50\" y=\"142\" class=\"axis-text\" text-anchor=\"end\">7</text>\n\n            <line x1=\"60\" y1=\"102\" x2=\"1140\" y2=\"102\" class=\"grid-main\" />\n            <text x=\"50\" y=\"106\" class=\"axis-text\" text-anchor=\"end\">8</text>\n\n            <line x1=\"60\" y1=\"66\" x2=\"1140\" y2=\"66\" class=\"grid-main\" />\n            <text x=\"50\" y=\"70\" class=\"axis-text\" text-anchor=\"end\">9</text>\n\n            <line x1=\"60\" y1=\"30\" x2=\"1140\" y2=\"30\" class=\"grid-main\" />\n            <text x=\"50\" y=\"34\" class=\"axis-text\" text-anchor=\"end\">10</text>\n\n            <!-- Linhas de grade verticais e rótulos de tempo dinâmicos no eixo X -->\n            {{#payload.eixoX}}\n            <line x1=\"{{x}}\" y1=\"30\" x2=\"{{x}}\" y2=\"390\" class=\"{{classe}}\" />\n            <text x=\"{{x}}\" y=\"415\" class=\"time-text\">{{rotulo}}</text>\n            {{/payload.eixoX}}\n\n            <!-- Linha de Setpoint Vermelha Tracejada -->\n            <line x1=\"60\" y1=\"{{payload.linhaSP}}\" x2=\"1140\" y2=\"{{payload.linhaSP}}\" stroke=\"#dc2626\" stroke-width=\"2\" stroke-dasharray=\"7,4\" />\n\n            <!-- Curva de Pressão Azul -->\n            <polyline clip-path=\"url(#plot-clip)\" fill=\"none\" stroke=\"#2563eb\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" points=\"{{payload.pontos}}\" />\n\n            <!-- Marcador de Falha Condicional -->\n            {{#payload.falhaX}}\n            <circle cx=\"{{payload.falhaX}}\" cy=\"{{payload.falhaY}}\" r=\"5.5\" fill=\"#dc2626\" stroke=\"#ffffff\" stroke-width=\"2\" />\n            <text x=\"{{payload.falhaX}}\" y=\"{{payload.falhaYTxt}}\" font-family=\"Arial, Helvetica, sans-serif\" font-size=\"12\" font-weight=\"bold\" text-anchor=\"{{payload.falhaAnchor}}\" fill=\"#b91c1c\">\n                FALHA: {{payload.falhaValor}} bar\n            </text>\n            {{/payload.falhaX}}\n\n            <!-- Legenda Horizontal na Base do SVG (y=442) -->\n            <line x1=\"320\" y1=\"442\" x2=\"350\" y2=\"442\" stroke=\"#2563eb\" stroke-width=\"2.5\" />\n            <text x=\"358\" y=\"446\" class=\"legend-text\">Pressão</text>\n\n            <line x1=\"470\" y1=\"442\" x2=\"505\" y2=\"442\" stroke=\"#dc2626\" stroke-width=\"2\" stroke-dasharray=\"6,3\" />\n            <text x=\"513\" y=\"446\" class=\"legend-text\">Setpoint</text>\n\n            <rect x=\"635\" y=\"434\" width=\"24\" height=\"15\" fill=\"#dcfce7\" stroke=\"#16a34a\" stroke-width=\"1\" rx=\"2\" />\n            <text x=\"667\" y=\"446\" class=\"legend-text\">Faixa de Tolerância Aprovada</text>\n        </svg>\n    </section>\n\n    <!-- Rodapé Horizontal Compacto -->\n    <footer class=\"footer\">\n        <div class=\"signature-block\">\n            <div class=\"signature-line\"></div>\n            <div class=\"signature-text\">Responsável pelo teste</div>\n        </div>\n        <div class=\"emission-date\">\n            <strong>Data de Emissão:</strong> {{{payload.emissao}}}\n        </div>\n    </footer>\n\n</div>\n\n</body>\n</html>",
+    "x": 900,
+    "y": 580,
+    "wires": [
+      [
+        "4e72940d3bb63eec"
+      ]
+    ]
+  },
+  {
+    "id": "7d655f418f1c0085",
+    "type": "function",
+    "z": "flow_pressao_full",
+    "name": "Coleta pressão",
+    "func": "// Recebe leituras reais de RETORNO_BAR (eth-ip in) e amostras periódicas de keepalive durante o ensaio\nif (msg.payload === null || msg.payload === undefined || msg.payload === '') return null;\n\nlet bruto = Number(msg.payload);\nif (!Number.isFinite(bruto)) return null;\n\n// Corrige pequeno desvio negativo de zero (4-20 mA) e permite leitura real de 0.00 bar (manômetro e ruptura)\nlet valor = bruto < 0 ? 0 : bruto;\nlet agora = Date.now();\nlet ativo = flow.get('ativo') === true;\nlet isKeepalive = msg._keepalive === true;\n\nif (!isKeepalive) {\n    flow.set('pressao_atual', valor);\n    flow.set('pressao_atual_t', agora);\n}\n\n// Fora de ensaio: atualiza apenas o manômetro em tempo real sem acumular memória à toa\nif (!ativo) {\n    return isKeepalive ? null : { payload: valor };\n}\n\n// Se for amostra de keepalive (2 s) e uma leitura real do CLP acabou de ser gravada (< 950 ms), evita duplicidade\nif (isKeepalive && (agora - (flow.get('ultima_coleta_t') || 0)) < 950) {\n    return null;\n}\n\nflow.set('ultima_coleta_t', agora);\n\n// Acumuladores do ensaio ativo\nlet soma = flow.get('soma') || 0;\nlet qtd = flow.get('qtd') || 0;\nsoma += valor;\nqtd += 1;\nflow.set('soma', soma);\nflow.set('qtd', qtd);\n\nlet min = flow.get('min');\nlet max = flow.get('max');\nif (min === null || min === undefined || valor < min) flow.set('min', valor);\nif (max === null || max === undefined || valor > max) flow.set('max', valor);\n\nlet historico = flow.get('historico') || [];\nhistorico.push({ v: valor, t: agora });\n\n// Poda O(1) amortizada na cabeça da fila (preserva toda a janela do ensaio + 2 min de margem)\nconst janelaMs = (flow.get('duracao_travada') || flow.get('duracao_teste') || 3600000) + 120000;\nlet corte = 0;\nwhile (corte < historico.length && (agora - historico[corte].t) > janelaMs) {\n    corte++;\n}\nif (corte > 0) {\n    historico.splice(0, corte);\n}\n\nflow.set('historico', historico);\n\nreturn isKeepalive ? null : { payload: valor };",
+    "outputs": 1,
+    "timeout": "",
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 480,
+    "y": 756.9318181818181,
+    "wires": [
+      [
+        "gauge"
+      ]
+    ]
+  },
+  {
+    "id": "5214bd83dc5b5467",
+    "type": "function",
+    "z": "flow_pressao_full",
+    "name": "Decremento de tempo",
+    "func": "// Roda a cada 1 s (inject). Saídas: 1 = tempo restante | 2 = finalização automática | 3 = status do teste\nconst fmt = (ms) => {\n    const total = Math.max(0, Math.ceil(ms / 1000));      // segundos restantes (arredonda p/ cima)\n    const mm = String(Math.floor(total / 60)).padStart(2, '0');\n    const ss = String(total % 60).padStart(2, '0');\n    return `${mm}:${ss}`;\n};\nconst tempo = (ms, enabled, minSelect) => {\n    const totalSec = Math.max(0, Math.ceil(ms / 1000));\n    const crono = fmt(ms);\n    return {\n        payload: `TEMPO RESTANTE: ${crono}`,\n        cronometro: crono,\n        segundos: totalSec,\n        minutos: minSelect,\n        enabled: enabled\n    };\n};\n\nconst AGUARDANDO = { payload: \"AGUARDANDO INÍCIO DO TESTE\", color: \"#B26A00\" };  // âmbar\n\nlet ativo   = flow.get('ativo');\nlet inicio  = flow.get(\"hora_inicio_date\");\nlet duracao = (ativo === true ? flow.get(\"duracao_travada\") : null) || flow.get(\"duracao_selecionada\") || flow.get(\"duracao_teste\") || 3600000;\nlet minSelect = Math.round(duracao / 60000);\n\n// NUNCA INICIOU / NÃO ESTÁ ATIVO -> contagem parada (com deduplicação 1 Hz para não piscar o dropdown)\nif (!inicio || !ativo) {\n    let status = AGUARDANDO;\n    if (flow.get('plc_online') === false) {\n        status = { payload: \"AGUARDANDO CONEXÃO COM O CLP (192.168.1.33)\", color: \"#D84315\" };\n    }\n    const aviso = flow.get('aviso_status');          // alerta de intertravamento / erro PDF\n    if (aviso && aviso.ate > Date.now()) {\n        status = { payload: aviso.payload, color: aviso.color };\n    }\n\n    const msgTempo = tempo(duracao, true, minSelect);\n    const chaveTempo = `${msgTempo.cronometro}|${msgTempo.minutos}|${msgTempo.enabled}`;\n    const chaveStatus = `${status.payload}|${status.color}`;\n\n    const outTempo = (context.get('idle_tempo') !== chaveTempo) ? msgTempo : null;\n    const outStatus = (context.get('idle_status') !== chaveStatus) ? status : null;\n\n    context.set('idle_tempo', chaveTempo);\n    context.set('idle_status', chaveStatus);\n\n    if (!outTempo && !outStatus) return null;\n    return [outTempo, null, outStatus];\n}\n\n// Em ensaio ativo: limpa cache de deduplicação ociosa para atualização imediata ao finalizar\ncontext.set('idle_tempo', null);\ncontext.set('idle_status', null);\n\nlet restante = (inicio + duracao) - Date.now();\n\n// CHEGOU EM ZERO -> FINALIZA AUTOMÁTICO\nif (restante <= 0 && ativo === true) {\n    flow.set('tempo_restante', 0);\n    flow.set('ativo', false);\n    flow.set('hora_fim_date', Date.now());\n    return [tempo(0, true, minSelect), { payload: \"FINALIZAR_AUTO\" }, AGUARDANDO];\n}\n\n// CONTAGEM NORMAL\nflow.set('tempo_restante', Math.ceil(restante / 60000));   // mantido em minutos (compatibilidade)\n\nconst sp = flow.get('sp_travado');\nlet rodando = {\n    payload: `TESTE RODANDO - SETPOINT ${sp !== undefined && sp !== null ? Number(sp).toFixed(2) : '--'} BAR`,\n    color: \"#2E7D32\"\n};\nif (flow.get('plc_online') === false) {\n    rodando = { payload: \"ALERTA: CLP SEM COMUNICAÇÃO - TESTE EM ANDAMENTO\", color: \"#C62828\" };\n}\nreturn [tempo(restante, false, minSelect), null, rodando];",
+    "outputs": 3,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 380,
+    "y": 640,
+    "wires": [
+      [
+        "82d8edb1336a7da3"
+      ],
+      [
+        "6d54da2809aedd4d"
+      ],
+      [
+        "a7c3f1d2b9e84f10"
+      ]
+    ]
+  },
+  {
+    "id": "6d54da2809aedd4d",
+    "type": "function",
+    "z": "flow_pressao_full",
+    "name": "Finaliza _Teste",
+    "func": "// Entradas: botão FINALIZAR TESTE (payload 0) ou cronômetro (payload \"FINALIZAR_AUTO\").\n// Saídas: [0] livre | [1] relatório (HTML -> PDF) | [2] libera a UI ('PARADO') | [3] ciclo_node = false (CLP) | [4] ponto final do setpoint travado (InfluxDB)\nconst auto = msg.payload === 'FINALIZAR_AUTO';\nif (!auto && flow.get('ativo') !== true) return null;   // nenhum teste em andamento\n\nconst spTravado = flow.get('sp_travado');\n// SEMPRE libera a tela, limpa sp_travado e zera ciclo_node, mesmo que o relatório não possa ser gerado\nconst liberar = (rel) => {\n    flow.set('ativo', false);\n    flow.set('sp_travado', null);\n    return [\n        null,\n        rel,\n        { payload: 'PARADO' },\n        { payload: false },\n        (spTravado !== undefined && spTravado !== null && !isNaN(Number(spTravado))) ? { payload: Number(spTravado) } : null\n    ];\n};\n\n// Datas/horas SEMPRE no fuso e formato brasileiros (o contêiner roda em UTC)\nconst BR = 'America/Sao_Paulo';\nconst partesBR = (d) => {\n    const o = {};\n    new Intl.DateTimeFormat('pt-BR', {\n        timeZone: BR, year: 'numeric', month: '2-digit', day: '2-digit',\n        hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'\n    }).formatToParts(new Date(d)).forEach(p => { o[p.type] = p.value; });\n    return o;\n};\nconst dataHoraBR = (d) => {\n    const o = partesBR(d);\n    return `${o.day}/${o.month}/${o.year} ${o.hour}:${o.minute}:${o.second}`;\n};\n\nlet sp = Number(spTravado ?? flow.get('sp') ?? 0) || 0;\nlet historico = flow.get('historico') || [];\n\nlet inicio = Number(flow.get(\"hora_inicio_date\"));\nlet fim = Number(flow.get(\"hora_fim_date\") || Date.now());\n\nif (!inicio) {\n    node.error(\"hora_inicio_date não encontrada\");\n    return liberar(null);\n}\n\nif (historico.length === 0) {\n    const pAtual = flow.get('pressao_atual');\n    if (pAtual !== undefined && pAtual !== null && Number.isFinite(Number(pAtual))) {\n        historico = [{ v: Math.max(0, Number(pAtual)), t: inicio }];\n    }\n}\n\n// Histórico estrito do intervalo [inicio, fim]\nlet historicoFiltrado = historico.filter(p => p.t >= inicio && p.t <= fim);\nif (historicoFiltrado.length === 0 && historico.length > 0) {\n    historicoFiltrado = [historico[historico.length - 1]];\n}\nif (historicoFiltrado.length === 0) {\n    node.error(\"Dados insuficientes\");\n    return liberar(null);\n}\n\n// Estatísticas calculadas diretamente sobre os pontos do ensaio + Média Ponderada no Tempo (integral de retenção de ordem zero)\nlet min = Number(historicoFiltrado[0].v);\nlet max = Number(historicoFiltrado[0].v);\nlet somaSimples = 0;\nfor (let i = 0; i < historicoFiltrado.length; i++) {\n    const v = Number(historicoFiltrado[i].v);\n    if (v < min) min = v;\n    if (v > max) max = v;\n    somaSimples += v;\n}\n\nlet media = somaSimples / historicoFiltrado.length;\nif (fim > inicio && historicoFiltrado.length > 0) {\n    let area = 0;\n    let pesoTotal = 0;\n    if (historicoFiltrado[0].t > inicio) {\n        const dt0 = Math.min(fim, historicoFiltrado[0].t) - inicio;\n        if (dt0 > 0) {\n            area += Number(historicoFiltrado[0].v) * dt0;\n            pesoTotal += dt0;\n        }\n    }\n    for (let i = 0; i < historicoFiltrado.length; i++) {\n        const tAtual = Math.max(inicio, historicoFiltrado[i].t);\n        const tProx = (i + 1 < historicoFiltrado.length) ? Math.min(fim, historicoFiltrado[i + 1].t) : fim;\n        const dt = Math.max(0, tProx - tAtual);\n        area += Number(historicoFiltrado[i].v) * dt;\n        pesoTotal += dt;\n    }\n    if (pesoTotal > 0) {\n        media = area / pesoTotal;\n    }\n}\n\nlet fimDate = new Date(fim);\n\n// Base de tempo dinâmica\nlet duracao = Number(flow.get('duracao_travada') || flow.get('duracao_teste') || flow.get('duracao_selecionada') || 3600000);\nlet duracaoMin = Math.max(10, Math.round(duracao / 60000));\n\n// Erro simétrico (Setpoint ± 0,5 bar): reprova tanto queda severa quanto sobrepressão severa (sem erro negativo)\nlet tolerancia = 0.5;\nlet erro = Math.max(Math.abs(sp - min), Math.abs(max - sp));\nlet erroArred = Math.round(erro * 10000) / 10000;\nlet status = erroArred <= tolerancia ? \"APROVADO\" : \"REPROVADO\";\n\n// Escala vertical: 0 a 10 bar -> 360 px (36 px/bar, y=390 até y=30)\nlet escala = 36;\nlet pontosArr = [];\n\nif (historicoFiltrado[0].t > inicio) {\n    let y0 = Number((390 - (Number(historicoFiltrado[0].v) * escala)).toFixed(2));\n    pontosArr.push(`60,${y0}`);\n}\n\nfor (let i = 0; i < historicoFiltrado.length; i++) {\n    let p = historicoFiltrado[i];\n    let proporcao = duracao > 0 ? (p.t - inicio) / duracao : 0;\n    if (proporcao < 0) proporcao = 0;\n    if (proporcao > 1) proporcao = 1;\n\n    let x = Number((60 + (proporcao * 1080)).toFixed(2));\n    let y = Number((390 - (Number(p.v) * escala)).toFixed(2));\n    pontosArr.push(`${x},${y}`);\n}\nlet pontos = pontosArr.join(' ');\n\n// Linha de Setpoint limitada à área útil do gráfico\nlet linhaSP = Number((390 - (Math.min(10, Math.max(0, sp)) * escala)).toFixed(2));\n\n// Primeiro ponto fora da faixa Setpoint ± 0,5 bar\nlet falhaX = null;\nlet falhaY = null;\nlet falhaValor = null;\nlet falhaAnchor = \"middle\";\n\nfor (let i = 0; i < historicoFiltrado.length; i++) {\n    let p = historicoFiltrado[i];\n    let desvioPonto = Math.round(Math.abs(Number(p.v) - sp) * 10000) / 10000;\n\n    if (desvioPonto > tolerancia) {\n        let proporcao = duracao > 0 ? (p.t - inicio) / duracao : 0;\n        if (proporcao < 0) proporcao = 0;\n        if (proporcao > 1) proporcao = 1;\n\n        let vPlot = Math.min(10, Math.max(0, Number(p.v)));\n        falhaX = Number((60 + (proporcao * 1080)).toFixed(2));\n        falhaY = Number((390 - (vPlot * escala)).toFixed(2));\n        falhaValor = Number(p.v).toFixed(2);\n        if (falhaX < 150) falhaAnchor = \"start\";\n        else if (falhaX > 1050) falhaAnchor = \"end\";\n        break;\n    }\n}\n\n// Grade vertical e rótulos dinâmicos do eixo X\nlet passoMin = 5;\nif (duracaoMin <= 15) {\n    passoMin = 1;\n} else if (duracaoMin === 20) {\n    passoMin = 2;\n}\n\nfunction horaOffset(minutos) {\n    return new Date(inicio + (minutos * 60000))\n        .toLocaleTimeString('pt-BR', {\n            timeZone: BR,\n            hour: '2-digit',\n            minute: '2-digit'\n        });\n}\n\nlet eixoX = [];\nfor (let m = 0; m <= duracaoMin; m += passoMin) {\n    let x = Number((60 + ((m / duracaoMin) * 1080)).toFixed(2));\n    let classe = (m === 0) ? \"axis-base\" : \"grid-main\";\n    let rotulo = horaOffset(m);\n    eixoX.push({ x: x, classe: classe, rotulo: rotulo });\n}\n\n// Faixa visual da zona de tolerância simétrica ([sp - 0.5, sp + 0.5] limitada a [0, 10])\nlet limSupTol = Math.min(10, Math.max(0, sp + tolerancia));\nlet limInfTol = Math.min(10, Math.max(0, sp - tolerancia));\nlet faixaTolY = Number((390 - (limSupTol * escala)).toFixed(2));\nlet faixaTolAltura = Number((Math.max(0, limSupTol - limInfTol) * escala).toFixed(2));\n\nlet falhaYTxt = null;\nif (falhaY !== null) {\n    falhaYTxt = falhaY > 365 ? (falhaY - 10) : (falhaY < 50 ? (falhaY + 18) : (falhaY + 16));\n}\n\nlet rel = {\n    equipamento: flow.get('equipamento_teste') ?? flow.get('equipamento'),\n\n    inicio: dataHoraBR(inicio),\n    fim: dataHoraBR(fimDate),\n    duracaoMin: duracaoMin,\n\n    media: media.toFixed(2),\n    min: Number(min).toFixed(2),\n    max: Number(max).toFixed(2),\n\n    sp: sp,\n    spFmt: Number(sp).toFixed(2),\n    toleranciaFmt: tolerancia.toFixed(2),\n    statusCor: status === \"APROVADO\" ? \"#15803d\" : \"#b91c1c\",\n    statusBg: status === \"APROVADO\" ? \"#dcfce7\" : \"#fee2e2\",\n    statusBorda: status === \"APROVADO\" ? \"#16a34a\" : \"#dc2626\",\n    faixaTolY: faixaTolY,\n    faixaTolAltura: faixaTolAltura,\n\n    erro: erro.toFixed(2),\n    status: status,\n\n    pontos: pontos,\n    linhaSP: linhaSP,\n\n    falhaX: falhaX,\n    falhaY: falhaY,\n    falhaValor: falhaValor,\n    falhaYTxt: falhaYTxt,\n    falhaAnchor: falhaAnchor,\n\n    eixoX: eixoX\n};\n\n// RESET mantendo a duração configurada (ou 60 min padrão)\nlet duracaoCfg = flow.get('duracao_selecionada') || 3600000;\nflow.set('tempo_restante', Math.ceil(duracaoCfg / 60000));\nflow.set('duracao_teste', duracaoCfg);\nflow.set('duracao_travada', null);\n\nlet agora = new Date();\nlet o = partesBR(agora);\nrel.emissao = `${o.day}/${o.month}/${o.year} - ${o.hour}:${o.minute}:${o.second}`;\n\n// NOME ÚNICO DO PDF: <Equipamento>_<DD-MM-AAAA_HH-mm-ss>.pdf (com anti-colisão no mesmo segundo)\nlet equip = String(flow.get('equipamento_teste') ?? flow.get('equipamento') ?? '')\n    .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')\n    .replace(/[^A-Za-z0-9]+/g, '_')\n    .replace(/^_+|_+$/g, '')\n    .slice(0, 60) || 'Equipamento';\nlet carimbo = `${o.day}-${o.month}-${o.year}_${o.hour}-${o.minute}-${o.second}`;\nlet basePdf = `${equip}_${carimbo}`;\nif (flow.get('ultimo_pdf_base') === basePdf) {\n    let seq = (flow.get('ultimo_pdf_seq') || 1) + 1;\n    flow.set('ultimo_pdf_seq', seq);\n    basePdf = `${basePdf}_${seq}`;\n} else {\n    flow.set('ultimo_pdf_base', basePdf);\n    flow.set('ultimo_pdf_seq', 1);\n}\n\n// HTML temporário isolado em /tmp por relatório (evita corrida entre execuções) e PDF único em /data/relatorios\nmsg.filename = \"/tmp/laudo_\" + basePdf + \".html\";\nmsg.pdfFile  = \"/data/relatorios/\" + basePdf + \".pdf\";\n\nreturn liberar({ payload: rel, filename: msg.filename, pdfFile: msg.pdfFile });",
+    "outputs": 5,
+    "timeout": "",
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 600,
+    "y": 560,
+    "wires": [
+      [],
+      [
+        "8525c1d000560d34"
+      ],
+      [
+        "fn_ui_lock"
+      ],
+      [
+        "eth_out_ciclo"
+      ],
+      [
+        "influx_out_setpoint"
+      ]
+    ]
+  },
+  {
+    "id": "49589c46b3396a0f",
+    "type": "function",
+    "z": "flow_pressao_full",
+    "name": "Inicia teste",
+    "func": "// Botão INICIAR TESTE: valida comunicação com o CLP, intertravamentos, trava o setpoint e inicia o ciclo.\n// Saídas: [0] bloqueia a UI ('RODANDO') | [1] ciclo_node = true (CLP) | [2] 1º ponto do setpoint travado (InfluxDB) | [3] texto de STATUS\nif (flow.get('ativo') === true) return null;   // já existe um teste em andamento\n\nconst valido = (v) => v !== null && v !== undefined && v !== '' && !isNaN(Number(v));\n\nconst clpOnline      = flow.get('plc_online') === true;\nconst equipamento    = String(flow.get('equipamento') ?? '').trim();\nconst bombaFisica    = flow.get('bomba_fisica') === true || flow.get('bomba_fisica') === 1;\nconst motorComando   = flow.get('motor_on') === true;\nconst motorLigado    = motorComando || bombaFisica;\n\nconst valvulaFisica  = flow.get('valvula') === true || flow.get('valvula') === 1;\nconst valvulaComando = flow.get('valvula_manual_on') === true;\nconst valvulaAberta  = valvulaComando || valvulaFisica;\n\nconst pAtual = flow.get('pressao_atual');\nconst pNum = Number(pAtual ?? 0);\n\n// Setpoint vigente = valor mais recente entre o campo da tela e o lido do CLP\nconst tUi = flow.get('sp_ui_t') || 0;\nconst tPlc = flow.get('sp_plc_t') || 0;\nconst primeiro = tUi >= tPlc ? flow.get('sp_ui') : flow.get('sp_plc');\nconst segundo  = tUi >= tPlc ? flow.get('sp_plc') : flow.get('sp_ui');\nconst spBruto = valido(primeiro) ? primeiro : segundo;\n\nconst motivos = [];\nif (!clpOnline) motivos.push('CLP SEM COMUNICAÇÃO (192.168.1.33)');\nif (!equipamento) motivos.push('PREENCHA O EQUIPAMENTO');\nif (motorLigado) motivos.push('DESLIGUE O MOTOR / BOMBA');\nif (valvulaAberta) motivos.push('FECHE A VÁLVULA');\nif (!valido(spBruto) || Number(spBruto) <= 0) motivos.push('DEFINA A PRESSÃO DESEJADA (> 0 BAR)');\nif (!Number.isFinite(pNum) || pNum <= 0) motivos.push('PRESSURIZE A PEÇA (> 0 BAR)');\n\nif (motivos.length > 0) {\n    const aviso = { payload: 'BLOQUEADO - ' + motivos.join(' / '), color: '#C62828' };\n    flow.set('aviso_status', { payload: aviso.payload, color: aviso.color, ate: Date.now() + 8000 });\n    return [null, null, null, aviso];\n}\n\nconst sp = Math.round(Number(spBruto) * 100) / 100;\nconst agoraInicio = Date.now();\n\nflow.set('ativo', true);\nflow.set('aviso_status', null);\nflow.set('inicio', new Date(agoraInicio).toLocaleString('pt-BR'));\nflow.set('hora_inicio_date', agoraInicio);\nflow.set('hora_fim_date', null);\n\n// Semeia imediatamente a pressão atual no instante t=0 (garante laudo mesmo com pressão 100% estável sem variação de bits)\nif (pAtual !== undefined && pAtual !== null && Number.isFinite(Number(pAtual))) {\n    const p0 = Math.max(0, Number(pAtual));\n    flow.set('soma', p0);\n    flow.set('qtd', 1);\n    flow.set('min', p0);\n    flow.set('max', p0);\n    flow.set('historico', [{ v: p0, t: agoraInicio }]);\n    flow.set('ultima_coleta_t', agoraInicio);\n} else {\n    flow.set('soma', 0);\n    flow.set('qtd', 0);\n    flow.set('min', null);\n    flow.set('max', null);\n    flow.set('historico', []);\n    flow.set('ultima_coleta_t', 0);\n}\n\n// Duração configurada pelo seletor (padrão 60 min se não selecionada)\nlet duracaoTeste = flow.get(\"duracao_selecionada\") || flow.get(\"duracao_teste\") || 3600000;\nflow.set(\"duracao_teste\", duracaoTeste);\nflow.set(\"duracao_travada\", duracaoTeste);\nflow.set(\"tempo_restante\", Math.ceil(duracaoTeste / 60000));\n\n// SETPOINT TRAVADO: capturado uma única vez, no instante do início, e mantido até o fim do teste\nflow.set('sp_travado', sp);\nflow.set('sp', sp);\nflow.set('equipamento_teste', equipamento);\n\nreturn [\n    { payload: 'RODANDO' },\n    { payload: true },\n    { payload: sp },\n    null\n];",
+    "outputs": 4,
+    "timeout": "",
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 590,
+    "y": 443.86363636363654,
+    "wires": [
+      [
+        "fn_ui_lock"
+      ],
+      [
+        "eth_out_ciclo"
+      ],
+      [
+        "influx_out_setpoint"
+      ],
+      [
+        "a7c3f1d2b9e84f10"
+      ]
+    ]
+  },
+  {
+    "id": "input_eq",
+    "type": "ui_text_input",
+    "z": "flow_pressao_full",
+    "name": "Equipamento",
+    "label": "Equipamento",
+    "tooltip": "",
+    "group": "ui_group_pressao",
+    "order": 1,
+    "width": 12,
+    "height": 1,
+    "passthru": false,
+    "mode": "text",
+    "delay": "100",
+    "topic": "",
+    "sendOnBlur": true,
+    "className": "",
+    "topicType": "str",
+    "x": 430,
+    "y": 20,
+    "wires": [
+      [
+        "fn_set_eq"
+      ]
+    ]
+  },
+  {
+    "id": "gauge",
+    "type": "ui_gauge",
+    "z": "flow_pressao_full",
+    "name": "",
+    "group": "ui_group_pressao",
+    "order": 8,
+    "width": 12,
+    "height": 6,
+    "gtype": "gage",
+    "title": "Pressão do sensor",
+    "label": "bar",
+    "format": "{{value | number:2}}",
+    "min": 0,
+    "max": 10,
+    "colors": [
+      "#00b500",
+      "#e6e600",
+      "#ca3838"
+    ],
+    "seg1": "8",
+    "seg2": "8.5",
+    "diff": false,
+    "className": "",
+    "x": 970,
+    "y": 800,
+    "wires": []
+  },
+  {
+    "id": "15e0a5b19569ae15",
+    "type": "influxdb out",
+    "z": "flow_pressao_full",
+    "influxdb": "235fd83d5ce9ea5d",
+    "name": "valvula",
+    "measurement": "vp-01",
+    "precision": "",
+    "retentionPolicy": "",
+    "database": "database",
+    "precisionV18FluxV20": "ms",
+    "retentionPolicyV18Flux": "",
+    "org": "vigor",
+    "bucket": "carrinho",
+    "x": 640,
+    "y": 860,
+    "wires": []
+  },
+  {
+    "id": "398b99857e5197e4",
+    "type": "influxdb out",
+    "z": "flow_pressao_full",
+    "influxdb": "235fd83d5ce9ea5d",
+    "name": "pressao",
+    "measurement": "PT-010",
+    "precision": "",
+    "retentionPolicy": "",
+    "database": "database",
+    "precisionV18FluxV20": "ms",
+    "retentionPolicyV18Flux": "",
+    "org": "vigor",
+    "bucket": "carrinho",
+    "x": 540,
+    "y": 808.4090909090908,
+    "wires": []
+  },
+  {
+    "id": "c5db1e77bf518ab4",
+    "type": "eth-ip in",
+    "z": "flow_pressao_full",
+    "endpoint": "da562bad96c4eafe",
+    "mode": "single",
+    "variable": "_IO_EM_DO_00",
+    "program": "",
+    "name": "VALVULA",
+    "x": 160,
+    "y": 840,
+    "wires": [
+      [
+        "fn_cache_valvula"
+      ]
+    ]
+  },
+  {
+    "id": "fba7dcc329b4be25",
+    "type": "eth-ip in",
+    "z": "flow_pressao_full",
+    "endpoint": "da562bad96c4eafe",
+    "mode": "single",
+    "variable": "RETORNO_BAR",
+    "program": "",
+    "name": "PRESSAO",
+    "x": 160,
+    "y": 780,
+    "wires": [
+      [
+        "398b99857e5197e4",
+        "7d655f418f1c0085",
+        "fn_auto_cutoff_sp"
+      ]
+    ]
+  },
+  {
+    "id": "7a612cafc5aaba50",
+    "type": "eth-ip out",
+    "z": "flow_pressao_full",
+    "endpoint": "da562bad96c4eafe",
+    "variable": "onval_node",
+    "program": "",
+    "name": "",
+    "x": 830,
+    "y": 343.06818181818187,
+    "wires": []
+  },
+  {
+    "id": "0f43d59264e5b79e",
+    "type": "eth-ip out",
+    "z": "flow_pressao_full",
+    "endpoint": "da562bad96c4eafe",
+    "variable": "offval_node",
+    "program": "",
+    "name": "",
+    "x": 790,
+    "y": 394.5454545454547,
+    "wires": []
+  },
+  {
+    "id": "daa4f8544153c40e",
+    "type": "eth-ip out",
+    "z": "flow_pressao_full",
+    "endpoint": "da562bad96c4eafe",
+    "variable": "on_node",
+    "program": "",
+    "name": "",
+    "x": 780,
+    "y": 111.47727272727272,
+    "wires": []
+  },
+  {
+    "id": "faecf82f35480bfa",
+    "type": "eth-ip out",
+    "z": "flow_pressao_full",
+    "endpoint": "da562bad96c4eafe",
+    "variable": "off_node",
+    "program": "",
+    "name": "",
+    "x": 760,
+    "y": 162.95454545454544,
+    "wires": []
+  },
+  {
+    "id": "fcc8d4b3097f775a",
+    "type": "eth-ip out",
+    "z": "flow_pressao_full",
+    "endpoint": "da562bad96c4eafe",
+    "variable": "setpoint_node",
+    "program": "",
+    "name": "",
+    "x": 660,
+    "y": 220,
+    "wires": []
+  },
+  {
+    "id": "9641c0e83444adc3",
+    "type": "ui_dropdown",
+    "z": "flow_pressao_full",
+    "name": "",
+    "label": "MOTOR",
+    "tooltip": "",
+    "place": "LIBERAR MANUAL",
+    "group": "ui_group_pressao",
+    "order": 2,
+    "width": 6,
+    "height": 1,
+    "passthru": false,
+    "multiple": false,
+    "options": [
+      {
+        "label": "MOTOR LIGADO",
+        "value": 1,
+        "type": "num"
+      },
+      {
+        "label": "MOTOR DESLIGADO",
+        "value": 2,
+        "type": "num"
+      },
+      {
+        "label": "LIBERAR MANUAL",
+        "value": 3,
+        "type": "num"
+      }
+    ],
+    "payload": "",
+    "topic": "topic",
+    "topicType": "msg",
+    "className": "",
+    "x": 270,
+    "y": 145.79545454545453,
+    "wires": [
+      [
+        "fn_ctrl_motor_manual"
+      ]
+    ]
+  },
+  {
+    "id": "f20962dfb01ffb40",
+    "type": "ui_dropdown",
+    "z": "flow_pressao_full",
+    "name": "",
+    "label": "VALVULA",
+    "tooltip": "",
+    "place": "LIBERAR MANUAL",
+    "group": "ui_group_pressao",
+    "order": 3,
+    "width": 6,
+    "height": 1,
+    "passthru": false,
+    "multiple": false,
+    "options": [
+      {
+        "label": "VÁLVULA ABERTA",
+        "value": 1,
+        "type": "num"
+      },
+      {
+        "label": "VÁLVULA FECHADA",
+        "value": 2,
+        "type": "num"
+      },
+      {
+        "label": "LIBERAR MANUAL",
+        "value": 3,
+        "type": "num"
+      }
+    ],
+    "payload": "",
+    "topic": "topic",
+    "topicType": "msg",
+    "className": "",
+    "x": 290,
+    "y": 377.38636363636374,
+    "wires": [
+      [
+        "fn_ctrl_valvula_manual"
+      ]
+    ]
+  },
+  {
+    "id": "82d8edb1336a7da3",
+    "type": "ui_template",
+    "z": "flow_pressao_full",
+    "group": "ui_group_pressao",
+    "name": "Seletor Tempo Restante",
+    "order": 9,
+    "width": 6,
+    "height": 1,
+    "format": "<div class=\"tempo-selector-container\">\n  <div class=\"tempo-display-col\">\n    <span class=\"tempo-title\">TEMPO RESTANTE</span>\n    <span class=\"tempo-timer\">{{ cronometro || '60:00' }}</span>\n  </div>\n  <div class=\"tempo-control-col\">\n    <button type=\"button\" class=\"tempo-step-btn\" ng-click=\"ajustar(-5)\" ng-disabled=\"disabled || (+selectedMin) <= 10\" title=\"Diminuir 5 min\">-</button>\n    <select class=\"tempo-dropdown\" ng-model=\"selectedMin\" ng-change=\"onTempoChange()\" ng-disabled=\"disabled\">\n      <option value=\"10\">10 min</option>\n      <option value=\"15\">15 min</option>\n      <option value=\"20\">20 min</option>\n      <option value=\"25\">25 min</option>\n      <option value=\"30\">30 min</option>\n      <option value=\"35\">35 min</option>\n      <option value=\"40\">40 min</option>\n      <option value=\"45\">45 min</option>\n      <option value=\"50\">50 min</option>\n      <option value=\"55\">55 min</option>\n      <option value=\"60\">60 min</option>\n    </select>\n    <button type=\"button\" class=\"tempo-step-btn\" ng-click=\"ajustar(5)\" ng-disabled=\"disabled || (+selectedMin) >= 60\" title=\"Aumentar 5 min\">+</button>\n  </div>\n</div>\n\n<style>\n.tempo-selector-container {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  width: 100%;\n  height: 100%;\n  padding: 0 6px;\n  box-sizing: border-box;\n  gap: 6px;\n  background: transparent;\n}\n.tempo-display-col {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  min-width: 0;\n  flex: 1 1 auto;\n}\n.tempo-title {\n  font-size: 11px;\n  font-weight: 700;\n  color: #625a70;\n  letter-spacing: 0.5px;\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  line-height: 1.1;\n}\n.tempo-timer {\n  font-size: 17px;\n  font-weight: 800;\n  font-family: 'Roboto Mono', 'SF Mono', Consolas, monospace;\n  color: #111;\n  letter-spacing: 0.5px;\n  line-height: 1.3;\n}\n.tempo-control-col {\n  display: flex;\n  align-items: center;\n  gap: 3px;\n  flex-shrink: 0;\n}\n.tempo-step-btn {\n  width: 26px;\n  height: 28px;\n  background-color: #3d3846;\n  color: #fff;\n  border: none;\n  border-radius: 4px;\n  font-weight: bold;\n  font-size: 15px;\n  line-height: 28px;\n  text-align: center;\n  padding: 0;\n  cursor: pointer;\n  transition: background-color 0.15s ease;\n  user-select: none;\n}\n.tempo-step-btn:hover:not([disabled]) {\n  background-color: #554e60;\n}\n.tempo-step-btn[disabled] {\n  opacity: 0.4;\n  cursor: not-allowed;\n}\n.tempo-dropdown {\n  height: 28px;\n  background-color: #fff;\n  color: #111;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n  padding: 2px 4px;\n  font-size: 13px;\n  font-weight: 600;\n  cursor: pointer;\n  outline: none;\n  box-sizing: border-box;\n}\n.tempo-dropdown:focus {\n  border-color: #3d3846;\n}\n.tempo-dropdown[disabled] {\n  opacity: 0.5;\n  cursor: not-allowed;\n  background-color: #e5e7eb;\n}\n</style>\n\n<script>\n(function(scope) {\n  scope.selectedMin = scope.selectedMin ? String(scope.selectedMin) : \"60\";\n  scope.cronometro = scope.cronometro || \"60:00\";\n  scope.disabled = false;\n\n  scope.$watch('msg', function(msg) {\n    if (!msg) return;\n    if (typeof msg.cronometro === 'string' && msg.cronometro.length > 0) {\n      scope.cronometro = msg.cronometro;\n    } else if (typeof msg.payload === 'string') {\n      if (msg.payload.indexOf('TEMPO RESTANTE:') !== -1) {\n        scope.cronometro = msg.payload.replace('TEMPO RESTANTE:', '').trim();\n      } else {\n        scope.cronometro = msg.payload;\n      }\n    }\n    if (msg.minutos !== undefined && msg.minutos !== null) {\n      scope.selectedMin = String(msg.minutos);\n    }\n    if (msg.enabled !== undefined) {\n      scope.disabled = !msg.enabled;\n    }\n  });\n\n  scope.onTempoChange = function() {\n    if (scope.disabled) return;\n    var val = parseInt(scope.selectedMin, 10);\n    if (isNaN(val)) val = 60;\n    val = Math.max(10, Math.min(60, Math.round(val / 5) * 5));\n    scope.selectedMin = String(val);\n    scope.cronometro = (val < 10 ? '0' : '') + val + ':00';\n    scope.send({ payload: val });\n  };\n\n  scope.ajustar = function(delta) {\n    if (scope.disabled) return;\n    var val = parseInt(scope.selectedMin, 10);\n    if (isNaN(val)) val = 60;\n    val += delta;\n    val = Math.max(10, Math.min(60, Math.round(val / 5) * 5));\n    scope.selectedMin = String(val);\n    scope.cronometro = (val < 10 ? '0' : '') + val + ':00';\n    scope.send({ payload: val });\n  };\n})(this.scope || $scope);\n</script>",
+    "storeOutMessages": true,
+    "fwdInMessages": true,
+    "resendOnRefresh": true,
+    "templateScope": "local",
+    "className": "",
+    "x": 600,
+    "y": 722.6136363636364,
+    "wires": [
+      [
+        "fn_set_tempo_restante"
+      ]
+    ]
+  },
+  {
+    "id": "fbdf6e655e629e2d",
+    "type": "ui_button",
+    "z": "flow_pressao_full",
+    "name": "",
+    "group": "ui_group_pressao",
+    "order": 5,
+    "width": 6,
+    "height": 1,
+    "passthru": false,
+    "label": "INICIAR TESTE",
+    "tooltip": "",
+    "color": "",
+    "bgcolor": "#3D3846",
+    "className": "",
+    "icon": "",
+    "payload": "1",
+    "payloadType": "num",
+    "topic": "topic",
+    "topicType": "msg",
+    "x": 380,
+    "y": 476.0227272727275,
+    "wires": [
+      [
+        "49589c46b3396a0f"
+      ]
+    ]
+  },
+  {
+    "id": "191a5d981abaa499",
+    "type": "ui_button",
+    "z": "flow_pressao_full",
+    "name": "",
+    "group": "ui_group_pressao",
+    "order": 6,
+    "width": 6,
+    "height": 1,
+    "passthru": false,
+    "label": "FINALIZAR TESTE",
+    "tooltip": "",
+    "color": "",
+    "bgcolor": "#3D3846",
+    "className": "",
+    "icon": "",
+    "payload": "0",
+    "payloadType": "num",
+    "topic": "topic",
+    "topicType": "msg",
+    "x": 390,
+    "y": 580,
+    "wires": [
+      [
+        "6d54da2809aedd4d"
+      ]
+    ]
+  },
+  {
+    "id": "c27f650072a158be",
+    "type": "ui_numeric",
+    "z": "flow_pressao_full",
+    "name": "",
+    "label": "PRESSÃO DESEJADA:",
+    "tooltip": "",
+    "group": "ui_group_pressao",
+    "order": 7,
+    "width": 0,
+    "height": 0,
+    "wrap": false,
+    "passthru": false,
+    "topic": "topic",
+    "topicType": "msg",
+    "format": "{{value}} BAR",
+    "min": 0,
+    "max": 10,
+    "step": "0.5",
+    "className": "",
+    "x": 350,
+    "y": 214.43181818181816,
+    "wires": [
+      [
+        "fn_cache_setpoint"
+      ]
+    ]
+  },
+  {
+    "id": "a7c3f1d2b9e84f10",
+    "type": "ui_text",
+    "z": "flow_pressao_full",
+    "group": "ui_group_pressao",
+    "order": 4,
+    "width": 12,
+    "height": 1,
+    "name": "Status do teste",
+    "label": "STATUS:  ",
+    "format": "<div style=\"text-align:center; width:100%; font-weight:bold; font-size:15px; letter-spacing:1px; padding:6px 0; border-radius:6px; color:#fff; background:{{msg.color}};\">{{msg.payload}}</div>",
+    "layout": "row-center",
+    "className": "",
+    "style": false,
+    "font": "",
+    "fontSize": 16,
+    "color": "#000000",
+    "x": 660,
+    "y": 660,
+    "wires": []
+  },
+  {
+    "id": "fn_cache_valvula",
+    "type": "function",
+    "z": "flow_pressao_full",
+    "name": "Cache Válvula",
+    "func": "let val = !!msg.payload;\nflow.set('valvula', val);\nreturn { payload: val };",
+    "outputs": 1,
+    "timeout": "",
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 410,
+    "y": 877.0454545454543,
+    "wires": [
+      [
+        "15e0a5b19569ae15"
+      ]
+    ]
+  },
+  {
+    "id": "eth_in_setpoint",
+    "type": "eth-ip in",
+    "z": "flow_pressao_full",
+    "endpoint": "da562bad96c4eafe",
+    "mode": "single",
+    "variable": "setpoint_node",
+    "program": "",
+    "name": "SETPOINT",
+    "x": 160,
+    "y": 900,
+    "wires": [
+      [
+        "fn_cache_setpoint_plc"
+      ]
+    ]
+  },
+  {
+    "id": "fn_cache_setpoint",
+    "type": "function",
+    "z": "flow_pressao_full",
+    "name": "Cache Setpoint (tela)",
+    "func": "// Valor digitado na tela (PRESSÃO DESEJADA). Bloqueia alterações no CLP durante ensaio ativo.\nif (flow.get('ativo') === true) return null;\nif (msg.payload === null || msg.payload === undefined || msg.payload === '') return null;\nconst sp = Math.round(Number(msg.payload) * 100) / 100;\nif (isNaN(sp)) return null;\nflow.set('sp_ui', sp);\nflow.set('sp_ui_t', Date.now());\nreturn { payload: sp };",
+    "outputs": 1,
+    "timeout": "",
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 920,
+    "y": 180,
+    "wires": [
+      [
+        "fcc8d4b3097f775a",
+        "9c879e7c29e0e8de"
+      ]
+    ]
+  },
+  {
+    "id": "influx_out_setpoint",
+    "type": "influxdb out",
+    "z": "flow_pressao_full",
+    "influxdb": "235fd83d5ce9ea5d",
+    "name": "setpoint",
+    "measurement": "setpoint",
+    "precision": "",
+    "retentionPolicy": "",
+    "database": "database",
+    "precisionV18FluxV20": "ms",
+    "retentionPolicyV18Flux": "",
+    "org": "vigor",
+    "bucket": "carrinho",
+    "x": 980,
+    "y": 860,
+    "wires": []
+  },
+  {
+    "id": "inject_heartbeat",
+    "type": "inject",
+    "z": "flow_pressao_full",
+    "name": "Heartbeat 2s",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "2",
+    "crontab": "",
+    "once": true,
+    "onceDelay": "1",
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 160,
+    "y": 980,
+    "wires": [
+      [
+        "fn_heartbeat"
+      ]
+    ]
+  },
+  {
+    "id": "fn_heartbeat",
+    "type": "function",
+    "z": "flow_pressao_full",
+    "name": "Keepalive InfluxDB",
+    "func": "// Roda a cada 2 s.\n// Saída 1: setpoint TRAVADO -> InfluxDB (somente durante ensaio ativo).\n// Saída 2: estado da válvula -> InfluxDB (keepalive para painel do Grafana).\n// Saída 3: pressão atual -> InfluxDB PT-010 (evita 'No data' no Grafana quando a pressão está 100% estável e CLP online).\n// Saída 4: amostra periódica -> Coleta pressão (garante curva e média fiéis mesmo sem variação de bits durante o ensaio).\nconst ativo = flow.get('ativo') === true;\nconst online = flow.get('plc_online') === true;\n\nlet outSetpoint = null;\nif (ativo) {\n    const sp = flow.get('sp_travado');\n    if (sp !== undefined && sp !== null && !isNaN(Number(sp))) {\n        outSetpoint = { payload: Number(sp) };\n    }\n}\n\nconst val = flow.get('valvula');\nconst outValvula = online ? { payload: (val === true || val === 1 || val === 'true') } : null;\n\nlet outPressaoInflux = null;\nlet outPressaoColeta = null;\nconst p = flow.get('pressao_atual');\nif (p !== undefined && p !== null && Number.isFinite(Number(p))) {\n    const pVal = Math.max(0, Number(p));\n    if (online) {\n        outPressaoInflux = { payload: pVal };\n    }\n    if (ativo && flow.get('plc_online') !== false) {\n        outPressaoColeta = { payload: pVal, _keepalive: true };\n    }\n}\n\nreturn [outSetpoint, outValvula, outPressaoInflux, outPressaoColeta];",
+    "outputs": 4,
+    "timeout": "",
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 430,
+    "y": 1000,
+    "wires": [
+      [
+        "influx_out_setpoint"
+      ],
+      [
+        "15e0a5b19569ae15"
+      ],
+      [
+        "398b99857e5197e4"
+      ],
+      [
+        "7d655f418f1c0085"
+      ]
+    ]
+  },
+  {
+    "id": "fn_cache_setpoint_plc",
+    "type": "function",
+    "z": "flow_pressao_full",
+    "name": "Cache Setpoint (CLP)",
+    "func": "// Último setpoint lido do CLP (setpoint_node). Sincroniza tela sem eco atrasado; não grava no Influx.\nif (msg.payload === null || msg.payload === undefined || msg.payload === '') return null;\nconst bruto = Number(msg.payload);\nif (isNaN(bruto)) return null;\nconst sp = Math.round(bruto * 100) / 100;\n\n// Filtro anti-eco atrasado: descarta leitura antiga caso o operador tenha acabado de alterar na tela\nif (Date.now() - (flow.get('sp_ui_t') || 0) < 1500 && Math.abs(sp - Number(flow.get('sp_ui'))) > 0.001) {\n    return null;\n}\n\nflow.set('sp_plc', sp);\nflow.set('sp_plc_t', Date.now());\nreturn [\n    { payload: sp },\n    flow.get('ativo') === true ? null : { payload: sp }\n];",
+    "outputs": 2,
+    "timeout": "",
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 720,
+    "y": 960,
+    "wires": [
+      [
+        "9c879e7c29e0e8de"
+      ],
+      [
+        "c27f650072a158be"
+      ]
+    ]
+  },
+  {
+    "id": "eth_out_ciclo",
+    "type": "eth-ip out",
+    "z": "flow_pressao_full",
+    "endpoint": "da562bad96c4eafe",
+    "variable": "ciclo_node",
+    "program": "",
+    "name": "ciclo_node",
+    "x": 930,
+    "y": 660,
+    "wires": []
+  },
+  {
+    "id": "fn_ui_lock",
+    "type": "function",
+    "z": "flow_pressao_full",
+    "name": "Habilitar / Bloquear UI",
+    "func": "// Entrada: msg.payload = 'RODANDO' | 'PARADO' | 'BOOT'\nlet estado = msg.payload;\nif (estado === 'BOOT') estado = flow.get('ativo') === true ? 'RODANDO' : 'PARADO';\nconst rodando = estado === 'RODANDO';\n\n// Invalida timers pendentes de 400 ms em fn_ctrl_motor_manual / fn_ctrl_valvula_manual / fn_auto_cutoff_sp\nflow.set('motor_cmd_seq', (flow.get('motor_cmd_seq') || 0) + 1);\nflow.set('valvula_cmd_seq', (flow.get('valvula_cmd_seq') || 0) + 1);\nflow.set('pulso_off_motor', false);\nflow.set('corte_efetuado', false);\n\n// Sempre garante que o estado do contexto reflita a liberação manual\nflow.set('motor_on', false);\nflow.set('on_node', false);\nflow.set('off_node', false);\nflow.set('valvula_manual_on', false);\nflow.set('onval_node', false);\nflow.set('offval_node', false);\n\nconst sp = flow.get('sp_travado');\nconst mostraSp = rodando && sp !== undefined && sp !== null;\n\nconst falseMsg = { payload: false };\n\nconst duracaoRef = (rodando ? flow.get('duracao_travada') : flow.get('duracao_selecionada')) || flow.get('duracao_teste') || 3600000;\nconst minutosSeletor = Math.round(Number(duracaoRef) / 60000);\n\nreturn [\n    { enabled: !rodando },\n    { enabled: !rodando, payload: 3 },\n    { enabled: !rodando, payload: 3 },\n    mostraSp ? { enabled: !rodando, payload: Number(sp) } : { enabled: !rodando },\n    { enabled: !rodando },\n    { enabled: rodando },\n    falseMsg,\n    falseMsg,\n    falseMsg,\n    falseMsg,\n    { enabled: !rodando, minutos: minutosSeletor },\n    falseMsg\n];",
+    "outputs": 12,
+    "timeout": "",
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 1040,
+    "y": 300,
+    "wires": [
+      [
+        "input_eq"
+      ],
+      [
+        "9641c0e83444adc3"
+      ],
+      [
+        "f20962dfb01ffb40"
+      ],
+      [
+        "c27f650072a158be"
+      ],
+      [
+        "fbdf6e655e629e2d"
+      ],
+      [
+        "191a5d981abaa499"
+      ],
+      [
+        "daa4f8544153c40e"
+      ],
+      [
+        "faecf82f35480bfa"
+      ],
+      [
+        "7a612cafc5aaba50"
+      ],
+      [
+        "0f43d59264e5b79e"
+      ],
+      [
+        "82d8edb1336a7da3"
+      ],
+      [
+        "eth_out_ciclo"
+      ]
+    ]
+  },
+  {
+    "id": "inject_boot",
+    "type": "inject",
+    "z": "flow_pressao_full",
+    "name": "Estado inicial da UI (boot)",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": true,
+    "onceDelay": "2",
+    "topic": "",
+    "payload": "BOOT",
+    "payloadType": "str",
+    "x": 450,
+    "y": 280,
+    "wires": [
+      [
+        "fn_ui_lock"
+      ]
+    ]
+  },
+  {
+    "id": "9c879e7c29e0e8de",
+    "type": "ui_text",
+    "z": "flow_pressao_full",
+    "group": "ui_group_pressao",
+    "order": 10,
+    "width": 6,
+    "height": 1,
+    "name": "",
+    "label": "Pressão definida do teste:",
+    "format": "{{msg.payload}} BAR",
+    "layout": "row-left",
+    "className": "",
+    "style": false,
+    "font": "",
+    "fontSize": 16,
+    "color": "#000000",
+    "x": 150,
+    "y": 280,
+    "wires": []
+  },
+  {
+    "id": "fn_ctrl_motor_manual",
+    "type": "function",
+    "z": "flow_pressao_full",
+    "name": "Controle Motor Manual",
+    "func": "if (flow.get('ativo') === true) return null;\n\nconst val = Number(msg.payload);\nconst seq = (flow.get('motor_cmd_seq') || 0) + 1;\nflow.set('motor_cmd_seq', seq);\nflow.set('pulso_off_motor', false);\n\nif (val === 1) { // 1: MOTOR LIGADO\n    flow.set('corte_efetuado', false);\n    flow.set('motor_on', true);\n    flow.set('on_node', true);\n    flow.set('off_node', false);\n    node.send([{ payload: true }, { payload: false }]);\n    return;\n} else if (val === 2) { // 2: MOTOR DESLIGADO\n    flow.set('motor_on', false);\n    flow.set('on_node', false);\n    flow.set('off_node', true);\n    node.send([{ payload: false }, { payload: true }]);\n    return;\n} else { // 3: LIBERAR MANUAL\n    flow.set('motor_on', false);\n    flow.set('on_node', false);\n    flow.set('off_node', true);\n    flow.set('pulso_off_motor', true);\n\n    node.send([{ payload: false }, { payload: true }]);\n\n    setTimeout(() => {\n        if (flow.get('motor_cmd_seq') !== seq) return;\n        flow.set('pulso_off_motor', false);\n        flow.set('off_node', false);\n        node.send([null, { payload: false }]);\n    }, 400);\n\n    return;\n}",
+    "outputs": 2,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 520,
+    "y": 140,
+    "wires": [
+      [
+        "daa4f8544153c40e"
+      ],
+      [
+        "faecf82f35480bfa"
+      ]
+    ]
+  },
+  {
+    "id": "fn_ctrl_valvula_manual",
+    "type": "function",
+    "z": "flow_pressao_full",
+    "name": "Controle Válvula Manual",
+    "func": "if (flow.get('ativo') === true) return null;\n\nconst val = Number(msg.payload);\nconst seq = (flow.get('valvula_cmd_seq') || 0) + 1;\nflow.set('valvula_cmd_seq', seq);\n\nif (val === 1) { // 1: VÁLVULA ABERTA\n    flow.set('valvula_manual_on', true);\n    flow.set('onval_node', true);\n    flow.set('offval_node', false);\n    node.send([{ payload: true }, { payload: false }]);\n    return;\n} else if (val === 2) { // 2: VÁLVULA FECHADA\n    flow.set('valvula_manual_on', false);\n    flow.set('onval_node', false);\n    flow.set('offval_node', true);\n    node.send([{ payload: false }, { payload: true }]);\n    return;\n} else { // 3: LIBERAR MANUAL\n    flow.set('valvula_manual_on', false);\n    flow.set('onval_node', false);\n    flow.set('offval_node', true);\n\n    node.send([{ payload: false }, { payload: true }]);\n\n    setTimeout(() => {\n        if (flow.get('valvula_cmd_seq') !== seq) return;\n        flow.set('offval_node', false);\n        node.send([null, { payload: false }]);\n    }, 400);\n\n    return;\n}",
+    "outputs": 2,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 520,
+    "y": 380,
+    "wires": [
+      [
+        "7a612cafc5aaba50"
+      ],
+      [
+        "0f43d59264e5b79e"
+      ]
+    ]
+  },
+  {
+    "id": "fn_auto_cutoff_sp",
+    "type": "function",
+    "z": "flow_pressao_full",
+    "name": "Zeramento Automático Setpoint",
+    "func": "// Monitora COMPARACAO e RETORNO_BAR para desligar o motor UMA ÚNICA VEZ ao atingir o setpoint.\nlet atingiuSetpoint = false;\nconst isComparacao = (typeof msg.payload === 'boolean' || msg.variable === 'COMPARACAO' || msg.topic === 'COMPARACAO');\n\nif (isComparacao) {\n    if (msg.payload === true || msg.payload === 1 || msg.payload === 'true') {\n        atingiuSetpoint = true;\n    }\n} else {\n    const pressao = Number(msg.payload);\n    if (Number.isFinite(pressao)) {\n        let sp = 0;\n        if (flow.get('ativo') === true && flow.get('sp_travado') !== null && flow.get('sp_travado') !== undefined) {\n            sp = Number(flow.get('sp_travado'));\n        } else {\n            const tUi = flow.get('sp_ui_t') || 0;\n            const tPlc = flow.get('sp_plc_t') || 0;\n            const cand1 = tUi >= tPlc ? flow.get('sp_ui') : flow.get('sp_plc');\n            const cand2 = tUi >= tPlc ? flow.get('sp_plc') : flow.get('sp_ui');\n            sp = Number(cand1 ?? cand2 ?? 0);\n        }\n        if (sp > 0 && pressao >= sp) {\n            atingiuSetpoint = true;\n        }\n    }\n}\n\nif (!atingiuSetpoint) {\n    flow.set('corte_efetuado', false);\n    return null;\n}\n\n// Se o corte já foi efetuado neste ciclo de pressão, não emite pulso duplo\nif (flow.get('corte_efetuado') === true) {\n    return null;\n}\n\n// Só dispara o corte automático quando o motor/bomba está realmente ligado ou comandado,\n// evitando tempestade de 21.600 escritas CIP/hora com motor desligado e preservando MOTOR DESLIGADO (2).\nconst motorLigado = (flow.get('motor_on') === true) ||\n                    (flow.get('on_node') === true) ||\n                    (flow.get('bomba_fisica') === true || flow.get('bomba_fisica') === 1);\n\nif (!motorLigado || flow.get('pulso_off_motor') === true) {\n    return null;\n}\n\nflow.set('corte_efetuado', true);\nconst seq = (flow.get('motor_cmd_seq') || 0) + 1;\nflow.set('motor_cmd_seq', seq);\nflow.set('motor_on', false);\nflow.set('on_node', false);\nflow.set('off_node', true);\nflow.set('pulso_off_motor', true);\n\n// Preserva enabled: false caso um ensaio esteja ativo (não remove disabled: true de replayMessages)\nnode.send([\n    { payload: false },\n    { payload: true },\n    { payload: 3, enabled: flow.get('ativo') !== true }\n]);\n\nsetTimeout(() => {\n    if (flow.get('motor_cmd_seq') !== seq) return;\n    flow.set('pulso_off_motor', false);\n    flow.set('off_node', false);\n    node.send([null, { payload: false }, null]);\n}, 400);\n\nreturn null;",
+    "outputs": 3,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 730,
+    "y": 280,
+    "wires": [
+      [
+        "daa4f8544153c40e"
+      ],
+      [
+        "faecf82f35480bfa"
+      ],
+      [
+        "9641c0e83444adc3"
+      ]
+    ]
+  },
+  {
+    "id": "eth_in_bomba",
+    "type": "eth-ip in",
+    "z": "flow_pressao_full",
+    "endpoint": "da562bad96c4eafe",
+    "mode": "single",
+    "variable": "_IO_EM_DO_01",
+    "program": "",
+    "name": "BOMBA FISICA",
+    "x": 160,
+    "y": 720,
+    "wires": [
+      [
+        "fn_cache_bomba"
+      ]
+    ]
+  },
+  {
+    "id": "fn_cache_bomba",
+    "type": "function",
+    "z": "flow_pressao_full",
+    "name": "Cache Bomba Física",
+    "func": "let b = msg.payload === true || msg.payload === 1 || msg.payload === 'true';\nflow.set('bomba_fisica', b);\nreturn { payload: b };",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 380,
+    "y": 720,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "ui_template_mobile_css",
+    "type": "ui_template",
+    "z": "flow_pressao_full",
+    "group": "",
+    "name": "CSS Mobile Responsivo",
+    "order": 0,
+    "width": 0,
+    "height": 0,
+    "format": "<style>\n@media only screen and (max-width: 768px) {\n    /* 1. Reset Global e Prevenção de Transbordamento Horizontal */\n    *, *::before, *::after {\n        box-sizing: border-box !important;\n    }\n\n    html, body, #nr-dashboard {\n        width: 100% !important;\n        max-width: 100% !important;\n        overflow-x: hidden !important;\n        margin: 0 !important;\n        padding: 0 !important;\n        position: relative !important;\n        -webkit-overflow-scrolling: touch !important;\n    }\n\n    /* 2. Containers Intermediários do Angular Material */\n    md-toolbar,\n    .md-toolbar-tools,\n    section[layout=\"row\"],\n    md-content,\n    md-content.maincontent,\n    div[ui-masonry],\n    ui-card-panel,\n    .nr-dashboard-cardpanel {\n        width: 100% !important;\n        max-width: 100% !important;\n        overflow-x: hidden !important;\n        box-sizing: border-box !important;\n        margin-left: 0 !important;\n        margin-right: 0 !important;\n        padding-left: 4px !important;\n        padding-right: 4px !important;\n    }\n\n    .md-toolbar-tools {\n        padding-left: 8px !important;\n        padding-right: 8px !important;\n    }\n\n    .md-toolbar-tools h1 {\n        font-size: 16px !important;\n        white-space: nowrap !important;\n        overflow: hidden !important;\n        text-overflow: ellipsis !important;\n    }\n\n    p.nr-dashboard-cardtitle {\n        width: 100% !important;\n        max-width: 100% !important;\n        box-sizing: border-box !important;\n    }\n\n    /* 3. Painel e Grid Container Flexível */\n    .nr-dashboard-cardcontainer {\n        display: flex !important;\n        flex-wrap: wrap !important;\n        justify-content: space-between !important;\n        align-items: stretch !important;\n        width: 100% !important;\n        max-width: 100% !important;\n        min-width: 0 !important;\n        height: auto !important;\n        position: relative !important;\n        margin: 0 auto !important;\n        padding: 4px 0 !important;\n        gap: 8px !important;\n        box-sizing: border-box !important;\n        overflow-x: hidden !important;\n    }\n\n    /* 4. Cada card (md-card) filho passa a fluir no layout flex com largura total */\n    .nr-dashboard-cardcontainer > md-card {\n        position: relative !important;\n        left: auto !important;\n        top: auto !important;\n        right: auto !important;\n        bottom: auto !important;\n        width: 100% !important;\n        max-width: 100% !important;\n        min-width: 0 !important;\n        height: auto !important;\n        min-height: 48px !important;\n        margin: 0 !important;\n        box-sizing: border-box !important;\n        overflow: hidden !important;\n        flex: 1 1 100% !important;\n    }\n\n    /* Em tablets pequenos ou telas landscape (481px a 768px), componentes de 6 colunas formam pares lado a lado */\n    @media only screen and (min-width: 481px) and (max-width: 768px) {\n        .nr-dashboard-cardcontainer > md-card[ui-card-size^=\"6x\"] {\n            width: calc(50% - 4px) !important;\n            flex: 1 1 calc(50% - 4px) !important;\n            max-width: calc(50% - 4px) !important;\n        }\n    }\n\n    /* 5. Centralização Perfeita do Manômetro / Gráfico (JustGage) no Mobile */\n    md-card[node-id=\"gauge\"] {\n        display: flex !important;\n        flex-direction: column !important;\n        align-items: center !important;\n        justify-content: center !important;\n        text-align: center !important;\n    }\n\n    .nr-dashboard-gauge,\n    div[id^=\"gauge_\"] {\n        max-width: 100% !important;\n        width: 100% !important;\n        height: auto !important;\n        box-sizing: border-box !important;\n        overflow: hidden !important;\n        display: flex !important;\n        justify-content: center !important;\n        align-items: center !important;\n        margin: 0 auto !important;\n        text-align: center !important;\n    }\n\n    .nr-dashboard-gauge svg {\n        max-width: 100% !important;\n        width: 100% !important;\n        height: auto !important;\n        display: block !important;\n        margin: 0 auto !important;\n        overflow: hidden !important;\n    }\n\n    .nr-dashboard-gauge-title {\n        text-align: center !important;\n        width: 100% !important;\n        margin: 8px auto 4px auto !important;\n    }\n\n    /* 6. Ajustes de botões, inputs, dropdowns e templates */\n    .nr-dashboard-button,\n    .nr-dashboard-button .md-button,\n    .nr-dashboard-dropdown,\n    .nr-dashboard-dropdown md-input-container,\n    .nr-dashboard-dropdown md-select,\n    .nr-dashboard-dropdown .md-select-value,\n    .nr-dashboard-numeric,\n    .nr-dashboard-textinput,\n    .nr-dashboard-textinput md-input-container,\n    .nr-dashboard-text,\n    .nr-dashboard-template {\n        width: 100% !important;\n        max-width: 100% !important;\n        box-sizing: border-box !important;\n        overflow: hidden !important;\n    }\n\n    .nr-dashboard-button .md-button {\n        min-height: 44px !important;\n        margin: 0 !important;\n    }\n\n    .nr-dashboard-numeric input.value {\n        max-width: 80px !important;\n    }\n}\n</style>\n\n<script>\n// Garante centralização e escala perfeita do gráfico de manômetro (JustGage/Raphaël) no celular\n(function() {\n    function autoCenterGauge() {\n        var svg = document.querySelector('.nr-dashboard-gauge svg');\n        if (!svg) return;\n        if (window.innerWidth <= 768) {\n            if (svg.getBBox) {\n                try {\n                    var bb = svg.getBBox();\n                    if (bb.width > 0 && bb.height > 0) {\n                        var pad = 10;\n                        var vx = bb.x - pad;\n                        var vy = bb.y - pad;\n                        var vw = bb.width + (pad * 2);\n                        var vh = bb.height + (pad * 2);\n                        var newVb = vx + \" \" + vy + \" \" + vw + \" \" + vh;\n                        if (svg.getAttribute('viewBox') !== newVb) {\n                            svg.setAttribute('viewBox', newVb);\n                            svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');\n                        }\n                    }\n                } catch(e) {}\n            }\n        } else {\n            if (svg.getAttribute('viewBox')) {\n                svg.removeAttribute('viewBox');\n                svg.removeAttribute('preserveAspectRatio');\n            }\n        }\n    }\n    setInterval(autoCenterGauge, 500);\n})();\n</script>",
+    "storeOutMessages": false,
+    "fwdInMessages": false,
+    "resendOnRefresh": false,
+    "templateScope": "global",
+    "className": "",
+    "x": 170,
+    "y": 60,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "fn_set_tempo_restante",
+    "type": "function",
+    "z": "flow_pressao_full",
+    "name": "Definir Tempo Restante",
+    "func": "if (flow.get('ativo') === true) return null;\n\nconst val = parseInt(msg.payload, 10);\nif (isNaN(val) || val < 10 || val > 60) return null;\n\n// Garante intervalo de 5 em 5 entre 10 e 60 minutos\nconst min = Math.max(10, Math.min(60, Math.round(val / 5) * 5));\nconst duracaoMs = min * 60 * 1000;\n\nflow.set('duracao_selecionada', duracaoMs);\nflow.set('duracao_teste', duracaoMs);\nflow.set('tempo_restante', min);\n\nconst mm = String(min).padStart(2, '0');\nconst texto = `TEMPO RESTANTE: ${mm}:00`;\n\nreturn {\n    payload: texto,\n    cronometro: `${mm}:00`,\n    minutos: min,\n    enabled: true\n};",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 840,
+    "y": 722.6136363636364,
+    "wires": [
+      [
+        "82d8edb1336a7da3"
+      ]
+    ]
+  },
+  {
+    "id": "eth_in_comparacao",
+    "type": "eth-ip in",
+    "z": "flow_pressao_full",
+    "endpoint": "da562bad96c4eafe",
+    "mode": "single",
+    "variable": "COMPARACAO",
+    "program": "",
+    "name": "COMPARACAO",
+    "x": 160,
+    "y": 620,
+    "wires": [
+      [
+        "fn_auto_cutoff_sp"
+      ]
+    ]
+  },
+  {
+    "id": "fn_verifica_pdf",
+    "type": "function",
+    "z": "flow_pressao_full",
+    "name": "Verificar Geração PDF",
+    "func": "// Monitora a saída do nó exec \"Gerar PDF (Chromium)\"\nconst rc = msg.payload; // { code: number, signal?: string }\nconst html = msg.filename;\n\n// Limpeza garantida do arquivo HTML temporário em /tmp\nif (html && typeof html === 'string' && html.startsWith('/tmp/laudo_')) {\n    try {\n        if (typeof fs !== 'undefined' && typeof fs.unlink === 'function') {\n            fs.unlink(html, () => {});\n        } else {\n            require('fs').unlink(html, () => {});\n        }\n    } catch (e) {}\n}\n\nif (!rc || rc.code !== 0) {\n    node.error(\"Falha ao gerar PDF via Chromium: \" + JSON.stringify(rc));\n    return {\n        payload: \"FALHA AO GERAR PDF DO RELATÓRIO\",\n        color: \"#C62828\"\n    };\n}\nreturn null;",
+    "outputs": 1,
+    "timeout": "",
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [
+      {
+        "var": "fs",
+        "module": "fs"
+      }
+    ],
+    "x": 1290,
+    "y": 600,
+    "wires": [
+      [
+        "a7c3f1d2b9e84f10"
+      ]
+    ]
+  },
+  {
+    "id": "status_clp_endpoint",
+    "type": "status",
+    "z": "flow_pressao_full",
+    "name": "Status Conexão CLP",
+    "scope": [
+      "fba7dcc329b4be25"
+    ],
+    "x": 160,
+    "y": 1060,
+    "wires": [
+      [
+        "fn_status_clp"
+      ]
+    ]
+  },
+  {
+    "id": "fn_status_clp",
+    "type": "function",
+    "z": "flow_pressao_full",
+    "name": "Monitorar Conexão CLP",
+    "func": "// Monitora o status em tempo real do link EtherNet/IP CIP através do nó PRESSAO (fba7dcc329b4be25).\n// fill === 'green' indica sessão CIP online; 'red'/'yellow'/'grey' indica offline ou reconectando.\nconst fill = (msg && msg.status && msg.status.fill) ? String(msg.status.fill) : '';\nconst online = (fill === 'green');\nconst estavaOnline = flow.get('plc_online') === true;\n\nflow.set('plc_online', online);\nflow.set('plc_status_texto', (msg && msg.status && msg.status.text) ? String(msg.status.text) : '');\n\n// Ao reconectar após queda de cabo/energia (onControllerEnd zera tag.value = null):\n// Reenvia imediatamente o estado real de ciclo_node (true se ensaio ativo, false se parado).\nif (online && !estavaOnline) {\n    return { payload: flow.get('ativo') === true };\n}\n\nreturn null;",
+    "outputs": 1,
+    "timeout": "",
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 430,
+    "y": 1060,
+    "wires": [
+      [
+        "eth_out_ciclo"
+      ]
+    ]
+  }
 ]

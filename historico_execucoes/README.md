@@ -6,7 +6,7 @@
 Este diretório mantém o registro cronológico, auditável e cumulativo de todas as etapas de desenvolvimento, comissionamento e manutenção do sistema.
 
 > **REGRA DE HISTÓRICO PERMANENTE:**  
-> Nenhum relatório existente nesta pasta deve ser sobrescrito ou apagado. Cada nova rodada de alterações deve gerar um novo arquivo numerado sequencialmente (`04_...`, `05_...`, ..., `09_...`), acompanhado da atualização deste índice.
+> Nenhum relatório existente nesta pasta deve ser sobrescrito ou apagado. Cada nova rodada de alterações deve gerar um novo arquivo numerado sequencialmente (`04_...`, `05_...`, ..., `10_...`), acompanhado da atualização deste índice.
 
 ---
 
@@ -23,6 +23,7 @@ Este diretório mantém o registro cronológico, auditável e cumulativo de toda
 | **07** | 16/10/2026 | [`07_RESUMO_EXECUCAO_tempo_restante_selecionavel_e_responsividade_mobile.md`](07_RESUMO_EXECUCAO_tempo_restante_selecionavel_e_responsividade_mobile.md) | Tempo restante configurável (10 a 60 min, passo 5), eliminação completa de overflow horizontal no mobile, manômetro renomeado para "Pressão do sensor" e centralização milimétrica com BBox SVG. | Adriano J. / Antigravity | Aprovado |
 | **08** | 16/10/2026 | [`08_RESUMO_EXECUCAO_corte_setpoint_comparacao_e_reset_liberar_manual.md`](08_RESUMO_EXECUCAO_corte_setpoint_comparacao_e_reset_liberar_manual.md) | Resolução do religamento indevido do motor no setpoint via tag CIP `COMPARACAO` e corte de `on_node=false`, pulso de RESET de 400 ms ao Liberar Manual e despacho CIP. | Adriano J. / Antigravity | Aprovado |
 | **09** | 30/10/2026 | [`09_RESUMO_EXECUCAO_grafico_dinamico_sincronia_setpoint_e_influx_windows.md`](09_RESUMO_EXECUCAO_grafico_dinamico_sincronia_setpoint_e_influx_windows.md) | Laudo PDF A4 Paisagem de página única com gráfico SVG dinâmico (10–60 min) e bloqueio multinível de tempo, eliminação do atraso de `0,5 bar` no Setpoint via Shim CIP de 4 camadas, correção do InfluxDB no Windows (`iot-network` DNS), higiene do `flows.json` e sincronização integral dos Dossiês. | Adriano J. / Antigravity | Aprovado |
+| **10** | 31/10/2026 | [`10_RESUMO_EXECUCAO_auditoria_hardening_metrologia_cip_desempenho.md`](10_RESUMO_EXECUCAO_auditoria_hardening_metrologia_cip_desempenho.md) | Auditoria profunda e hardening completo: leitura de `0,00 bar` e ruptura, média ponderada no tempo (ZOH) + keepalive `2 s`, tolerância simétrica `Setpoint ± 0,5 bar`, supervisão online/offline do CLP, Shim CIP de 7 camadas (framing TCP + guarda in-flight + limpeza de timers), fim da tempestade CIP, UID determinístico no Grafana (`InfluxDB-Flux`), poda $O(1)$ (**1.086x** mais rápida), blindagem PDF Chromium (`/tmp` + `--disable-dev-shm-usage` + timeout `30 s`) e centralização documental em `docs/`. | Adriano J. / Antigravity | Aprovado |
 
 ---
 
@@ -39,7 +40,8 @@ historico_execucoes/
 ├── 06_RESUMO_EXECUCAO_controles_3_posicoes_intertravamento_fisico_mobile.md  # Execução 06
 ├── 07_RESUMO_EXECUCAO_tempo_restante_selecionavel_e_responsividade_mobile.md # Execução 07
 ├── 08_RESUMO_EXECUCAO_corte_setpoint_comparacao_e_reset_liberar_manual.md    # Execução 08
-└── 09_RESUMO_EXECUCAO_grafico_dinamico_sincronia_setpoint_e_influx_windows.md # Execução 09 (Atual)
+├── 09_RESUMO_EXECUCAO_grafico_dinamico_sincronia_setpoint_e_influx_windows.md # Execução 09
+└── 10_RESUMO_EXECUCAO_auditoria_hardening_metrologia_cip_desempenho.md       # Execução 10 (Atual)
 ```
 
-O arquivo [`RESUMO_EXECUCAO.md`](../RESUMO_EXECUCAO.md) na raiz do repositório funciona como ponteiro de leitura rápida direcionando para a versão mais recente (**09**).
+O arquivo [`docs/RESUMO_EXECUCAO.md`](../docs/RESUMO_EXECUCAO.md) funciona como ponteiro de leitura rápida direcionando para a versão mais recente (**10**).

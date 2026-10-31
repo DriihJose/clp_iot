@@ -1,6 +1,6 @@
 # DOSSIÊ TÉCNICO DE MANUTENÇÃO E OPERAÇÃO
 ## Sistema SCADA / IoT - Bancada de Teste de Pressão Hidrostática
-**Controlador:** Rockwell Micro850 (2080-L50E) | **Supervisório:** Node-RED 4.x/5.x (Dashboard 3.6.6) | **Banco:** InfluxDB 2.7 | **Dashboards:** Grafana 11.x  
+**Controlador:** Rockwell Micro850 (2080-L50E) | **Supervisório:** Node-RED 5.0.8 (Dashboard 3.6.6) | **Banco:** InfluxDB 2.7.12 | **Dashboards:** Grafana 13.2.4  
 **Compatibilidade:** Linux (Ubuntu 20.04/22.04/24.04 LTS) e Windows 10/11 (Docker Desktop / WSL2)  
 **Ambiente:** 100% Offline (Air-gapped)
 
@@ -10,7 +10,7 @@
 
 Este documento é a referência definitiva de engenharia de automação e software para manutenção, calibração, diagnóstico e operação do sistema de teste hidrostático da bancada.
 
-O sistema executa testes de estanqueidade e integridade mecânica com duração configurável de **10 a 60 minutos** (passo de 5 minutos, padrão 60 minutos, com travamento multinível `duracao_travada` durante o ensaio), registrando a curva de pressão em alta resolução, garantindo sincronia imediata e bidirecional de Setpoint com o CLP sem atraso de `0,5 bar`, calculando indicadores estatísticos (média, mínima, máxima, erro relativo) e gerando relatórios de ensaio em formato **PDF A4 Paisagem de página única** com gráfico vetorial SVG panorâmico dinâmico, além de prover telas de operação responsivas (desktop e mobile) no Node-RED Dashboard (`/ui`) e análise histórica no Grafana.
+O sistema executa testes de estanqueidade e integridade mecânica com duração configurável de **10 a 60 minutos** (passo de 5 minutos, padrão 60 minutos, com travamento multinível `duracao_travada` durante o ensaio), monitorando continuamente a conectividade CIP com o CLP (`flow.plc_online`), registrando toda a faixa de pressão de **`0,00` a `10,00 bar`** (incluindo detecção de despressurização total / rompimento e keepalive de `2 s` em regime estacionário), garantindo sincronia imediata e bidirecional de Setpoint com o CLP sem atraso de `0,5 bar`, calculando indicadores estatísticos exatos sobre a janela filtrada do ensaio (**média ponderada no tempo por retenção de ordem zero / ZOH**, mínima, máxima e tolerância bilateral simétrica **`Setpoint ± 0,5 bar`**) e gerando relatórios de ensaio em formato **PDF A4 Paisagem de página única** com gráfico vetorial SVG panorâmico dinâmico (`clipPath`, ancoragem adaptativa de falha e HTML temporário isolado em `/tmp`), além de prover telas de operação no Node-RED Dashboard (`/ui`) e análise histórica no Grafana (`uid: InfluxDB-Flux`).
 
 ---
 
@@ -39,7 +39,7 @@ O sistema executa testes de estanqueidade e integridade mecânica com duração 
         v                                                                   v
 +-----------------------+                                   +-----------------------+
 |  NODE-RED (Port 1880) |                                   |  NODE-RED (Port 1880) |
-|  - Driver CIP shim    |                                   |  - Driver CIP shim    |
+|  - Shim CIP 7 camadas |                                   |  - Shim CIP 7 camadas |
 |  - Chromium Headless  |                                   |  - Chromium Headless  |
 +-----------------------+                                   +-----------------------+
         |                                                                   |
@@ -47,14 +47,14 @@ O sistema executa testes de estanqueidade e integridade mecânica com duração 
                                           | (HTTP API v2: host.docker.internal:8086)
                                           v
                               +-----------------------+
-                              | INFLUXDB 2.7 (P:8086) |
+                              | INFLUXDB 2.7.12(:8086)|
                               | Org: vigor            |
                               | Bucket: carrinho      |
                               +-----------------------+
-                                          | (Flux Query)
+                                          | (Flux Query / uid: InfluxDB-Flux)
                                           v
                               +-----------------------+
-                              |  GRAFANA (Port 3000)  |
+                              | GRAFANA 13.2.4 (:3000)|
                               |  Dashboard Dinâmico   |
                               +-----------------------+
 ```
@@ -64,7 +64,7 @@ Toda a comunicação do CLP foi unificada e homologada para o Micro850 via CIP n
 
 | Tag no CLP | Tipo de Dado | Sentido | Descrição Funcional |
 |---|---|---|---|
-| `RETORNO_BAR` | `REAL` | CLP -> Node-RED | Pressão instantânea lida pelo transmissor analógico (0 a 10 bar). |
+| `RETORNO_BAR` | `REAL` | CLP -> Node-RED | Pressão instantânea lida pelo transmissor analógico (`0,00` a `10,00 bar`). |
 | `_IO_EM_DO_00` | `BOOL` | CLP -> Node-RED | Feedback elétrico da saída digital 00 (Válvula solenoide). |
 | `_IO_EM_DO_01` | `BOOL` | CLP -> Node-RED | Feedback elétrico da saída digital 01 (Bomba hidráulica / Motor). |
 | `COMPARACAO` | `BOOL` | CLP -> Node-RED | Comparador interno do CLP (`true` quando pressão >= setpoint), acionando corte definitivo do motor. |
@@ -73,7 +73,7 @@ Toda a comunicação do CLP foi unificada e homologada para o Micro850 via CIP n
 | `off_node` | `BOOL` | Node-RED -> CLP | Comando Desliga Motor / Pulso de RESET de `400 ms` ao Liberar Manual ou atingir Setpoint (Linha 6 Ladder CLP). |
 | `onval_node` | `BOOL` | Node-RED -> CLP | Comando Abre Válvula (Linha 8 Ladder CLP - aciona Set em `_IO_EM_DO_00`). |
 | `offval_node` | `BOOL` | Node-RED -> CLP | Comando Fecha Válvula / Pulso de RESET de `400 ms` ao Liberar Manual (Linha 9 Ladder CLP). |
-| `ciclo_node` | `BOOL` | Node-RED -> CLP | **Sinal de Teste em Andamento**: `true` durante o teste, `false` ao parar/finalizar. |
+| `ciclo_node` | `BOOL` | Node-RED -> CLP | **Sinal de Teste em Andamento**: `true` durante o teste, `false` no boot/parada e re-sincronizado na reconexão CIP. |
 
 ---
 
@@ -84,29 +84,28 @@ clp_iot/
 ├── .env.example                       # Modelo de variáveis de ambiente do InfluxDB e Grafana
 ├── .gitattributes                     # Normalização de finais de linha (LF/CRLF)
 ├── .gitignore                         # Regras de exclusão de dados dinâmicos, credenciais e PDFs
-├── Dockerfile.nodered                 # Imagem customizada Alpine do Node-RED com Chromium Headless
-├── DOSSIE_TECNICO_MANUTENCAO.md       # Documento mestre de engenharia (sincronizado com docs/)
+├── Dockerfile.nodered                 # Imagem customizada Alpine do Node-RED 5.0.8 com Chromium Headless
 ├── README.md                          # Guia rápido de introdução e operação offline
-├── RESUMO_EXECUCAO.md                 # Ponteiro central para a execução mais recente (Execução 09)
-├── docker-compose.windows.yml         # Orquestração Docker para Windows 10/11 (DNS interno iot-network)
+├── docker-compose.windows.yml         # Orquestração Docker para Windows 10/11 (versões fixadas + DNS iot-network)
 ├── docker-compose.yml                 # Orquestração Docker para Linux (network_mode: host)
 ├── docker-entrypoint.sh               # Inicialização offline segura sem downloads externos
 ├── iniciar-sistema.bat                # Atalho Windows para subida 100% offline
 ├── parar-sistema.bat                  # Atalho Windows para parada limpa dos serviços
-├── exportar-imagens-offline.bat       # Exportador de imagens Docker (.tar) para backup air-gapped
-├── enviar-github.bat                  # Utilitário administrativo de versionamento Git
-├── docs/                              # Espelho organizado da documentação técnica
-│   ├── DOSSIE_TECNICO_MANUTENCAO.md   # Cópia idêntica deste Dossiê Técnico
+├── docs/                              # Documentação oficial centralizada de engenharia e operação
+│   ├── DOSSIE_TECNICO_MANUTENCAO.md   # Documento mestre de engenharia e manutenção (este arquivo)
 │   ├── README.md
 │   ├── RELATORIO_MIGRACAO_WINDOWS.md
-│   ├── RESUMO_EXECUCAO.md             # Cópia sincronizada do ponteiro de execuções
+│   ├── RESUMO_EXECUCAO.md             # Ponteiro central para a execução mais recente (Versão 10)
 │   └── RESUMO_PROJETO_SCADA.md
 ├── scripts/                           # Scripts modulares por sistema operacional
+│   ├── README.md
 │   ├── linux/
+│   │   ├── README.md
 │   │   ├── iniciar-sistema.sh
 │   │   ├── parar-sistema.sh
 │   │   └── setup-linux.sh
 │   └── windows/
+│       ├── README.md
 │       ├── enviar-github.bat
 │       ├── exportar-imagens-offline.bat
 │       ├── iniciar-sistema.bat
@@ -114,10 +113,10 @@ clp_iot/
 │       └── setup-windows.ps1
 ├── grafana_provisioning/              # Provisionamento automático de Data Sources e Dashboards
 │   ├── dashboards/
-│   │   ├── dashboard.json             # Dashboard dinâmico de Pressão, Setpoint e Válvula
-│   │   └── default.yaml
+│   │   ├── dashboards.yaml
+│   │   └── pressao_hidrostatica.json  # Dashboard dinâmico de Pressão, Setpoint e Válvula
 │   └── datasources/
-│       └── influxdb.yaml              # Conexão automática ao InfluxDB 2.7 (Flux)
+│       └── influxdb.yaml              # Conexão determinística (uid: InfluxDB-Flux) ao InfluxDB 2.7.12
 ├── historico_execucoes/               # Registro cronológico imutável de todas as intervenções
 │   ├── 01_RESUMO_EXECUCAO_comissionamento_rede_shim_cip.md
 │   ├── 02_RESUMO_EXECUCAO_multiplataforma_docker_pdf.md
@@ -128,12 +127,13 @@ clp_iot/
 │   ├── 07_RESUMO_EXECUCAO_tempo_restante_selecionavel_e_responsividade_mobile.md
 │   ├── 08_RESUMO_EXECUCAO_corte_setpoint_comparacao_e_reset_liberar_manual.md
 │   ├── 09_RESUMO_EXECUCAO_grafico_dinamico_sincronia_setpoint_e_influx_windows.md
+│   ├── 10_RESUMO_EXECUCAO_auditoria_hardening_metrologia_cip_desempenho.md
 │   └── README.md
 ├── nodered_data/                      # Volume persistente do Node-RED (/data)
-│   ├── flows.json                     # Fluxo oficial limpo e validado (53 objetos JSON / 16 functions)
-│   ├── package.json                   # Dependências npm estritas e homologadas
+│   ├── flows.json                     # Fluxo oficial limpo e validado (56 objetos JSON / 18 functions)
+│   ├── package.json                   # Dependências npm estritas e homologadas (sem pacotes órfãos)
 │   ├── package-lock.json              # Lockfile determinístico
-│   ├── settings.js                    # Configurações do Node-RED + Shim CIP Micro800 de 4 camadas
+│   ├── settings.js                    # Configurações do Node-RED + Shim CIP Micro800 de 7 camadas
 │   └── node_modules/                  # Dependências locais para operação 100% Air-Gapped
 └── relatorios/                        # Pasta no host onde os laudos PDF A4 Paisagem são gravados
     └── .gitkeep
@@ -218,7 +218,7 @@ networks:
 ```
 
 ### 3.2 `docker-compose.windows.yml` (Windows 10/11)
-> **Compatibilidade Multiplataforma de `host.docker.internal`:** No Windows (Docker Desktop / WSL2), o serviço `nodered` compartilha a bridge `iot-network` com o `influxdb`, onde o `influxdb` publica o alias de rede `host.docker.internal`. **Não** se deve declarar `extra_hosts: ["host.docker.internal:host-gateway"]` no `nodered` do Windows, pois isso injetaria `192.168.65.254` no `/etc/hosts` (sobrepondo o DNS interno `127.0.0.11` do Docker e causando `ETIMEDOUT 192.168.65.254:8086` em ambientes air-gapped/firewall). Sem `extra_hosts` no Windows e com `extra_hosts` no Linux (`network_mode: host`), o mesmo `flows.json` (`http://host.docker.internal:8086`) funciona nativamente nos dois sistemas operacionais.
+> **Compatibilidade Multiplataforma de `host.docker.internal` e Pinagem Determinística:** No Windows (Docker Desktop / WSL2), as imagens estão fixadas nas versões exatas homologadas localmente (`clp_iot-nodered:latest` sobre `nodered/node-red:5.0.8`, `influxdb:2.7.12` e `grafana/grafana:13.2.4`). O serviço `nodered` compartilha a bridge `iot-network` com o `influxdb`, onde o `influxdb` publica o alias de rede `host.docker.internal`. **Não** se deve declarar `extra_hosts: ["host.docker.internal:host-gateway"]` no `nodered` do Windows, evitando injeção de `192.168.65.254` em `/etc/hosts`.
 
 ```yaml
 services:
@@ -244,7 +244,7 @@ services:
       - influxdb
 
   influxdb:
-    image: influxdb:2.7
+    image: influxdb:2.7.12
     container_name: influxdb
     pull_policy: missing
     ports:
@@ -269,7 +269,7 @@ services:
           - host.docker.internal
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:13.2.4
     container_name: grafana
     pull_policy: missing
     ports:
@@ -299,7 +299,7 @@ networks:
 
 ### 3.3 `Dockerfile.nodered`
 ```dockerfile
-FROM nodered/node-red:latest
+FROM nodered/node-red:5.0.8
 
 USER root
 
@@ -319,6 +319,33 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 USER node-red
 
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+```
+
+### 3.3.1 `grafana_provisioning/datasources/influxdb.yaml`
+> **UID Determinístico (`uid: InfluxDB-Flux`):** Garante que os 7 painéis provisionados em `pressao_hidrostatica.json` encontrem o datasource tanto em instalações novas quanto em atualizações sobre volumes `grafana_data/grafana.db` pré-existentes (via `deleteDatasources` + recriação atômica no boot).
+
+```yaml
+apiVersion: 1
+
+deleteDatasources:
+  - name: InfluxDB-Flux
+    orgId: 1
+
+datasources:
+  - name: InfluxDB-Flux
+    uid: InfluxDB-Flux
+    type: influxdb
+    access: proxy
+    url: http://influxdb:8086
+    isDefault: true
+    jsonData:
+      version: Flux
+      organization: vigor
+      defaultBucket: carrinho
+      httpMode: POST
+    secureJsonData:
+      token: ${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN}
+    editable: true
 ```
 
 ### 3.4 `docker-entrypoint.sh`
@@ -345,12 +372,15 @@ fi
 exec /usr/src/node-red/entrypoint.sh "${@}"
 ```
 
-### 3.5 O Shim CIP Micro800 em `nodered_data/settings.js` e `ethernet-ip.js`
-> **Problemas Resolvidos pelo Shim CIP de 4 Camadas (Versionado no Git):**
-> 1. **Roteamento Direto Micro800 (`Controller.prototype.write_cip`):** A família Micro800 (Micro820/850/870) não possui backplane e rejeita `Unconnected Send` roteado para Porta 1/Slot 0. O shim envia os pacotes CIP diretamente ao `Message Router` via `ENIP.write_cip`.
-> 2. **Despacho Forçado CIP via `write_ready` (`TagGroup.prototype.generateWriteMessageRequests`):** Na biblioteca `ethernet-ip` original, `generateWriteMessageRequests` só enviava `WRITE_TAG` quando `tag.value !== tag.controller_value`, descartando pulsos repetidos de `400 ms` (`off_node` / `offval_node`). Ao alterar a condição para `tag.value !== null && (tag.write_ready || tag.value !== tag.controller_value)`, toda escrita em `eth-ip out` dispara efetivamente o `WRITE_TAG` CIP sem precisar anular `controllerValue` em `ethernet-ip.js`.
-> 3. **Supressão de Leitura Pré-Escrita (`Tag.prototype.controller_value`):** Como `Controller.scan()` executa `_readTagGroup` antes de `_writeTagGroup`, zerar `controllerValue` fazia a leitura anterior à escrita disparar `"Initialized"` com o setpoint antigo (causando atraso crônico de `0,5 bar`). O setter interceptado suprime emissões espúrias enquanto `stage_write === true`.
-> 4. **Confirmação Imediata Pós-Escrita e Normalização Float32 (`Tag.prototype.unstageWriteRequest`):** Ao concluir `WRITE_TAG`, limpa `stage_write = false`, normaliza tags `REAL` (`0xca`) com `Math.fround(Number(tag.value))` (alinhando IEEE-754 Float32 com `Buffer.readFloatLE`) e aciona o setter `this.controller_value = tag.value`, emitindo `"Changed"` imediatamente com o valor confirmado no CLP.
+### 3.5 O Shim CIP Micro800 de 7 Camadas em `nodered_data/settings.js` e `ethernet-ip.js`
+> **Problemas Resolvidos pelo Shim CIP de 7 Camadas (Versionado no Git):**
+> 1. **Limpeza Determinística de Timers (`utilities.promiseTimeout`):** Na biblioteca `ethernet-ip` original, `promiseTimeout` não executava `clearTimeout` após a resolução da Promise, mantendo objetos `Timeout` retidos até expirarem (notadamente em tentativas de reconexão de 10 s com CLP desligado). O shim aplica `clearTimeout` no `.finally()` antes de carregar `Controller`.
+> 2. **Roteamento Direto Micro800 (`Controller.prototype.write_cip`):** A família Micro800 (Micro820/850/870) não possui backplane e rejeita `Unconnected Send` roteado para Porta 1/Slot 0. O shim envia os pacotes CIP diretamente ao `Message Router` via `ENIPProto.write_cip`.
+> 3. **Reassemblagem de Stream TCP ENIP (`ENIPProto._handleDataEvent` / `_handleCloseEvent`):** O handler nativo assumia que cada evento `socket.on('data')` continha exatamente 1 quadro EtherNet/IP completo de 24 bytes de cabeçalho + payload. O shim introduz um buffer acumulador (`this._rxBuf`) que reassembla segmentos TCP fragmentados e separa múltiplos pacotes ENIP coalescidos no mesmo frame TCP.
+> 4. **Rastreamento Sequencial de Escritas In-Flight (`Tag.prototype.value` + `_write_seq` / `_inflight_seq`):** Como `Controller._writeTagGroup` é assíncrono sobre TCP, uma nova escrita em `tag.value` durante uma requisição CIP em trânsito (ex.: borda de descida `false` de um pulso de `400 ms` enquanto a escrita `true` sofreu latência de rede) seria limpa indevidamente por `unstageWriteRequest()`. O contador monotônico `_write_seq` preserva `stage_write = true` caso um valor mais novo tenha sido enfileirado durante o voo.
+> 5. **Despacho Forçado CIP via `write_ready` (`TagGroup.prototype.generateWriteMessageRequests`):** Dispara `WRITE_TAG` sempre que `tag.value !== null && (tag.write_ready || tag.value !== tag.controller_value)`, registrando `_inflight_seq` e `_inflight_val` no instante exato da montagem do pacote CIP.
+> 6. **Supressão de Leitura Pré-Escrita (`Tag.prototype.controller_value`):** Suprime emissões espúrias `"Initialized"` / `"Changed"` de leituras anteriores à escrita enquanto `stage_write === true`, eliminando o atraso crônico de `0,5 bar` no setpoint.
+> 7. **Confirmação Pós-Escrita Seletiva e Normalização Float32 (`Tag.prototype.unstageWriteRequest`):** Só limpa `stage_write = false` quando `_write_seq === _inflight_seq`, normaliza tags `REAL` (`0xca`) com `Math.fround(Number(val))` (precisão IEEE-754 Float32) e confirma `this.controller_value` imediatamente.
 
 ```javascript
 /*******************************************************************************
@@ -365,17 +395,104 @@ exec /usr/src/node-red/entrypoint.sh "${@}"
  * Remove this block if a ControlLogix/CompactLogix (routed) PLC is ever used.
  ******************************************************************************/
 try {
+    // 0. Limpeza imediata de timers de timeout (10 s) em ethernet-ip/src/utilities ANTES de carregar Controller
+    const eipUtilities = require("/data/node_modules/ethernet-ip/src/utilities");
+    eipUtilities.promiseTimeout = (promise, ms, error = new Error("ASYNC Function Call Timed Out!!!")) => {
+        return new Promise((resolve, reject) => {
+            const timer = setTimeout(() => reject(error), ms);
+            promise.then(
+                (val) => {
+                    clearTimeout(timer);
+                    resolve(val);
+                },
+                (err) => {
+                    clearTimeout(timer);
+                    reject(err);
+                }
+            );
+        });
+    };
+
     const { Controller, Tag, TagGroup, EthernetIP } = require("/data/node_modules/ethernet-ip");
     const { MessageRouter } = EthernetIP.CIP;
     const { MULTIPLE_SERVICE_PACKET } = MessageRouter.services;
 
     // 1. Roteamento Direto Micro800 (envia direto ao Message Router sem Unconnected Send / backplane)
-    const ENIP = Object.getPrototypeOf(Controller.prototype);
+    // Nota: Object.getPrototypeOf(Controller.prototype) retorna diretamente ENIP.prototype
+    const ENIPProto = Object.getPrototypeOf(Controller.prototype);
     Controller.prototype.write_cip = function (data, connected = false, timeout = 10, cb = null) {
-        ENIP.write_cip.call(this, data, connected, timeout, cb);
+        ENIPProto.write_cip.call(this, data, connected, timeout, cb);
     };
 
-    // 2. Despacho Forçado CIP via write_ready (stage_write), inclusive quando tag.value === tag.controller_value
+    // 2. Buffer de Remontagem de Stream TCP ENIP (trata pacotes fragmentados < 24+len e pacotes coalescidos > 24+len)
+    const origHandleData = ENIPProto._handleDataEvent;
+    const origHandleClose = ENIPProto._handleCloseEvent;
+    if (typeof origHandleData === "function") {
+        ENIPProto._handleDataEvent = function (data) {
+            if (!Buffer.isBuffer(data) || data.length === 0) return;
+
+            this._rxBuf = (this._rxBuf && this._rxBuf.length > 0)
+                ? Buffer.concat([this._rxBuf, data])
+                : data;
+
+            while (this._rxBuf && this._rxBuf.length >= 24) {
+                const payloadLen = this._rxBuf.readUInt16LE(2);
+                const frameLen = 24 + payloadLen;
+
+                // Pacote TCP fragmentado: aguarda o restante dos bytes no próximo evento 'data'
+                if (this._rxBuf.length < frameLen) break;
+
+                let frame;
+                if (this._rxBuf.length === frameLen) {
+                    frame = this._rxBuf;
+                    this._rxBuf = null;
+                } else {
+                    // Dois ou mais pacotes ENIP coalescidos no mesmo segmento TCP
+                    frame = Buffer.from(this._rxBuf.subarray(0, frameLen));
+                    this._rxBuf = Buffer.from(this._rxBuf.subarray(frameLen));
+                }
+
+                try {
+                    origHandleData.call(this, frame);
+                } catch (err) {
+                    this._rxBuf = null;
+                    this.emit("error", err);
+                    break;
+                }
+            }
+        };
+    }
+    if (typeof origHandleClose === "function") {
+        ENIPProto._handleCloseEvent = function (hadError) {
+            this._rxBuf = null;
+            return origHandleClose.call(this, hadError);
+        };
+    }
+
+    // 3. Rastreamento de sequência de escrita (protege pulsos rápidos de 400 ms como TRUE -> FALSE em trânsito)
+    const valDesc = Object.getOwnPropertyDescriptor(Tag.prototype, "value");
+    if (valDesc && typeof valDesc.set === "function") {
+        Object.defineProperty(Tag.prototype, "value", {
+            get: valDesc.get,
+            set: function (newValue) {
+                if (this.state && this.state.tag) {
+                    this.state.tag._write_seq = (this.state.tag._write_seq || 0) + 1;
+                    if (newValue === null) {
+                        this.state.tag.value = null;
+                        this.state.tag.stage_write = false;
+                        this.state.tag._inflight_seq = undefined;
+                        this.state.tag._inflight_val = undefined;
+                        return;
+                    }
+                }
+                return valDesc.set.call(this, newValue);
+            },
+            enumerable: valDesc.enumerable,
+            configurable: true
+        });
+    }
+
+    // 4. Despacho Forçado CIP via write_ready (stage_write) com snapshot da escrita em voo (_inflight_seq)
     TagGroup.prototype.generateWriteMessageRequests = function () {
         const { tags } = this.state;
 
@@ -388,6 +505,10 @@ try {
             const tag = tags[key];
 
             if (tag.value !== null && (tag.write_ready || tag.value !== tag.controller_value)) {
+                if (tag.state && tag.state.tag) {
+                    tag.state.tag._inflight_seq = tag.state.tag._write_seq || 0;
+                    tag.state.tag._inflight_val = tag.value;
+                }
                 let msg = tag.generateWriteMessageRequest();
 
                 messageLength += msg.length + 2;
@@ -441,7 +562,7 @@ try {
         return messages;
     };
 
-    // 3. Supressão de leitura antiga durante escrita pendente (stage_write === true)
+    // 5. Supressão de leitura antiga durante escrita pendente (stage_write === true)
     const ctrlValDesc = Object.getOwnPropertyDescriptor(Tag.prototype, "controller_value");
     if (ctrlValDesc && typeof ctrlValDesc.set === "function") {
         Object.defineProperty(Tag.prototype, "controller_value", {
@@ -461,18 +582,35 @@ try {
         });
     }
 
-    // 4. Confirmação imediata pós-escrita com normalização IEEE-754 Float32 para tags REAL (0xca)
+    // 6. Confirmação pós-escrita segura contra corrida em voo + normalização IEEE-754 Float32 para REAL (0xca)
     Tag.prototype.unstageWriteRequest = function () {
         const { tag } = this.state;
+        const hasInflight = tag._inflight_seq !== undefined;
+        const sentRaw = hasInflight ? tag._inflight_val : tag.value;
+        const normalizedSent = (tag.type === 0xca && sentRaw !== null && !isNaN(Number(sentRaw)))
+            ? Math.fround(Number(sentRaw))
+            : sentRaw;
+
+        const superseded = hasInflight && tag._write_seq !== tag._inflight_seq;
+        tag._inflight_seq = undefined;
+        tag._inflight_val = undefined;
+
+        if (superseded) {
+            // Uma nova escrita (ex.: fim do pulso FALSE após 400 ms) entrou na fila enquanto o pacote anterior estava em trânsito.
+            // Registra o valor confirmado no CLP sem apagar stage_write, garantindo o envio da nova escrita no próximo ciclo.
+            tag.controllerValue = normalizedSent;
+            tag.stage_write = (tag.value !== null);
+            return;
+        }
+
         tag.stage_write = false;
         if (tag.type === 0xca && tag.value !== null && !isNaN(Number(tag.value))) {
-            const val = Math.fround(Number(tag.value));
-            tag.value = val;
+            tag.value = normalizedSent;
         }
-        this.controller_value = tag.value;
+        this.controller_value = normalizedSent;
     };
 
-    console.log("[micro800-shim] ethernet-ip patched: direct Message Router + stage_write forced dispatch + REAL sync");
+    console.log("[micro800-shim] ethernet-ip patched: direct Message Router + TCP framing + inflight write guard + timer cleanup + REAL sync");
 } catch (e) {
     console.warn("[micro800-shim] not applied:", e.message);
 }
@@ -749,62 +887,65 @@ Write-Host "=================================================================" -
 
 ## 4. MAPEAMENTO COMPLETO DO FLUXO DO NODE-RED (`flows.json`)
 
-O fluxo do Node-RED é composto por **53 objetos JSON** (1 aba, 4 nós de configuração e 48 nós funcionais/visuais, incluindo **16 nós `function`**) organizados em 8 blocos lógicos sem sobreposição no canvas e sem duplicidade de escrita no InfluxDB.
+O fluxo do Node-RED é composto por **56 objetos JSON** (1 aba, 4 nós de configuração e 51 nós funcionais/visuais, incluindo **18 nós `function`**) organizados em blocos lógicos sem sobreposição no canvas e sem duplicidade de escrita no InfluxDB.
 
 ### 4.1 Visão Geral dos Blocos Lógicos
 
 ```
-[IHM: Equipamento] -----------> (fn_set_eq: Salvar Equipamento)
+[Status CLP (PRESSAO)] -------> (fn_status_clp) -----------------------> [CLP: ciclo_node sync / boot=false]
+[IHM: Equipamento (100ms)] ---> (fn_set_eq: Salvar Equipamento)
 [IHM: Motor 3 Posições] ------> (fn_ctrl_motor_manual: Pulso 400ms) ---> [CLP: on_node / off_node]
 [IHM: Válvula 3 Posições] ----> (fn_ctrl_valvula_manual: Pulso 400ms) -> [CLP: onval_node / offval_node]
 [IHM: PRESSÃO DESEJADA] ------> [CLP: setpoint_node] & (fn_cache_setpoint) & [IHM: Pressão definida]
 [CLP: setpoint_node] ---------> (fn_cache_setpoint_plc: Anti-Eco) -----> [IHM: Pressão definida & PRESSÃO DESEJADA]
 [IHM: Seletor Tempo 10..60m] <> (fn_set_tempo_restante: Trava ativo)
 
-[CLP: RETORNO_BAR (500ms)] ---> [InfluxDB: PT-010 (único: 398b99857e5197e4)]
-                            +-> (7d655f41: Coleta pressão) ------------> [IHM: Manômetro gauge]
-                            +-> (fn_auto_cutoff_sp) <------------------- [CLP: COMPARACAO (x:160, y:620)]
+[CLP: RETORNO_BAR (500ms)] ---> [InfluxDB: PT-010 (398b99857e5197e4)]
+                            +-> (7d655f41: Coleta pressão >= 0.00 bar) -> [IHM: Manômetro gauge]
+                            +-> (fn_auto_cutoff_sp: sem storm CIP) <---- [CLP: COMPARACAO (x:160, y:620)]
                                          |
                                          +-----------------------------> [CLP: on_node=0 / off_node pulso 400ms] & [IHM: MOTOR=3]
 [CLP: _IO_EM_DO_01 (Bomba)] --> (fn_cache_bomba)
 [CLP: _IO_EM_DO_00 (Válvula)] > (fn_cache_valvula) --------------------> [InfluxDB: vp-01]
+(Inject 2s) ------------------> (fn_heartbeat: 4 saídas) --------------> [InfluxDB: setpoint & vp-01 & PT-010 keepalive] & (Coleta pressão)
 
-[IHM: INICIAR TESTE] ---------> (49589c46: Inicia teste) --------------> [CLP: ciclo_node = true]
+[IHM: INICIAR TESTE] ---------> (49589c46: Inicia teste + seed t0) ----> [CLP: ciclo_node = true]
                                                                     +--> [InfluxDB: setpoint travado]
                                                                     +--> (fn_ui_lock: 11 saídas - Bloqueia UI & Zera Tags)
-(Inject 1s) ------------------> (5214bd83: Decremento de tempo) -------> [IHM: Seletor Tempo & Status]
+(Inject 1s) ------------------> (5214bd83: Decremento de tempo dedup) -> [IHM: Seletor Tempo & Status]
                                          | (tempo esgotado -> FINALIZAR_AUTO)
                                          v
-[IHM: FINALIZAR TESTE] -------> (6d54da28: Finaliza _Teste) -----------> [CLP: ciclo_node = false]
+[IHM: FINALIZAR TESTE] -------> (6d54da28: Finaliza _Teste ZOH ±0,5) --> [CLP: ciclo_node = false]
                                          |                          +--> (fn_ui_lock: 11 saídas - Libera UI)
                                          v                          +--> [InfluxDB: ponto final setpoint]
-                                [8525c1d0: Relatório HTML/SVG A4 Paisagem]
+                                [8525c1d0: Relatório HTML/SVG A4 Paisagem (clipPath)]
                                          v
-                                (4e72940d: Grava relatorio.html) -> (e32ec29a: Comando Chromium) -> [Chromium PDF]
+                                (4e72940d: /tmp/laudo_<basePdf>.html) -> (e32ec29a: Comando Chromium)
+                                         v
+                                [38510ae3: Gerar PDF (Chromium 30s)] --> (fn_verifica_pdf: Limpa /tmp & Alerta IHM)
 ```
 
-1. **Leitura CLP e Gravação Única no InfluxDB:** Nós `eth-ip in` monitoram `RETORNO_BAR` (gravada **uma única vez** na measurement `PT-010` pelo nó `398b99857e5197e4`, inclusive `0.00 bar` na despressurização, enquanto `Coleta pressão` alimenta o `gauge` e o buffer estatístico), `_IO_EM_DO_00` (`VALVULA`), `_IO_EM_DO_01` (`BOMBA FISICA`), `COMPARACAO` (reposicionado em `x: 160, y: 620` sem sobreposição) e `setpoint_node` (`SETPOINT`).
-2. **Sincronia Bidirecional de Setpoint Sem Atraso de `0,5 bar`:** `PRESSÃO DESEJADA:` (`c27f650072a158be`, `passthru: false`, passo `0.5`) escreve em `setpoint_node`, memoriza `sp_ui` arredondado em 2 casas decimais e atualiza `Pressão definida do teste:`. O retorno `eth_in_setpoint` passa exclusivamente por `fn_cache_setpoint_plc` (2 saídas + filtro anti-eco de `1500 ms`), sincronizando `Pressão definida do teste:` e `PRESSÃO DESEJADA:` no boot e em alterações externas sem loop nem eco atrasado.
-3. **Controles Manuais de 3 Posições com Pulso SET/RESET de `400 ms`:** Os seletores `MOTOR` e `VALVULA` oferecem `1` (Ligado/Aberta), `2` (Desligado/Fechada) e `3` (`LIBERAR MANUAL`). Na posição `3`, disparam `on_node = false` / `onval_node = false` e um pulso temporizado de `400 ms` (`true` -> `false`) em `off_node` / `offval_node` (despachado via `tag.write_ready` no shim CIP), desarmando as bobinas SET/RESET do Micro850.
-4. **Corte Definitivo no Setpoint (`COMPARACAO` + `RETORNO_BAR`):** `fn_auto_cutoff_sp` monitora tanto a tag `COMPARACAO` do CLP quanto `RETORNO_BAR >= sp`. Ao atingir o setpoint, força `on_node = false`, aplica pulso de RESET de `400 ms` em `off_node` e retorna o seletor `MOTOR` para `3` (`LIBERAR MANUAL`), impedindo qualquer religamento automático quando a pressão oscilar abaixo do setpoint.
-5. **Intertravamento Estrito de Partida e Bloqueio Multinível de UI (11 Saídas):** `Inicia teste` exige equipamento preenchido, motor desligado (comando e `_IO_EM_DO_01`), válvula fechada (comando e `_IO_EM_DO_00`) e setpoint válido, travando `sp_travado` e `duracao_travada`. `fn_ui_lock` controla 11 saídas (incluindo a 11ª saída para travar/destravar o `Seletor Tempo Restante` mantendo o dropdown fixo na duração escolhida).
-6. **Responsividade Mobile Isolada (`ui_template_mobile_css`):** Regras CSS `@media only screen and (max-width: 768px)` e auto-centralização por `getBBox()` do SVG do manômetro `JustGage`, eliminando transbordamento horizontal em smartphones sem afetar desktops.
-7. **Gráfico Vetorial SVG Panorâmico Dinâmico (`10 a 60 min`):** `Finaliza _Teste` utiliza timestamps exatos (sem truncamento de segundos), filtra `[inicio, fim]` sobre a janela dinâmica retida por `Coleta pressão` e gera `eixoX` dinâmico (`passoMin = 1` até 15 min, `2` para 20 min, `5` para 25–60 min) em `viewBox="0 0 1200 460"`, eliminando rótulos `HH:mm` duplicados.
-8. **Renderização PDF A4 Paisagem de Página Única:** O template `Relatório  HTML` (`@page { size: A4 landscape; margin: 10mm; }`, container de `188mm`) é renderizado offline via `chromium-browser --headless --no-sandbox --disable-gpu --no-pdf-header-footer --print-to-pdf`, gerando um PDF único por ensaio em `/data/relatorios/<Equipamento>_<DD-MM-AAAA_HH-mm-ss>.pdf`.
+1. **Supervisão Online/Offline do CLP e Resiliência de `ciclo_node`:** O nó `status_clp_endpoint` monitora o estado de conexão CIP de `PRESSAO` (`fba7dcc329b4be25`) e alimenta `fn_status_clp`, que atualiza `flow.plc_online`, bloqueia a partida do ensaio se o CLP estiver desconectado, garante `ciclo_node = false` no boot do Node-RED e re-envia o estado vigente de `ciclo_node` caso o cabo Ethernet reconecte durante um ensaio.
+2. **Cobertura Completa de `0,00 bar` e Keepalive Estacionário de `2 s`:** `Coleta pressão` aceita `valor >= 0` (`Number.isFinite(valor) && valor >= 0`), permitindo ao manômetro exibir `0,00 bar` na despressurização e detectando rompimento catastrófico em ensaio ativo. Quando `RETORNO_BAR` permanece estritamente constante no CLP (sem evento `Changed`), `fn_heartbeat` injeta keepalive periódico a cada `2 s` tanto em `PT-010` quanto em `Coleta pressão`.
+3. **Poda Amortizada $O(1)$ de Alta Performance:** Em vez de realocar o array com `Array.filter` a cada amostra ($O(N^2)$ acumulado), `Coleta pressão` avança um ponteiro na cabeça ordenada temporalmente e aplica `historico.slice(corte)` apenas quando necessário, reduzindo o processamento de 72.000 amostras de `~48 s` para `~44 ms` (ganho > 1.000x).
+4. **Corte Definitivo no Setpoint Sem Tempestade CIP:** `fn_auto_cutoff_sp` avalia `sp_travado` somente com `ativo === true` (limpando `sp_travado = null` ao finalizar), cancela timers pendentes via `motor_cmd_seq`, preserva `enabled: false` no dropdown `MOTOR` durante ensaios e só dispara `WRITE_TAG` quando `motor_on`, `on_node` ou `bomba_fisica` estão ativos (eliminando 21.600 escritas CIP/hora redundantes).
+5. **Metrologia Exata no Relatório (`Finaliza _Teste`):** `min`, `max` e `media` são extraídos exclusivamente de `historicoFiltrado` (`[inicio, fim]`, iniciando na amostra semeada em `t = inicio`), usando **média ponderada no tempo (integração ZOH)** imune à taxa variável de eventos `Changed` do driver CIP e **tolerância simétrica bilateral `Setpoint ± 0,5 bar`** (`Math.abs(erro) <= 0.5`), reprovando tanto queda excessiva de pressão (`erro > +0,5 bar`) quanto sobrepressão severa (`erro < -0,5 bar`).
+6. **Geração Segura de PDF A4 Paisagem:** `Finaliza _Teste` grava cada HTML temporário em `/tmp/laudo_<basePdf>.html` (sem colisão concorrente), `Comando Chromium` inclui `--disable-dev-shm-usage`, o nó `exec` possui timeout de `30 s` e `fn_verifica_pdf` remove o HTML temporário e alerta o operador na tarja `STATUS` se `rc.code !== 0`.
 
 ---
 
-### 4.2 CÓDIGO JAVASCRIPT INTEGRAL DE TODOS OS 16 NÓS `function`
+### 4.2 CÓDIGO JAVASCRIPT INTEGRAL DE TODOS OS 18 NÓS `function`
 
-Abaixo está o código JavaScript **EXATO e integral** contido em todos os 16 nós `function` de `nodered_data/flows.json`.
+Abaixo está o código JavaScript **EXATO e integral** contido em todos os 18 nós `function` de `nodered_data/flows.json`.
 
 ---
 
 #### 1. Nó `fn_set_eq` — `Salvar Equipamento`
 - **ID:** `fn_set_eq` | **Saídas:** `1` (sem fios conectados)
-- **Função:** Armazena a identificação do equipamento digitada na IHM em `flow.equipamento`.
+- **Função:** Armazena a identificação do equipamento digitada na IHM em `flow.equipamento` (bloqueado no backend se `flow.ativo === true`).
 
 ```javascript
+if (flow.get('ativo') === true) return null;
 flow.set('equipamento', msg.payload);
 return null;
 ```
@@ -813,12 +954,18 @@ return null;
 
 #### 2. Nó `fn_ctrl_motor_manual` — `Controle Motor Manual`
 - **ID:** `fn_ctrl_motor_manual` | **Saídas:** `2` (`[0] on_node`, `[1] off_node`)
-- **Função:** Controla o motor em 3 estados e dispara pulso de RESET de `400 ms` em `off_node` ao selecionar `LIBERAR MANUAL` (`3`).
+- **Função:** Controla o motor em 3 estados (bloqueado durante ensaio ativo), cancela timers obsoletos via contador sequencial `motor_cmd_seq` e dispara pulso de RESET de `400 ms` em `off_node` ao selecionar `LIBERAR MANUAL` (`3`).
 
 ```javascript
+if (flow.get('ativo') === true) return null;
+
 const val = Number(msg.payload);
+const seq = (flow.get('motor_cmd_seq') || 0) + 1;
+flow.set('motor_cmd_seq', seq);
+flow.set('pulso_off_motor', false);
 
 if (val === 1) { // 1: MOTOR LIGADO
+    flow.set('corte_efetuado', false);
     flow.set('motor_on', true);
     flow.set('on_node', true);
     flow.set('off_node', false);
@@ -831,20 +978,18 @@ if (val === 1) { // 1: MOTOR LIGADO
     node.send([{ payload: false }, { payload: true }]);
     return;
 } else { // 3: LIBERAR MANUAL
-    // Bobinas SET/RESET no CLP:
-    // 1. Desliga o comando de liga (on_node = false)
-    // 2. Dispara pulso rápido de RESET (off_node = true por 400ms, depois off_node = false)
     flow.set('motor_on', false);
     flow.set('on_node', false);
     flow.set('off_node', true);
+    flow.set('pulso_off_motor', true);
 
-    // Envia on_node = false e início do pulso off_node = true
     node.send([{ payload: false }, { payload: true }]);
 
-    // Aguarda intervalo de 400ms (300ms a 500ms) para leitura pelo ciclo de scan do CLP
     setTimeout(() => {
+        if (flow.get('motor_cmd_seq') !== seq) return;
+        flow.set('pulso_off_motor', false);
         flow.set('off_node', false);
-        node.send([null, { payload: false }]); // Encerra pulso de RESET
+        node.send([null, { payload: false }]);
     }, 400);
 
     return;
@@ -855,10 +1000,14 @@ if (val === 1) { // 1: MOTOR LIGADO
 
 #### 3. Nó `fn_ctrl_valvula_manual` — `Controle Válvula Manual`
 - **ID:** `fn_ctrl_valvula_manual` | **Saídas:** `2` (`[0] onval_node`, `[1] offval_node`)
-- **Função:** Controla a válvula em 3 estados e dispara pulso de RESET de `400 ms` em `offval_node` ao selecionar `LIBERAR MANUAL` (`3`).
+- **Função:** Controla a válvula em 3 estados (bloqueado durante ensaio ativo), cancela timers obsoletos via contador sequencial `valvula_cmd_seq` e dispara pulso de RESET de `400 ms` em `offval_node` ao selecionar `LIBERAR MANUAL` (`3`).
 
 ```javascript
+if (flow.get('ativo') === true) return null;
+
 const val = Number(msg.payload);
+const seq = (flow.get('valvula_cmd_seq') || 0) + 1;
+flow.set('valvula_cmd_seq', seq);
 
 if (val === 1) { // 1: VÁLVULA ABERTA
     flow.set('valvula_manual_on', true);
@@ -873,20 +1022,16 @@ if (val === 1) { // 1: VÁLVULA ABERTA
     node.send([{ payload: false }, { payload: true }]);
     return;
 } else { // 3: LIBERAR MANUAL
-    // Bobinas SET/RESET no CLP:
-    // 1. Desliga o comando de abertura (onval_node = false)
-    // 2. Dispara pulso rápido de RESET (offval_node = true por 400ms, depois offval_node = false)
     flow.set('valvula_manual_on', false);
     flow.set('onval_node', false);
     flow.set('offval_node', true);
 
-    // Envia onval_node = false e início do pulso offval_node = true
     node.send([{ payload: false }, { payload: true }]);
 
-    // Aguarda intervalo de 400ms (300ms a 500ms) para leitura pelo ciclo de scan do CLP
     setTimeout(() => {
+        if (flow.get('valvula_cmd_seq') !== seq) return;
         flow.set('offval_node', false);
-        node.send([null, { payload: false }]); // Encerra pulso de RESET
+        node.send([null, { payload: false }]);
     }, 400);
 
     return;
@@ -897,53 +1042,78 @@ if (val === 1) { // 1: VÁLVULA ABERTA
 
 #### 4. Nó `fn_auto_cutoff_sp` — `Zeramento Automático Setpoint`
 - **ID:** `fn_auto_cutoff_sp` | **Saídas:** `3` (`[0] on_node`, `[1] off_node`, `[2] dropdown MOTOR`)
-- **Função:** Monitora `COMPARACAO` e `RETORNO_BAR`, aplicando corte definitivo em `on_node` e pulso de RESET de `400 ms` em `off_node` ao atingir o setpoint.
+- **Função:** Monitora `COMPARACAO` e `RETORNO_BAR` (avaliando `sp_travado` apenas quando `ativo === true`), corta o motor **somente** quando há comando/bomba ligada (eliminando tempestade de 21.600 escritas CIP/h com motor já desligado) e aplica pulso de RESET de `400 ms` com `motor_cmd_seq` preservando `enabled: false` durante ensaio ativo.
 
 ```javascript
-// Monitora a tag COMPARACAO do CLP e a pressão RETORNO_BAR para forçar on_node = false em definitivo ao atingir o setpoint
-
+// Monitora COMPARACAO e RETORNO_BAR para desligar o motor UMA ÚNICA VEZ ao atingir o setpoint.
 let atingiuSetpoint = false;
+const isComparacao = (typeof msg.payload === 'boolean' || msg.variable === 'COMPARACAO' || msg.topic === 'COMPARACAO');
 
-// Caso 1: Leitura da tag COMPARACAO do CLP (BOOL: true quando pressão do sensor >= setpoint)
-if (typeof msg.payload === 'boolean' || msg.variable === 'COMPARACAO' || msg.topic === 'COMPARACAO') {
+if (isComparacao) {
     if (msg.payload === true || msg.payload === 1 || msg.payload === 'true') {
         atingiuSetpoint = true;
     }
-}
-
-// Caso 2: Leitura direta de pressão (RETORNO_BAR)
-const pressao = Number(msg.payload);
-if (!atingiuSetpoint && !isNaN(pressao)) {
-    const sp = Number(flow.get('sp_travado') ?? flow.get('sp_ui') ?? flow.get('sp_plc') ?? 0);
-    if (sp > 0 && pressao >= sp) {
-        atingiuSetpoint = true;
+} else {
+    const pressao = Number(msg.payload);
+    if (Number.isFinite(pressao)) {
+        let sp = 0;
+        if (flow.get('ativo') === true && flow.get('sp_travado') !== null && flow.get('sp_travado') !== undefined) {
+            sp = Number(flow.get('sp_travado'));
+        } else {
+            const tUi = flow.get('sp_ui_t') || 0;
+            const tPlc = flow.get('sp_plc_t') || 0;
+            const cand1 = tUi >= tPlc ? flow.get('sp_ui') : flow.get('sp_plc');
+            const cand2 = tUi >= tPlc ? flow.get('sp_plc') : flow.get('sp_ui');
+            sp = Number(cand1 ?? cand2 ?? 0);
+        }
+        if (sp > 0 && pressao >= sp) {
+            atingiuSetpoint = true;
+        }
     }
 }
 
-// Se atingiu o setpoint (por COMPARACAO == true ou pressao >= sp):
-// Força on_node = false em definitivo, envia pulso de reset em off_node (400ms) e reseta o seletor do motor para Liberar Manual
-if (atingiuSetpoint) {
-    flow.set('motor_on', false);
-    flow.set('on_node', false);
-    flow.set('off_node', true);
-
-    // [0] on_node: false | [1] off_node: true (início do pulso de reset) | [2] seletor MOTOR: 3 (LIBERAR MANUAL)
-    node.send([
-        { payload: false },
-        { payload: true },
-        { payload: 3 }
-    ]);
-
-    setTimeout(() => {
-        flow.set('off_node', false);
-        node.send([null, { payload: false }, null]); // Encerra pulso de reset
-    }, 400);
-
-    return;
+if (!atingiuSetpoint) {
+    flow.set('corte_efetuado', false);
+    return null;
 }
 
-// Quando a pressão cair abaixo do setpoint (COMPARACAO vira false):
-// NÃO religa o motor sozinho. Permanece desligado até nova ação manual do operador.
+// Se o corte já foi efetuado neste ciclo de pressão, não emite pulso duplo
+if (flow.get('corte_efetuado') === true) {
+    return null;
+}
+
+// Só dispara o corte automático quando o motor/bomba está realmente ligado ou comandado,
+// evitando tempestade de 21.600 escritas CIP/hora com motor desligado e preservando MOTOR DESLIGADO (2).
+const motorLigado = (flow.get('motor_on') === true) ||
+                    (flow.get('on_node') === true) ||
+                    (flow.get('bomba_fisica') === true || flow.get('bomba_fisica') === 1);
+
+if (!motorLigado || flow.get('pulso_off_motor') === true) {
+    return null;
+}
+
+flow.set('corte_efetuado', true);
+const seq = (flow.get('motor_cmd_seq') || 0) + 1;
+flow.set('motor_cmd_seq', seq);
+flow.set('motor_on', false);
+flow.set('on_node', false);
+flow.set('off_node', true);
+flow.set('pulso_off_motor', true);
+
+// Preserva enabled: false caso um ensaio esteja ativo (não remove disabled: true de replayMessages)
+node.send([
+    { payload: false },
+    { payload: true },
+    { payload: 3, enabled: flow.get('ativo') !== true }
+]);
+
+setTimeout(() => {
+    if (flow.get('motor_cmd_seq') !== seq) return;
+    flow.set('pulso_off_motor', false);
+    flow.set('off_node', false);
+    node.send([null, { payload: false }, null]);
+}, 400);
+
 return null;
 ```
 
@@ -975,17 +1145,17 @@ return { payload: val };
 
 #### 7. Nó `fn_cache_setpoint` — `Cache Setpoint (tela)`
 - **ID:** `fn_cache_setpoint` | **Saídas:** `0`
-- **Função:** Arredonda o setpoint digitado em `PRESSÃO DESEJADA:` para 2 casas decimais e memoriza `flow.sp_ui` e `flow.sp_ui_t`.
+- **Função:** Bloqueia edições durante ensaio ativo (`flow.ativo === true`), arredonda o setpoint digitado em `PRESSÃO DESEJADA:` para 2 casas decimais e memoriza `flow.sp_ui` e `flow.sp_ui_t`.
 
 ```javascript
-// Valor digitado na tela (PRESSÃO DESEJADA). Apenas memoriza: o Influx só recebe o setpoint TRAVADO durante o teste.
+// Valor digitado na tela (PRESSÃO DESEJADA). Bloqueia alterações no CLP durante ensaio ativo.
+if (flow.get('ativo') === true) return null;
 if (msg.payload === null || msg.payload === undefined || msg.payload === '') return null;
 const sp = Math.round(Number(msg.payload) * 100) / 100;
-if (!isNaN(sp)) {
-    flow.set('sp_ui', sp);
-    flow.set('sp_ui_t', Date.now());
-}
-return null;
+if (isNaN(sp)) return null;
+flow.set('sp_ui', sp);
+flow.set('sp_ui_t', Date.now());
+return { payload: sp };
 ```
 
 ---
@@ -1049,23 +1219,27 @@ return {
 
 #### 10. Nó `49589c46b3396a0f` — `Inicia teste`
 - **ID:** `49589c46b3396a0f` | **Saídas:** `4` (`[0] fn_ui_lock`, `[1] ciclo_node`, `[2] InfluxDB setpoint`, `[3] Status do teste`)
-- **Função:** Valida os 4 intertravamentos físicos/lógicos de partida, trava `sp_travado`, `duracao_travada` e `equipamento_teste` e inicia oficialmente o ensaio.
+- **Função:** Valida os 5 intertravamentos de partida (incluindo `CLP ONLINE` via `flow.plc_online === true`), trava `sp_travado`, `duracao_travada` e `equipamento_teste`, semeia a amostra inicial `{ v: pressao_atual, t: agora }` em `flow.historico` no instante exato `t = inicio` e inicia oficialmente o ensaio.
 
 ```javascript
-// Botão INICIAR TESTE: valida o intertravamento, trava o setpoint e inicia o ciclo.
+// Botão INICIAR TESTE: valida comunicação com o CLP, intertravamentos, trava o setpoint e inicia o ciclo.
 // Saídas: [0] bloqueia a UI ('RODANDO') | [1] ciclo_node = true (CLP) | [2] 1º ponto do setpoint travado (InfluxDB) | [3] texto de STATUS
 if (flow.get('ativo') === true) return null;   // já existe um teste em andamento
 
 const valido = (v) => v !== null && v !== undefined && v !== '' && !isNaN(Number(v));
 
-const equipamento   = String(flow.get('equipamento') ?? '').trim();
-const bombaFisica   = flow.get('bomba_fisica') === true || flow.get('bomba_fisica') === 1;
-const motorComando  = flow.get('motor_on') === true;
-const motorLigado   = motorComando || bombaFisica;
+const clpOnline      = flow.get('plc_online') === true;
+const equipamento    = String(flow.get('equipamento') ?? '').trim();
+const bombaFisica    = flow.get('bomba_fisica') === true || flow.get('bomba_fisica') === 1;
+const motorComando   = flow.get('motor_on') === true;
+const motorLigado    = motorComando || bombaFisica;
 
 const valvulaFisica  = flow.get('valvula') === true || flow.get('valvula') === 1;
 const valvulaComando = flow.get('valvula_manual_on') === true;
 const valvulaAberta  = valvulaComando || valvulaFisica;
+
+const pAtual = flow.get('pressao_atual');
+const pNum = Number(pAtual ?? 0);
 
 // Setpoint vigente = valor mais recente entre o campo da tela e o lido do CLP
 const tUi = flow.get('sp_ui_t') || 0;
@@ -1075,43 +1249,51 @@ const segundo  = tUi >= tPlc ? flow.get('sp_plc') : flow.get('sp_ui');
 const spBruto = valido(primeiro) ? primeiro : segundo;
 
 const motivos = [];
+if (!clpOnline) motivos.push('CLP SEM COMUNICAÇÃO (192.168.1.33)');
 if (!equipamento) motivos.push('PREENCHA O EQUIPAMENTO');
 if (motorLigado) motivos.push('DESLIGUE O MOTOR / BOMBA');
 if (valvulaAberta) motivos.push('FECHE A VÁLVULA');
-if (!valido(spBruto)) motivos.push('DEFINA A PRESSÃO DESEJADA');
+if (!valido(spBruto) || Number(spBruto) <= 0) motivos.push('DEFINA A PRESSÃO DESEJADA (> 0 BAR)');
+if (!Number.isFinite(pNum) || pNum <= 0) motivos.push('PRESSURIZE A PEÇA (> 0 BAR)');
 
 if (motivos.length > 0) {
     const aviso = { payload: 'BLOQUEADO - ' + motivos.join(' / '), color: '#C62828' };
-    // o aviso fica visível por 8 s (o cronômetro de 1 s reescreve o STATUS)
     flow.set('aviso_status', { payload: aviso.payload, color: aviso.color, ate: Date.now() + 8000 });
     return [null, null, null, aviso];
 }
 
 const sp = Math.round(Number(spBruto) * 100) / 100;
+const agoraInicio = Date.now();
 
 flow.set('ativo', true);
 flow.set('aviso_status', null);
-flow.set('inicio', new Date().toLocaleString('pt-BR'));
+flow.set('inicio', new Date(agoraInicio).toLocaleString('pt-BR'));
+flow.set('hora_inicio_date', agoraInicio);
+flow.set('hora_fim_date', null);
 
-flow.set('soma', 0);
-flow.set('qtd', 0);
-flow.set('min', null);
-flow.set('max', null);
-
-// limpa histórico
-flow.set('historico', []);
-
-// hora oficial de início
-flow.set("hora_inicio_date", Date.now());
+// Semeia imediatamente a pressão atual no instante t=0 (garante laudo mesmo com pressão 100% estável sem variação de bits)
+if (pAtual !== undefined && pAtual !== null && Number.isFinite(Number(pAtual))) {
+    const p0 = Math.max(0, Number(pAtual));
+    flow.set('soma', p0);
+    flow.set('qtd', 1);
+    flow.set('min', p0);
+    flow.set('max', p0);
+    flow.set('historico', [{ v: p0, t: agoraInicio }]);
+    flow.set('ultima_coleta_t', agoraInicio);
+} else {
+    flow.set('soma', 0);
+    flow.set('qtd', 0);
+    flow.set('min', null);
+    flow.set('max', null);
+    flow.set('historico', []);
+    flow.set('ultima_coleta_t', 0);
+}
 
 // Duração configurada pelo seletor (padrão 60 min se não selecionada)
 let duracaoTeste = flow.get("duracao_selecionada") || flow.get("duracao_teste") || 3600000;
 flow.set("duracao_teste", duracaoTeste);
 flow.set("duracao_travada", duracaoTeste);
 flow.set("tempo_restante", Math.ceil(duracaoTeste / 60000));
-
-// IMPORTANTE: limpa fim anterior
-flow.set("hora_fim_date", null);
 
 // SETPOINT TRAVADO: capturado uma única vez, no instante do início, e mantido até o fim do teste
 flow.set('sp_travado', sp);
@@ -1130,29 +1312,19 @@ return [
 
 #### 11. Nó `fn_ui_lock` — `Habilitar / Bloquear UI`
 - **ID:** `fn_ui_lock` | **Saídas:** `11` (`[0..5]` widgets da UI, `[6..9]` tags CIP manuais, `[10]` `Seletor Tempo Restante`)
-- **Função:** Gerencia o bloqueio/desbloqueio completo da IHM (incluindo o seletor de duração `minutosSeletor`) e garante liberação manual das tags no boot, início e fim de ensaio.
+- **Função:** Gerencia o bloqueio/desbloqueio completo da IHM (incluindo `Seletor Tempo Restante`), invalida timers pendentes (`motor_cmd_seq` / `valvula_cmd_seq`) e garante liberação manual das tags no boot, início e fim de ensaio.
 
 ```javascript
 // Entrada: msg.payload = 'RODANDO' | 'PARADO' | 'BOOT'
-// Durante o teste: tudo desabilitado (msg.enabled = false), exceto FINALIZAR TESTE.
-// Fora do teste:   tudo habilitado, FINALIZAR TESTE desabilitado.
-// Ao iniciar o teste, no boot e ao finalizar: força on_node, off_node, onval_node e offval_node = false (LIBERAR MANUAL).
-// Saídas:
-// [0] Equipamento
-// [1] MOTOR -> { enabled, payload: 3 }
-// [2] VALVULA -> { enabled, payload: 3 }
-// [3] PRESSÃO DESEJADA -> { enabled, payload: sp }
-// [4] INICIAR TESTE -> { enabled }
-// [5] FINALIZAR TESTE -> { enabled }
-// [6] on_node (CLP) -> { payload: false }
-// [7] off_node (CLP) -> { payload: false }
-// [8] onval_node (CLP) -> { payload: false }
-// [9] offval_node (CLP) -> { payload: false }
-// [10] Seletor Tempo Restante -> { enabled, minutos }
-
 let estado = msg.payload;
 if (estado === 'BOOT') estado = flow.get('ativo') === true ? 'RODANDO' : 'PARADO';
 const rodando = estado === 'RODANDO';
+
+// Invalida timers pendentes de 400 ms em fn_ctrl_motor_manual / fn_ctrl_valvula_manual / fn_auto_cutoff_sp
+flow.set('motor_cmd_seq', (flow.get('motor_cmd_seq') || 0) + 1);
+flow.set('valvula_cmd_seq', (flow.get('valvula_cmd_seq') || 0) + 1);
+flow.set('pulso_off_motor', false);
+flow.set('corte_efetuado', false);
 
 // Sempre garante que o estado do contexto reflita a liberação manual
 flow.set('motor_on', false);
@@ -1181,7 +1353,8 @@ return [
     falseMsg,
     falseMsg,
     falseMsg,
-    { enabled: !rodando, minutos: minutosSeletor }
+    { enabled: !rodando, minutos: minutosSeletor },
+    falseMsg
 ];
 ```
 
@@ -1189,62 +1362,74 @@ return [
 
 #### 12. Nó `7d655f418f1c0085` — `Coleta pressão`
 - **ID:** `7d655f418f1c0085` | **Saídas:** `1` (`[0] gauge`)
-- **Função:** Calcula estatísticas em tempo real (`soma`, `qtd`, `min`, `max`), mantém buffer histórico com janela dinâmica (`duracao_travada + 120000 ms` durante ensaio ativo, evitando perda de amostras após 10 minutos) e alimenta apenas o manômetro `gauge` (a escrita em `PT-010` no InfluxDB ocorre diretamente na saída de `PRESSAO` via `398b99857e5197e4`).
+- **Função:** Aceita `0.00 bar` (`!Number.isFinite(valor) || valor < 0`), atualiza `flow.pressao_atual`, calcula estatísticas em tempo real, poda a cabeça do buffer `flow.historico` em tempo amortizado $O(1)$ com janela dinâmica (`duracao_travada + 120000 ms` durante ensaio ativo) e alimenta o manômetro `gauge`.
 
 ```javascript
-let ativo = flow.get('ativo');
+// Recebe leituras reais de RETORNO_BAR (eth-ip in) e amostras periódicas de keepalive durante o ensaio
+if (msg.payload === null || msg.payload === undefined || msg.payload === '') return null;
 
-//if (!ativo) return null; // só grava quando ativo
+let bruto = Number(msg.payload);
+if (!Number.isFinite(bruto)) return null;
 
-let valor = Number(msg.payload);
+// Corrige pequeno desvio negativo de zero (4-20 mA) e permite leitura real de 0.00 bar (manômetro e ruptura)
+let valor = bruto < 0 ? 0 : bruto;
+let agora = Date.now();
+let ativo = flow.get('ativo') === true;
+let isKeepalive = msg._keepalive === true;
 
-// ignora valores inválidos (0, null, NaN)
-if (!valor || valor <= 0) return null;
+if (!isKeepalive) {
+    flow.set('pressao_atual', valor);
+    flow.set('pressao_atual_t', agora);
+}
 
-// média
+// Fora de ensaio: atualiza apenas o manômetro em tempo real sem acumular memória à toa
+if (!ativo) {
+    return isKeepalive ? null : { payload: valor };
+}
+
+// Se for amostra de keepalive (2 s) e uma leitura real do CLP acabou de ser gravada (< 950 ms), evita duplicidade
+if (isKeepalive && (agora - (flow.get('ultima_coleta_t') || 0)) < 950) {
+    return null;
+}
+
+flow.set('ultima_coleta_t', agora);
+
+// Acumuladores do ensaio ativo
 let soma = flow.get('soma') || 0;
 let qtd = flow.get('qtd') || 0;
-
 soma += valor;
 qtd += 1;
-
 flow.set('soma', soma);
 flow.set('qtd', qtd);
 
-// min max
 let min = flow.get('min');
 let max = flow.get('max');
+if (min === null || min === undefined || valor < min) flow.set('min', valor);
+if (max === null || max === undefined || valor > max) flow.set('max', valor);
 
-if (min === null || valor < min) flow.set('min', valor);
-if (max === null || valor > max) flow.set('max', valor);
-
-// histórico LIMPO
 let historico = flow.get('historico') || [];
+historico.push({ v: valor, t: agora });
 
-historico.push({
-    v: valor,
-    t: Date.now()
-});
-
-// Janela de retenção dinâmica: preserva todo o teste em andamento
-let agora = Date.now();
-if (ativo === true) {
-    const janelaMs = (flow.get('duracao_travada') || flow.get('duracao_teste') || 3600000) + 120000;
-    historico = historico.filter(p => agora - p.t <= janelaMs);
-} else {
-    historico = historico.filter(p => agora - p.t <= 600000);
+// Poda O(1) amortizada na cabeça da fila (preserva toda a janela do ensaio + 2 min de margem)
+const janelaMs = (flow.get('duracao_travada') || flow.get('duracao_teste') || 3600000) + 120000;
+let corte = 0;
+while (corte < historico.length && (agora - historico[corte].t) > janelaMs) {
+    corte++;
+}
+if (corte > 0) {
+    historico.splice(0, corte);
 }
 
 flow.set('historico', historico);
 
-return msg;
+return isKeepalive ? null : { payload: valor };
 ```
 
 ---
 
 #### 13. Nó `5214bd83dc5b5467` — `Decremento de tempo`
 - **ID:** `5214bd83dc5b5467` | **Saídas:** `3` (`[0] Seletor Tempo Restante`, `[1] Finaliza _Teste`, `[2] Status do teste`)
-- **Função:** Executado a cada `1 s`; atualiza cronômetro `MM:SS`, preserva `minutos: minSelect` e `enabled: false` durante o ensaio (`duracao_travada`) e aciona `FINALIZAR_AUTO` ao zerar.
+- **Função:** Executado a cada `1 s`; deduplica mensagens idênticas em repouso (eliminando tráfego WebSocket ocioso de 1 Hz), exibe alerta `CLP OFFLINE - VERIFIQUE CABO / ENERGIA (192.168.1.33)` quando desconectado, atualiza cronômetro `MM:SS` durante o ensaio e aciona `FINALIZAR_AUTO` ao zerar.
 
 ```javascript
 // Roda a cada 1 s (inject). Saídas: 1 = tempo restante | 2 = finalização automática | 3 = status do teste
@@ -1273,13 +1458,34 @@ let inicio  = flow.get("hora_inicio_date");
 let duracao = (ativo === true ? flow.get("duracao_travada") : null) || flow.get("duracao_selecionada") || flow.get("duracao_teste") || 3600000;
 let minSelect = Math.round(duracao / 60000);
 
-// NUNCA INICIOU / NÃO ESTÁ ATIVO -> contagem parada
+// NUNCA INICIOU / NÃO ESTÁ ATIVO -> contagem parada (com deduplicação 1 Hz para não piscar o dropdown)
 if (!inicio || !ativo) {
     let status = AGUARDANDO;
-    const aviso = flow.get('aviso_status');          // alerta de intertravamento (INICIAR bloqueado)
-    if (aviso && aviso.ate > Date.now()) status = { payload: aviso.payload, color: aviso.color };
-    return [tempo(duracao, true, minSelect), null, status];
+    if (flow.get('plc_online') === false) {
+        status = { payload: "AGUARDANDO CONEXÃO COM O CLP (192.168.1.33)", color: "#D84315" };
+    }
+    const aviso = flow.get('aviso_status');          // alerta de intertravamento / erro PDF
+    if (aviso && aviso.ate > Date.now()) {
+        status = { payload: aviso.payload, color: aviso.color };
+    }
+
+    const msgTempo = tempo(duracao, true, minSelect);
+    const chaveTempo = `${msgTempo.cronometro}|${msgTempo.minutos}|${msgTempo.enabled}`;
+    const chaveStatus = `${status.payload}|${status.color}`;
+
+    const outTempo = (context.get('idle_tempo') !== chaveTempo) ? msgTempo : null;
+    const outStatus = (context.get('idle_status') !== chaveStatus) ? status : null;
+
+    context.set('idle_tempo', chaveTempo);
+    context.set('idle_status', chaveStatus);
+
+    if (!outTempo && !outStatus) return null;
+    return [outTempo, null, outStatus];
 }
+
+// Em ensaio ativo: limpa cache de deduplicação ociosa para atualização imediata ao finalizar
+context.set('idle_tempo', null);
+context.set('idle_status', null);
 
 let restante = (inicio + duracao) - Date.now();
 
@@ -1287,11 +1493,7 @@ let restante = (inicio + duracao) - Date.now();
 if (restante <= 0 && ativo === true) {
     flow.set('tempo_restante', 0);
     flow.set('ativo', false);
-
-    // FINAL REAL
     flow.set('hora_fim_date', Date.now());
-
-    // chama finalização automática
     return [tempo(0, true, minSelect), { payload: "FINALIZAR_AUTO" }, AGUARDANDO];
 }
 
@@ -1299,7 +1501,13 @@ if (restante <= 0 && ativo === true) {
 flow.set('tempo_restante', Math.ceil(restante / 60000));   // mantido em minutos (compatibilidade)
 
 const sp = flow.get('sp_travado');
-const rodando = { payload: `TESTE RODANDO - SETPOINT ${sp !== undefined && sp !== null ? Number(sp).toFixed(2) : '--'} BAR`, color: "#2E7D32" };  // verde
+let rodando = {
+    payload: `TESTE RODANDO - SETPOINT ${sp !== undefined && sp !== null ? Number(sp).toFixed(2) : '--'} BAR`,
+    color: "#2E7D32"
+};
+if (flow.get('plc_online') === false) {
+    rodando = { payload: "ALERTA: CLP SEM COMUNICAÇÃO - TESTE EM ANDAMENTO", color: "#C62828" };
+}
 return [tempo(restante, false, minSelect), null, rodando];
 ```
 
@@ -1307,7 +1515,7 @@ return [tempo(restante, false, minSelect), null, rodando];
 
 #### 14. Nó `6d54da2809aedd4d` — `Finaliza _Teste`
 - **ID:** `6d54da2809aedd4d` | **Saídas:** `5` (`[0]` livre, `[1] Relatório  HTML`, `[2] fn_ui_lock`, `[3] ciclo_node`, `[4] InfluxDB setpoint`)
-- **Função:** Consolida os indicadores estatísticos com timestamps exatos, projeta a curva vetorial SVG panorâmica e o array dinâmico `eixoX` proporcional à duração do ensaio (`10 a 60 min`), limpa `duracao_travada` e dispara a geração do laudo PDF A4 Paisagem de página única.
+- **Função:** Extrai `min`, `max` e média ponderada no tempo (integração por retenção de ordem zero / ZOH) estritamente sobre `historicoFiltrado` (`[inicio, fim]`), aplica tolerância simétrica `Setpoint ± 0,5 bar` (`Math.abs(erro) <= tolerancia`, reprovando subpressão e sobrepressão severa), limpa `sp_travado = null`, posiciona `falhaAnchor` sem corte nas bordas e gera HTML temporário exclusivo `/tmp/laudo_<basePdf>.html` + PDF único em `/data/relatorios/<basePdf>.pdf`.
 
 ```javascript
 // Entradas: botão FINALIZAR TESTE (payload 0) ou cronômetro (payload "FINALIZAR_AUTO").
@@ -1316,9 +1524,10 @@ const auto = msg.payload === 'FINALIZAR_AUTO';
 if (!auto && flow.get('ativo') !== true) return null;   // nenhum teste em andamento
 
 const spTravado = flow.get('sp_travado');
-// SEMPRE libera a tela e zera o ciclo_node, mesmo que o relatório não possa ser gerado
+// SEMPRE libera a tela, limpa sp_travado e zera ciclo_node, mesmo que o relatório não possa ser gerado
 const liberar = (rel) => {
     flow.set('ativo', false);
+    flow.set('sp_travado', null);
     return [
         null,
         rel,
@@ -1343,22 +1552,9 @@ const dataHoraBR = (d) => {
     return `${o.day}/${o.month}/${o.year} ${o.hour}:${o.minute}:${o.second}`;
 };
 
-let soma = flow.get('soma') || 0;
-let qtd = flow.get('qtd') || 1;
-let media = soma / qtd;
-
-let min = flow.get('min');
-let max = flow.get('max');
-let sp = Number(flow.get('sp_travado') ?? flow.get('sp') ?? 0) || 0;
+let sp = Number(spTravado ?? flow.get('sp') ?? 0) || 0;
 let historico = flow.get('historico') || [];
 
-// PROTEÇÃO
-if (min == null || max == null || historico.length === 0) {
-    node.error("Dados insuficientes");
-    return liberar(null);
-}
-
-// 🔥 TEMPO OFICIAL EXATO (sem truncamento de segundos)
 let inicio = Number(flow.get("hora_inicio_date"));
 let fim = Number(flow.get("hora_fim_date") || Date.now());
 
@@ -1367,81 +1563,124 @@ if (!inicio) {
     return liberar(null);
 }
 
+if (historico.length === 0) {
+    const pAtual = flow.get('pressao_atual');
+    if (pAtual !== undefined && pAtual !== null && Number.isFinite(Number(pAtual))) {
+        historico = [{ v: Math.max(0, Number(pAtual)), t: inicio }];
+    }
+}
+
+// Histórico estrito do intervalo [inicio, fim]
+let historicoFiltrado = historico.filter(p => p.t >= inicio && p.t <= fim);
+if (historicoFiltrado.length === 0 && historico.length > 0) {
+    historicoFiltrado = [historico[historico.length - 1]];
+}
+if (historicoFiltrado.length === 0) {
+    node.error("Dados insuficientes");
+    return liberar(null);
+}
+
+// Estatísticas calculadas diretamente sobre os pontos do ensaio + Média Ponderada no Tempo (integral de retenção de ordem zero)
+let min = Number(historicoFiltrado[0].v);
+let max = Number(historicoFiltrado[0].v);
+let somaSimples = 0;
+for (let i = 0; i < historicoFiltrado.length; i++) {
+    const v = Number(historicoFiltrado[i].v);
+    if (v < min) min = v;
+    if (v > max) max = v;
+    somaSimples += v;
+}
+
+let media = somaSimples / historicoFiltrado.length;
+if (fim > inicio && historicoFiltrado.length > 0) {
+    let area = 0;
+    let pesoTotal = 0;
+    if (historicoFiltrado[0].t > inicio) {
+        const dt0 = Math.min(fim, historicoFiltrado[0].t) - inicio;
+        if (dt0 > 0) {
+            area += Number(historicoFiltrado[0].v) * dt0;
+            pesoTotal += dt0;
+        }
+    }
+    for (let i = 0; i < historicoFiltrado.length; i++) {
+        const tAtual = Math.max(inicio, historicoFiltrado[i].t);
+        const tProx = (i + 1 < historicoFiltrado.length) ? Math.min(fim, historicoFiltrado[i + 1].t) : fim;
+        const dt = Math.max(0, tProx - tAtual);
+        area += Number(historicoFiltrado[i].v) * dt;
+        pesoTotal += dt;
+    }
+    if (pesoTotal > 0) {
+        media = area / pesoTotal;
+    }
+}
+
 let fimDate = new Date(fim);
 
-// 🔥 BASE DE TEMPO DINÂMICA
+// Base de tempo dinâmica
 let duracao = Number(flow.get('duracao_travada') || flow.get('duracao_teste') || flow.get('duracao_selecionada') || 3600000);
 let duracaoMin = Math.max(10, Math.round(duracao / 60000));
 
-// 🔥 HISTÓRICO FILTRADO EXATO
-let historicoFiltrado = historico.filter(p => p.t >= inicio && p.t <= fim);
-
-// ERRO
-let erro = sp - min;
+// Erro simétrico (Setpoint ± 0,5 bar): reprova tanto queda severa quanto sobrepressão severa (sem erro negativo)
 let tolerancia = 0.5;
-let status = erro <= tolerancia ? "APROVADO" : "REPROVADO";
+let erro = Math.max(Math.abs(sp - min), Math.abs(max - sp));
+let erroArred = Math.round(erro * 10000) / 10000;
+let status = erroArred <= tolerancia ? "APROVADO" : "REPROVADO";
 
-// ESCALA
+// Escala vertical: 0 a 10 bar -> 360 px (36 px/bar, y=390 até y=30)
 let escala = 36;
+let pontosArr = [];
 
-// 🔥 PONTOS
-let pontos = "";
+if (historicoFiltrado[0].t > inicio) {
+    let y0 = Number((390 - (Number(historicoFiltrado[0].v) * escala)).toFixed(2));
+    pontosArr.push(`60,${y0}`);
+}
 
-// 🔥 PONTO INICIAL
-let primeiroValor = historicoFiltrado.length > 0 ? historicoFiltrado[0].v : sp;
-
-let x0 = 60;
-let y0 = 390 - ((Number(primeiroValor) || 0) * escala);
-
-pontos += x0 + "," + y0 + " ";
-
-// 🔥 LINHA DA PRESSÃO
-historicoFiltrado.forEach((p) => {
-    let proporcao = (p.t - inicio) / duracao;
-
+for (let i = 0; i < historicoFiltrado.length; i++) {
+    let p = historicoFiltrado[i];
+    let proporcao = duracao > 0 ? (p.t - inicio) / duracao : 0;
     if (proporcao < 0) proporcao = 0;
     if (proporcao > 1) proporcao = 1;
 
     let x = Number((60 + (proporcao * 1080)).toFixed(2));
     let y = Number((390 - (Number(p.v) * escala)).toFixed(2));
+    pontosArr.push(`${x},${y}`);
+}
+let pontos = pontosArr.join(' ');
 
-    pontos += x + "," + y + " ";
-});
+// Linha de Setpoint limitada à área útil do gráfico
+let linhaSP = Number((390 - (Math.min(10, Math.max(0, sp)) * escala)).toFixed(2));
 
-// 🔥 SETPOINT
-let linhaSP = 390 - (sp * escala);
-
-// 🔥 FALHA
+// Primeiro ponto fora da faixa Setpoint ± 0,5 bar
 let falhaX = null;
 let falhaY = null;
 let falhaValor = null;
+let falhaAnchor = "middle";
 
 for (let i = 0; i < historicoFiltrado.length; i++) {
     let p = historicoFiltrado[i];
-    let erroPonto = sp - p.v;
+    let desvioPonto = Math.round(Math.abs(Number(p.v) - sp) * 10000) / 10000;
 
-    if (erroPonto > tolerancia) {
-        let proporcao = (p.t - inicio) / duracao;
+    if (desvioPonto > tolerancia) {
+        let proporcao = duracao > 0 ? (p.t - inicio) / duracao : 0;
         if (proporcao < 0) proporcao = 0;
         if (proporcao > 1) proporcao = 1;
 
+        let vPlot = Math.min(10, Math.max(0, Number(p.v)));
         falhaX = Number((60 + (proporcao * 1080)).toFixed(2));
-        falhaY = Number((390 - (Number(p.v) * escala)).toFixed(2));
+        falhaY = Number((390 - (vPlot * escala)).toFixed(2));
         falhaValor = Number(p.v).toFixed(2);
+        if (falhaX < 150) falhaAnchor = "start";
+        else if (falhaX > 1050) falhaAnchor = "end";
         break;
     }
 }
 
-// =======================================================
-// 🔥 GRADE VERTICAL E RÓTULOS DO EIXO X DINÂMICOS
-// =======================================================
+// Grade vertical e rótulos dinâmicos do eixo X
 let passoMin = 5;
 if (duracaoMin <= 15) {
     passoMin = 1;
 } else if (duracaoMin === 20) {
     passoMin = 2;
-} else {
-    passoMin = 5;
 }
 
 function horaOffset(minutos) {
@@ -1461,13 +1700,17 @@ for (let m = 0; m <= duracaoMin; m += passoMin) {
     eixoX.push({ x: x, classe: classe, rotulo: rotulo });
 }
 
-// =======================================================
+// Faixa visual da zona de tolerância simétrica ([sp - 0.5, sp + 0.5] limitada a [0, 10])
+let limSupTol = Math.min(10, Math.max(0, sp + tolerancia));
+let limInfTol = Math.min(10, Math.max(0, sp - tolerancia));
+let faixaTolY = Number((390 - (limSupTol * escala)).toFixed(2));
+let faixaTolAltura = Number((Math.max(0, limSupTol - limInfTol) * escala).toFixed(2));
 
-// Faixa visual da zona de tolerância aprovada ([Math.max(0, sp - tolerancia), sp])
-let faixaTolY = 390 - (Math.min(10, Math.max(0, sp)) * 36);
-let faixaTolAltura = Math.max(0, (Math.min(10, Math.max(0, sp)) - Math.max(0, sp - tolerancia)) * 36);
+let falhaYTxt = null;
+if (falhaY !== null) {
+    falhaYTxt = falhaY > 365 ? (falhaY - 10) : (falhaY < 50 ? (falhaY + 18) : (falhaY + 16));
+}
 
-// RELATÓRIO
 let rel = {
     equipamento: flow.get('equipamento_teste') ?? flow.get('equipamento'),
 
@@ -1497,9 +1740,9 @@ let rel = {
     falhaX: falhaX,
     falhaY: falhaY,
     falhaValor: falhaValor,
-    falhaYTxt: falhaY !== null ? (falhaY > 365 ? falhaY - 10 : falhaY + 16) : null,
+    falhaYTxt: falhaYTxt,
+    falhaAnchor: falhaAnchor,
 
-    // Grade dinâmica do eixo X
     eixoX: eixoX
 };
 
@@ -1509,22 +1752,30 @@ flow.set('tempo_restante', Math.ceil(duracaoCfg / 60000));
 flow.set('duracao_teste', duracaoCfg);
 flow.set('duracao_travada', null);
 
-// DATA DE EMISSÃO (formato brasileiro) exibida abaixo da assinatura
 let agora = new Date();
 let o = partesBR(agora);
 rel.emissao = `${o.day}/${o.month}/${o.year} - ${o.hour}:${o.minute}:${o.second}`;
 
-// NOME ÚNICO DO PDF: <Equipamento>_<DD-MM-AAAA_HH-mm-ss>.pdf (sanitizado, sem acentos/espaços)
+// NOME ÚNICO DO PDF: <Equipamento>_<DD-MM-AAAA_HH-mm-ss>.pdf (com anti-colisão no mesmo segundo)
 let equip = String(flow.get('equipamento_teste') ?? flow.get('equipamento') ?? '')
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .replace(/[^A-Za-z0-9]+/g, '_')
     .replace(/^_+|_+$/g, '')
     .slice(0, 60) || 'Equipamento';
 let carimbo = `${o.day}-${o.month}-${o.year}_${o.hour}-${o.minute}-${o.second}`;
+let basePdf = `${equip}_${carimbo}`;
+if (flow.get('ultimo_pdf_base') === basePdf) {
+    let seq = (flow.get('ultimo_pdf_seq') || 1) + 1;
+    flow.set('ultimo_pdf_seq', seq);
+    basePdf = `${basePdf}_${seq}`;
+} else {
+    flow.set('ultimo_pdf_base', basePdf);
+    flow.set('ultimo_pdf_seq', 1);
+}
 
-// Caminhos POSIX dentro do contêiner (/data/relatorios -> ./relatorios no host)
-msg.filename = "/data/relatorios/relatorio.html";                      // HTML temporário renderizado pelo Chromium
-msg.pdfFile  = "/data/relatorios/" + equip + "_" + carimbo + ".pdf";   // PDF final, único por teste
+// HTML temporário isolado em /tmp por relatório (evita corrida entre execuções) e PDF único em /data/relatorios
+msg.filename = "/tmp/laudo_" + basePdf + ".html";
+msg.pdfFile  = "/data/relatorios/" + basePdf + ".pdf";
 
 return liberar({ payload: rel, filename: msg.filename, pdfFile: msg.pdfFile });
 ```
@@ -1533,34 +1784,115 @@ return liberar({ payload: rel, filename: msg.filename, pdfFile: msg.pdfFile });
 
 #### 15. Nó `e32ec29ac871e4f2` — `Comando Chromium`
 - **ID:** `e32ec29ac871e4f2` | **Saídas:** `1` (`[0] Gerar PDF (Chromium)`)
-- **Função:** Monta a linha de comando headless do `chromium-browser` apontando para `msg.filename || "/data/relatorios/relatorio.html"` e `msg.pdfFile`.
+- **Função:** Monta a linha de comando headless do `chromium-browser` com `--disable-dev-shm-usage` (evitando crash em `/dev/shm` de 64 MB no Docker) apontando para `msg.filename` (`/tmp/laudo_<basePdf>.html`) e `msg.pdfFile`.
 
 ```javascript
 // Argumentos do Chromium headless (o executável está no nó "Gerar PDF (Chromium)").
-// --no-pdf-header-footer remove a data em inglês e o título "relatorio.html" impressos pelo navegador.
+// --disable-dev-shm-usage evita falha de memória compartilhada (/dev/shm de 64 MB no Docker).
+// --no-pdf-header-footer remove a data em inglês e o título impressos pelo navegador.
 const pdf  = msg.pdfFile;
-const html = msg.filename || "/data/relatorios/relatorio.html";
-msg.payload = `--headless --no-sandbox --disable-gpu --no-pdf-header-footer --print-to-pdf="${pdf}" "${html}"`;
+const html = msg.filename || "/tmp/relatorio.html";
+msg.payload = `--headless --no-sandbox --disable-gpu --disable-dev-shm-usage --no-pdf-header-footer --print-to-pdf="${pdf}" "${html}"`;
 return msg;
 ```
 
 ---
 
 #### 16. Nó `fn_heartbeat` — `Keepalive InfluxDB`
-- **ID:** `fn_heartbeat` | **Saídas:** `2` (`[0] InfluxDB setpoint`, `[1] InfluxDB vp-01`)
-- **Função:** Executado a cada `2 s`; publica `sp_travado` na measurement `setpoint` exclusivamente durante ensaio ativo e mantém o keepalive booleano de `vp-01` para o Grafana.
+- **ID:** `fn_heartbeat` | **Saídas:** `4` (`[0] InfluxDB setpoint`, `[1] InfluxDB vp-01`, `[2] InfluxDB PT-010`, `[3] Coleta pressão`)
+- **Função:** Executado a cada `2 s`; suprime telemetria falsa quando `plc_online !== true`, publica `sp_travado` e re-amostra `pressao_atual` (keepalive de `PT-010` e `Coleta pressão` quando `RETORNO_BAR` permanece perfeitamente estável por `>= 1800 ms`) durante ensaio ativo, além do keepalive booleano de `vp-01`.
 
 ```javascript
 // Roda a cada 2 s.
-// Saída 1: setpoint TRAVADO no início do teste -> InfluxDB, SOMENTE enquanto há teste em andamento.
-// Saída 2: estado da válvula (keepalive para o painel de status do Grafana).
-let out1 = null;
-if (flow.get('ativo') === true) {
+// Saída 1: setpoint TRAVADO -> InfluxDB (somente durante ensaio ativo).
+// Saída 2: estado da válvula -> InfluxDB (keepalive para painel do Grafana).
+// Saída 3: pressão atual -> InfluxDB PT-010 (evita 'No data' no Grafana quando a pressão está 100% estável e CLP online).
+// Saída 4: amostra periódica -> Coleta pressão (garante curva e média fiéis mesmo sem variação de bits durante o ensaio).
+const ativo = flow.get('ativo') === true;
+const online = flow.get('plc_online') === true;
+
+let outSetpoint = null;
+if (ativo) {
     const sp = flow.get('sp_travado');
-    if (sp !== undefined && sp !== null && !isNaN(Number(sp))) out1 = { payload: Number(sp) };
+    if (sp !== undefined && sp !== null && !isNaN(Number(sp))) {
+        outSetpoint = { payload: Number(sp) };
+    }
 }
+
 const val = flow.get('valvula');
-return [out1, { payload: (val === true || val === 1 || val === 'true') }];
+const outValvula = online ? { payload: (val === true || val === 1 || val === 'true') } : null;
+
+let outPressaoInflux = null;
+let outPressaoColeta = null;
+const p = flow.get('pressao_atual');
+if (p !== undefined && p !== null && Number.isFinite(Number(p))) {
+    const pVal = Math.max(0, Number(p));
+    if (online) {
+        outPressaoInflux = { payload: pVal };
+    }
+    if (ativo && flow.get('plc_online') !== false) {
+        outPressaoColeta = { payload: pVal, _keepalive: true };
+    }
+}
+
+return [outSetpoint, outValvula, outPressaoInflux, outPressaoColeta];
+```
+
+---
+
+#### 17. Nó `fn_status_clp` — `Monitorar Conexão CLP`
+- **ID:** `fn_status_clp` | **Saídas:** `1` (`[0] ciclo_node`)
+- **Função:** Monitora o nó `status` (`status_clp_endpoint` vinculado a `PRESSAO`), atualiza `flow.plc_online` (`fill === "green"`), força `ciclo_node = false` no boot (`msg.topic === "boot"`) e re-sincroniza `ciclo_node = (flow.ativo === true)` automaticamente ao reconectar o cabo Ethernet do CLP.
+
+```javascript
+// Monitora o status em tempo real do link EtherNet/IP CIP através do nó PRESSAO (fba7dcc329b4be25).
+// fill === 'green' indica sessão CIP online; 'red'/'yellow'/'grey' indica offline ou reconectando.
+const fill = (msg && msg.status && msg.status.fill) ? String(msg.status.fill) : '';
+const online = (fill === 'green');
+const estavaOnline = flow.get('plc_online') === true;
+
+flow.set('plc_online', online);
+flow.set('plc_status_texto', (msg && msg.status && msg.status.text) ? String(msg.status.text) : '');
+
+// Ao reconectar após queda de cabo/energia (onControllerEnd zera tag.value = null):
+// Reenvia imediatamente o estado real de ciclo_node (true se ensaio ativo, false se parado).
+if (online && !estavaOnline) {
+    return { payload: flow.get('ativo') === true };
+}
+
+return null;
+```
+
+---
+
+#### 18. Nó `fn_verifica_pdf` — `Verificar Geração PDF`
+- **ID:** `fn_verifica_pdf` | **Saídas:** `1` (`[0] Status do teste`)
+- **Função:** Inspeciona o código de retorno (`rc.code`) do processo `chromium-browser` (com timeout de `30 s`), remove o arquivo HTML temporário `/tmp/laudo_*.html` sem acumular lixo e publica alerta vermelho de 12 s na tarja `STATUS` caso a geração do PDF falhe.
+
+```javascript
+// Monitora a saída do nó exec "Gerar PDF (Chromium)"
+const rc = msg.payload; // { code: number, signal?: string }
+const html = msg.filename;
+
+// Limpeza garantida do arquivo HTML temporário em /tmp
+if (html && typeof html === 'string' && html.startsWith('/tmp/laudo_')) {
+    try {
+        if (typeof fs !== 'undefined' && typeof fs.unlink === 'function') {
+            fs.unlink(html, () => {});
+        } else {
+            require('fs').unlink(html, () => {});
+        }
+    } catch (e) {}
+}
+
+if (!rc || rc.code !== 0) {
+    node.error("Falha ao gerar PDF via Chromium: " + JSON.stringify(rc));
+    return {
+        payload: "FALHA AO GERAR PDF DO RELATÓRIO",
+        color: "#C62828"
+    };
+}
+return null;
 ```
 
 ---
@@ -1574,31 +1906,35 @@ No Node-RED, você pode inspecionar todas as variáveis abrindo o menu lateral d
 | Variável | Tipo | Descrição | Valor Típico |
 |---|---|---|---|
 | `flow.ativo` | `Boolean` | Flag mestre indicando se há um teste em execução | `true` ou `false` |
+| `flow.plc_online` | `Boolean` | Estado em tempo real da sessão EtherNet/IP CIP com o Micro850 | `true` (verde) ou `false` |
 | `flow.equipamento` | `String` | Nome/código do equipamento digitado na IHM | Ex: `"Bomba_01"` |
 | `flow.equipamento_teste` | `String` | Nome do equipamento congelado no início do ensaio | Ex: `"Bomba_01"` |
+| `flow.pressao_atual` | `Number` | Última pressão válida (`>= 0 bar`) recebida de `RETORNO_BAR` | Ex: `5.50` ou `0.00` |
+| `flow.pressao_atual_t` | `Number (ms)` | Timestamp epoch da última atualização em `Coleta pressão` | Ex: `1793396502000` |
 | `flow.sp_ui` | `Number` | Último setpoint ajustado na caixa `PRESSÃO DESEJADA:` (2 casas) | Ex: `5.5` |
 | `flow.sp_ui_t` | `Number (ms)` | Timestamp epoch da última alteração manual de setpoint na tela | Ex: `1793396500000` |
 | `flow.sp_plc` | `Number` | Último setpoint confirmado/lido da tag `setpoint_node` do CLP | Ex: `5.5` |
 | `flow.sp_plc_t` | `Number (ms)` | Timestamp epoch da última confirmação de setpoint vinda do CLP | Ex: `1793396500250` |
-| `flow.sp_travado` | `Number` | Pressão de teste travada na partida do ensaio | Ex: `5.5` |
+| `flow.sp_travado` | `Number / null` | Pressão travada na partida do ensaio (`null` fora de ensaio) | Ex: `5.5` ou `null` |
 | `flow.hora_inicio_date` | `Number (ms)` | Timestamp epoch exato do instante em que o teste iniciou | Ex: `1793396501000` |
 | `flow.hora_fim_date` | `Number (ms)` | Timestamp epoch exato do término automático (ou `null` durante ensaio) | Ex: `1793400101000` |
 | `flow.duracao_selecionada` | `Number (ms)` | Duração escolhida pelo operador no seletor (10 a 60 min) | `600000` a `3600000` |
 | `flow.duracao_teste` | `Number (ms)` | Duração configurada corrente em milissegundos | `3600000` (padrão 60 min) |
 | `flow.duracao_travada` | `Number (ms)` | Duração travada na partida (imutável até o fim do ensaio) | `600000` a `3600000` |
 | `flow.tempo_restante` | `Number` | Minutos inteiros restantes para o término do ensaio | `60` a `0` |
-| `flow.min` | `Number` | Menor pressão válida (`> 0`) registrada durante o ensaio | Ex: `5.32` |
-| `flow.max` | `Number` | Maior pressão registrada durante o ensaio | Ex: `5.54` |
-| `flow.soma` | `Number` | Somatório das amostras válidas para cálculo da média | Ex: `9850.4` |
-| `flow.qtd` | `Number` | Quantidade de amostras integradas no ensaio | Ex: `1800` |
-| `flow.historico` | `Array` | Buffer `{v, t}` com retenção dinâmica (`duracao_travada + 2 min`) | `[{v:5.5, t:...}]` |
+| `flow.min` | `Number` | Menor pressão (`>= 0.00 bar`) registrada no contexto corrente | Ex: `5.32` ou `0.00` |
+| `flow.max` | `Number` | Maior pressão registrada no contexto corrente | Ex: `5.54` |
+| `flow.historico` | `Array` | Buffer `{v, t}` podado em $O(1)$ (`duracao_travada + 2 min`) | `[{v:5.5, t:...}]` |
 | `flow.motor_on` | `Boolean` | Estado lógico do comando manual do motor | `true` ou `false` |
+| `flow.motor_cmd_seq` | `Number` | Sequencial monotônico para cancelamento de timers de `400 ms` do motor | Ex: `14` |
 | `flow.on_node` / `flow.off_node` | `Boolean` | Espelho em contexto dos comandos CIP enviados ao motor | `true` ou `false` |
 | `flow.bomba_fisica` | `Boolean` | Feedback digital físico da bomba no CLP (`_IO_EM_DO_01`) | `true` ou `false` |
 | `flow.valvula_manual_on` | `Boolean` | Estado lógico do comando manual da válvula | `true` ou `false` |
+| `flow.valvula_cmd_seq` | `Number` | Sequencial monotônico para cancelamento de timers de `400 ms` da válvula | Ex: `8` |
 | `flow.onval_node` / `flow.offval_node` | `Boolean` | Espelho em contexto dos comandos CIP enviados à válvula | `true` ou `false` |
 | `flow.valvula` | `Boolean` | Feedback digital físico da válvula no CLP (`_IO_EM_DO_00`) | `true` ou `false` |
-| `flow.aviso_status` | `Object` | Mensagem temporária (8 s) de intertravamento na tarja de status | `{payload, color, ate}` |
+| `flow.ultimo_pdf_base` / `ultimo_pdf_seq` | `String / Number` | Controle anti-colisão de nomes de PDF emitidos no mesmo segundo | `"Bomba_..."` / `2` |
+| `flow.aviso_status` | `Object` | Mensagem temporária na tarja de status (intertravamento ou falha PDF) | `{payload, color, ate}` |
 
 ---
 
@@ -1611,11 +1947,11 @@ Se por qualquer motivo operacional a interface precisar ser reinicializada:
 
 ---
 
-### 5.3 Como Alterar a Tolerância de Aprovação (Padrão `0.5 bar`)
+### 5.3 Como Alterar a Tolerância Simétrica de Aprovação (Padrão `± 0.5 bar`)
 
 1. Abra o nó `Finaliza _Teste` (`6d54da2809aedd4d`).
 2. Localize `let tolerancia = 0.5;` e ajuste para o valor desejado (ex.: `0.3` ou `1.0`).
-3. Clique em **Done** e **Deploy**. A faixa verde `faixaTolAltura` no SVG e o critério `APROVADO / REPROVADO` ajustar-se-ão automaticamente.
+3. O critério bilateral `Math.abs(erro) <= tolerancia` e a faixa verde visual (`[Setpoint - tolerancia, Setpoint + tolerancia]`) no gráfico SVG ajustar-se-ão automaticamente tanto para subpressão quanto para sobrepressão.
 
 ---
 
@@ -1636,15 +1972,15 @@ A duração do ensaio é selecionável diretamente na IHM pelo widget **Seletor 
 
 | Sintoma | Causa Mais Provável | Procedimento de Correção |
 |---|---|---|
-| **CLP Offline / Erro de Leitura no Node-RED** | Cabo Ethernet desconectado ou IP do PC fora da sub-rede `192.168.1.x`. | 1. Teste `ping 192.168.1.33`.<br>2. Confirme IP estático `192.168.1.100/24` sem gateway na placa cabeada.<br>3. Verifique o LED LINK Ethernet no Micro850. |
-| **Erro `TIMEOUT occurred while reading Controller Props`** | Shim CIP Micro800 ausente no `settings.js`. | Verifique nos logs `docker logs nodered` a linha `[micro800-shim] ethernet-ip patched: direct Message Router + stage_write forced dispatch + REAL sync`. |
-| **Erro `Write to InfluxDB failed: ETIMEDOUT 192.168.65.254:8086` no Windows** | Presença indevida de `extra_hosts: ["host.docker.internal:host-gateway"]` no serviço `nodered` do `docker-compose.windows.yml`. | Mantenha `extra_hosts` **apenas** no `docker-compose.yml` (Linux). No Windows, o `influxdb` já possui o alias `host.docker.internal` na `iot-network`. Recrie o contêiner offline com `docker compose -f docker-compose.windows.yml up -d --no-build nodered`. |
-| **Atraso de `0,5 bar` ou eco antigo no Setpoint** | `controllerValue = null` em `ethernet-ip.js` ou fio direto sem filtro entre `SETPOINT` e UI. | Certifique-se de que `ethernet-ip.js` não zera `controllerValue`, que o shim de 4 camadas em `settings.js` está ativo e que `eth_in_setpoint` passa exclusivamente por `fn_cache_setpoint_plc`. |
-| **Botão INICIAR TESTE bloqueado em vermelho** | Intertravamento de segurança atuou. | Leia a tarja `STATUS`: preencha `Equipamento`, desligue o motor (`_IO_EM_DO_01 = false`), feche a válvula (`_IO_EM_DO_00 = false`) e defina a `PRESSÃO DESEJADA`. |
-| **PDF não gerado em `./relatorios`** | Falha de permissão ou ausência de amostras válidas (`> 0 bar`). | 1. Verifique se houve leitura `RETORNO_BAR > 0` durante o ensaio.<br>2. Consulte `docker logs --tail 50 nodered` e permissões de `./relatorios`. |
+| **Tarja vermelha `CLP OFFLINE - VERIFIQUE CABO / ENERGIA (192.168.1.33)`** | Cabo Ethernet desconectado, Micro850 desligado ou IP do PC fora da sub-rede `192.168.1.x`. | 1. Teste `ping 192.168.1.33`.<br>2. Confirme IP estático `192.168.1.100/24` sem gateway na placa cabeada.<br>3. Ao reconectar, `fn_status_clp` liberará `plc_online = true` e re-sincronizará `ciclo_node` automaticamente. |
+| **Erro `TIMEOUT occurred while reading Controller Props`** | Shim CIP Micro800 ausente no `settings.js`. | Verifique nos logs `docker logs nodered` a linha `[micro800-shim] ethernet-ip patched: direct Message Router + TCP framing + inflight write guard + timer cleanup + REAL sync`. |
+| **Painéis do Grafana exibindo `Datasource InfluxDB-Flux was not found`** | `uid: InfluxDB-Flux` ausente no provisionamento de datasources. | Confirme que `grafana_provisioning/datasources/influxdb.yaml` contém `deleteDatasources` + `uid: InfluxDB-Flux` e reinicie o contêiner `docker restart grafana`. |
+| **Erro `Write to InfluxDB failed: ETIMEDOUT 192.168.65.254:8086` no Windows** | Presença indevida de `extra_hosts: ["host.docker.internal:host-gateway"]` no serviço `nodered` do `docker-compose.windows.yml`. | Mantenha `extra_hosts` **apenas** no `docker-compose.yml` (Linux). No Windows, o `influxdb` já possui o alias `host.docker.internal` na `iot-network`. |
+| **Botão INICIAR TESTE bloqueado em vermelho** | Intertravamento de segurança atuou. | Leia a tarja `STATUS`: verifique se o CLP está online, preencha `Equipamento`, desligue o motor (`_IO_EM_DO_01 = false`), feche a válvula (`_IO_EM_DO_00 = false`) e defina a `PRESSÃO DESEJADA`. |
+| **Tarja vermelha `FALHA AO GERAR PDF DO RELATÓRIO`** | Falha de permissão em `./relatorios` ou timeout de renderização do Chromium. | 1. Consulte `docker logs --tail 50 nodered` para ver o código de saída capturado por `fn_verifica_pdf`.<br>2. Verifique espaço em disco e permissão de escrita em `./relatorios`. |
 
 ---
 
 ## 7. DISPOSIÇÕES FINAIS E SUPORTE TÉCNICO
 
-O projeto opera de maneira **100% autônoma e offline (air-gapped)** em chão de fábrica, compatível com Windows e Linux usando exatamente o mesmo `flows.json` e `settings.js`. Toda evolução técnica deve ser versionada no Git, sincronizada entre `DOSSIE_TECNICO_MANUTENCAO.md` e `docs/DOSSIE_TECNICO_MANUTENCAO.md` e registrada sequencialmente em `historico_execucoes/`.
+O projeto opera de maneira **100% autônoma e offline (air-gapped)** em chão de fábrica, compatível com Windows e Linux usando exatamente o mesmo `flows.json` e `settings.js`. Toda evolução técnica deve ser versionada no Git, documentada em `docs/DOSSIE_TECNICO_MANUTENCAO.md` e registrada sequencialmente em `historico_execucoes/` (com ponteiro atualizado em `docs/RESUMO_EXECUCAO.md`).

@@ -1,4 +1,4 @@
-﻿# Sistema SCADA / IoT - Bancada de Testes de Pressão Hidrostática
+# Sistema SCADA / IoT - Bancada de Testes de Pressão Hidrostática
 
 Sistema supervisório e de aquisição de dados industrial para bancada de ensaios de pressão hidrostática (Vigor Alimentos / Detecto), integrando **CLP Allen-Bradley Micro850 (2080-L50E)**, **Node-RED**, **InfluxDB 2.7** e **Grafana** em contêineres Docker multiplataforma (Linux Ubuntu e Windows com Docker Desktop), operando **100% OFFLINE**.
 
@@ -82,7 +82,7 @@ C:\aplicacoes\clp_iot\
 
 | Serviço | URL | Descrição |
 | :--- | :--- | :--- |
-| **IHM / Supervisório** | **[http://localhost:1880/ui](http://localhost:1880/ui)** | Painel operacional do operador (manômetro, botões, LED) |
+| **IHM / Supervisório** | **[http://localhost:1880/ui](http://localhost:1880/ui)** | Painel operacional do operador (manômetro, seletores manuais, cronômetro e status) |
 | **Editor Node-RED** | **[http://localhost:1880](http://localhost:1880)** | Fluxos lógicos de comunicação e automação |
 | **Grafana** | **[http://localhost:3000](http://localhost:3000)** | Painéis analíticos (*user: admin / pass: admin*) |
 | **InfluxDB 2.7** | **[http://localhost:8086](http://localhost:8086)** | Banco de séries temporais |
@@ -98,11 +98,13 @@ Comunicação via EtherNet/IP CIP nativo no endpoint `192.168.1.33:44818` (Slot 
 | :--- | :--- | :--- | :--- |
 | `RETORNO_BAR` | `REAL` | Entrada (Read) | Pressão em tempo real lida pelo transmissor analógico (0 a 10 bar). |
 | `_IO_EM_DO_00` | `BOOL` | Entrada (Read) | Feedback elétrico da saída digital física da válvula solenoide. |
-| `setpoint_node` | `REAL` | Bidirecional | Pressão desejada de teste (3 BAR, 6 BAR, 8 BAR ou customizado). |
-| `on_node` | `DINT` | Saída (Write) | Comando manual de ligar motor/bomba hidráulica. |
-| `off_node` | `DINT` | Saída (Write) | Comando manual de desligar motor/bomba hidráulica. |
-| `onval_node` | `DINT` | Saída (Write) | Comando manual de abertura da válvula solenoide. |
-| `offval_node` | `DINT` | Saída (Write) | Comando manual de fechamento da válvula solenoide. |
+| `_IO_EM_DO_01` | `BOOL` | Entrada (Read) | Feedback elétrico da saída digital física do motor/bomba hidráulica. |
+| `COMPARACAO` | `BOOL` | Entrada (Read) | Flag lógica do CLP indicando pressão igual ou superior ao setpoint (`RETORNO_BAR >= setpoint_node`). |
+| `setpoint_node` | `REAL` | Bidirecional | Pressão desejada de teste (0 a 10 bar, passo 0,5 bar). |
+| `on_node` | `BOOL` | Saída (Write) | Comando remoto de ligar motor/bomba hidráulica. |
+| `off_node` | `BOOL` | Saída (Write) | Comando remoto de desligar motor/bomba hidráulica (e pulso de `400 ms` ao liberar manual). |
+| `onval_node` | `BOOL` | Saída (Write) | Comando remoto de abertura da válvula solenoide. |
+| `offval_node` | `BOOL` | Saída (Write) | Comando remoto de fechamento da válvula solenoide (e pulso de `400 ms` ao liberar manual). |
 | `ciclo_node` | `BOOL` | Saída (Write) | Sinaliza ciclo de teste hidrostático em andamento (`true`) ou finalizado (`false`). |
 
 ---

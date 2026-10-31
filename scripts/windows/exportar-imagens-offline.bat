@@ -8,8 +8,8 @@ echo   EXPORTANDO IMAGENS DOCKER PARA INSTALACAO 100%% OFFLINE
 echo   Destino: %CD%\imagens-offline.tar
 echo =================================================================
 echo.
-echo Salvando clp_iot-nodered:latest, influxdb:2.7 e grafana/grafana:latest em imagens-offline.tar...
-docker save -o "%CD%\imagens-offline.tar" clp_iot-nodered:latest influxdb:2.7 grafana/grafana:latest
+echo Salvando clp_iot-nodered:latest, influxdb:2.7.12 e grafana/grafana:13.2.4 em imagens-offline.tar...
+docker save -o "%CD%\imagens-offline.tar" clp_iot-nodered:latest influxdb:2.7.12 grafana/grafana:13.2.4
 if %errorlevel% equ 0 (
     echo.
     echo =================================================================
